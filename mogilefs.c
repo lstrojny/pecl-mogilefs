@@ -43,8 +43,6 @@ static int le_mogilefs_sock;
 #define le_mogilefs_sock_name "Mogilefs Socket Buffer"
 static zend_class_entry *mogilefs_class_entry_ptr;
 
-ZEND_DECLARE_MODULE_GLOBALS(mogilefs)
-
 /* {{{ mogilefs_functions[]
  *
  * Every user visible function must have an entry in mogilefs_functions[].
@@ -134,13 +132,17 @@ zend_module_entry mogilefs_module_entry = {
 	mogilefs_functions,
 	PHP_MINIT(mogilefs),
 	PHP_MSHUTDOWN(mogilefs),
-	PHP_RINIT(mogilefs),		/* Replace with NULL if there's nothing to do at request start */
+	PHP_RINIT(mogilefs),
 	NULL,
 	PHP_MINFO(mogilefs),
 #if ZEND_MODULE_API_NO >= 20010901
-	"0.7.1", /* Replace with version number for your extension */
+	"0.7.4",
 #endif
-	STANDARD_MODULE_PROPERTIES
+	PHP_MODULE_GLOBALS(mogilefs),
+	NULL,
+	NULL,
+	NULL,
+	STANDARD_MODULE_PROPERTIES_EX
 };
 /* }}} */
 
@@ -229,13 +231,13 @@ PHP_MSHUTDOWN_FUNCTION(mogilefs)
 	UNREGISTER_INI_ENTRIES();
 	return SUCCESS;
 }
-/* }}} */
+/** }}} */
 
 /* {{{ PHP_RINIT_FUNCTION
  */
 PHP_RINIT_FUNCTION(mogilefs)
 {
-    MOGILEFS_G(default_link) = -1;
+	MOGILEFS_G(default_link) = -1;
 	return SUCCESS;
 }
 /* }}} */
@@ -253,7 +255,6 @@ PHP_MINFO_FUNCTION(mogilefs)
 	*/
 }
 /* }}} */
-
 
 int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, const char * const result, int result_len) { /* {{{ */
     char *l_key_val, *last, *token, *splited_key, *t_data, *cur_key = NULL;
