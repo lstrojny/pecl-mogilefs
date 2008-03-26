@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2008 Timu EREN <selamtux@gmail.com>
  * Copyright (c) 2007 AHSEIN Khalid <mogilefs@capoune.net>
+ * Copyright (c) 2008 Lars Strojny <lstrojny@php.net>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -136,7 +137,7 @@ zend_module_entry mogilefs_module_entry = {
 	NULL,
 	PHP_MINFO(mogilefs),
 #if ZEND_MODULE_API_NO >= 20010901
-	"0.7.4",
+	PHP_MOGILEFS_VERSION,
 #endif
 	PHP_MODULE_GLOBALS(mogilefs),
 	NULL,
@@ -248,11 +249,9 @@ PHP_MINFO_FUNCTION(mogilefs)
 {
 	php_info_print_table_start();
 	php_info_print_table_header(2, "mogilefs support", "enabled");
+	php_info_print_table_row(2, "Version", PHP_MOGILEFS_VERSION);
+	php_info_print_table_row(2, "Revision", "$Id$");
 	php_info_print_table_end();
-
-	/* Remove comments if you have entries in php.ini
-	DISPLAY_INI_ENTRIES();
-	*/
 }
 /* }}} */
 
