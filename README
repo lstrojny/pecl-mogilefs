@@ -1,0 +1,66 @@
+MogileFS is a open source distribued filesystem. www.Danga.com/MogileFS/
+
+Maintainers : AHSEIN Khalid < k@capoune.net >
+License : BSD License
+
+Description
+This extension allows you to communicate with the MogileFS tracker.
+Mogilefs.php is a Class to use mogilefs storage functions easily.
+
+INSTALL MOGILEFS
+
+$ phpize
+$ ./configure --with-mogilefs
+# make install
+
+FUNCTIONS
+    * bool mogilefs::connect (string host, int port, string domain)
+    * bool mogilefs::close
+    * bool mogilefs::put (file, string key, string class)
+    * array mogilefs::get_paths (string key)
+    * bool mogilefs::delete (string key)
+    * bool mogilefs::rename (string from_key, string to_key)
+    * bool mogilefs::list_keys (string prefix, string after, integer limit)
+    * bool mogilefs::list_fids (integer from, integer to)
+    * array mogilefs::get_domains
+    * array mogilefs::get_hosts
+    * array mogilefs::get_devices
+    * bool mogilefs::sleep(integer duration)
+    * array mogilefs::stats(ingeter all)
+    * bool mogilefs::replicate
+    * array mogilefs::create_device(string devid, string status)
+    * array mogilefs::create_domain(string domain)
+    * array mogilefs::delete_domain(string domain)
+    * array mogilefs::create_class(string domain, string class, string mindevcount)
+    * array mogilefs::update_class(string domain, string class, string mindevcount)
+    * array mogilefs::create_host(string hostname)
+    * array mogilefs::update_host(string hostname, string ip, string port, string state[dead, alive]) default alive
+    * bool mogilefs::delete_host(string hostname)
+    * bool mogilefs::set_weight(string hostname, string device, string weight)
+    * bool mogilefs::set_state(string hostname, string device, string state[dead, alive] ) default alive
+    * bool mogilefs::checker(string on/off, string level)
+
+EXAMPLE
+
+<?php
+
+/****
+  Example using mogilefs object API
+****/
+$mg = new Mogilefs;
+$mg->connect('192.168.101.1', 6001, 'myDomain');
+$mg->put('/example/file.jpg', 'my_key', 'my_class');
+$paths = $mg->get_paths('my_key');
+$mg->close();
+
+
+/****
+  Example using mogilefs procedural API
+****/
+$mg_object = mogilefs_connect('192.168.101.1', 6001, 'myDomain');
+mogilefs_put($mg_object, '/example/file.jpg', 'my_key', 'my_class');
+$paths = mogilefs_get_paths($mg_object, 'my_key');
+mogilefs_close($mg_object);
+
+?>
+
