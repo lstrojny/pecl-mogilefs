@@ -309,6 +309,7 @@ MogilefsSock *mogilefs_sock_server_init(char *m_host, int m_host_len, unsigned s
 	memcpy(mogilefs_sock->domain, m_domain, m_domain_len);
 	mogilefs_sock->host[m_host_len] = '\0';
 	mogilefs_sock->domain[m_domain_len] = '\0';
+
 	mogilefs_sock->port = m_port;
 	mogilefs_sock->timeout = timeout;
 
@@ -511,34 +512,35 @@ int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_DC) { /
 } /* }}} */
 
 
-/* {{{ proto string mogilefs_connect(string host, string port [, int timeout])
+/* {{{ proto string mogilefs_connect(string host, string port, string domain [, int timeout])
 	Initialize a new MogileFS Session */
 
 PHP_FUNCTION(mogilefs_connect)
 {
 	char *m_host = NULL, *m_domain = NULL;
-	int  m_host_len, m_port, m_domain_len, id;
+	int m_host_len, m_domain_len, id;
+	long m_port;
 	struct timeval timeout = { 5L, 0L };
 	MogilefsSock *mogilefs_sock = NULL;
 	zval *mg_object = getThis();
 
-	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sls|l",
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sls|l",
 							 &m_host, &m_host_len, &m_port,
 							 &m_domain, &m_domain_len, &timeout.tv_sec) == FAILURE) {
 		RETURN_FALSE;
 	}
-	if(timeout.tv_sec < 0L || timeout.tv_sec > INT_MAX) {
+	if (timeout.tv_sec < 0L || timeout.tv_sec > INT_MAX) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid timeout");
 		RETURN_FALSE;
 	}
 
 	mogilefs_sock = mogilefs_sock_server_init(m_host, m_host_len, m_port, m_domain, m_domain_len, timeout.tv_sec);
-	if(mogilefs_sock_server_open(mogilefs_sock, 1 TSRMLS_CC) < 0) {
+	if (mogilefs_sock_server_open(mogilefs_sock, 1 TSRMLS_CC) < 0) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Can't connect to %s:%d", m_host, m_port);
 		RETURN_FALSE;
 	}
 
-	if(!mg_object) {
+	if (!mg_object) {
 		object_init_ex(return_value, mogilefs_class_entry_ptr);
 		id = zend_list_insert(mogilefs_sock, le_mogilefs_sock);
 		add_property_resource(return_value, "socket", id);
@@ -683,7 +685,7 @@ PHP_FUNCTION(mogilefs_get)
 			RETURN_FALSE;
 		}
 	}
- 	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "GET_PATHS domain=%s&key=%s\r\n", mogilefs_sock->domain, m_key);
