@@ -134,7 +134,7 @@ zend_module_entry mogilefs_module_entry = {
 	PHP_MINIT(mogilefs),
 	PHP_MSHUTDOWN(mogilefs),
 	PHP_RINIT(mogilefs),
-	NULL,
+	PHP_RSHUTDOWN(mogilefs),
 	PHP_MINFO(mogilefs),
 #if ZEND_MODULE_API_NO >= 20010901
 	PHP_MOGILEFS_VERSION,
@@ -211,6 +211,9 @@ static void php_mogilefs_init_globals(zend_mogilefs_globals *mogilefs_globals)
 static void mogilefs_destructor_mogilefs_sock(zend_rsrc_list_entry * rsrc TSRMLS_DC)
 {
     MogilefsSock *mogilefs_sock = (MogilefsSock *) rsrc->ptr;
+	efree(mogilefs_sock->host);
+	efree(mogilefs_sock->domain);
+	efree(mogilefs_sock);
 }
 
 PHP_MINIT_FUNCTION(mogilefs)
@@ -239,6 +242,14 @@ PHP_MSHUTDOWN_FUNCTION(mogilefs)
 PHP_RINIT_FUNCTION(mogilefs)
 {
 	MOGILEFS_G(default_link) = -1;
+	return SUCCESS;
+}
+/* }}} */
+
+/* {{{ PHP_RSHUTDOWN_FUNCTION
+ */
+PHP_RSHUTDOWN_FUNCTION(mogilefs)
+{
 	return SUCCESS;
 }
 /* }}} */
@@ -341,7 +352,7 @@ int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
 	m_host_len = spprintf(&m_host, 0, "%s:%d", mogilefs_sock->host, mogilefs_sock->port);
 
 	mogilefs_sock->stream = php_stream_xport_create( m_host, m_host_len,
-										   ENFORCE_SAFE_MODE | REPORT_ERRORS,
+										   ENFORCE_SAFE_MODE,
 										   STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT,
 										   hash_key, &tv, NULL, &errstr, &err);
 	efree(m_host);
