@@ -6,3 +6,5 @@ define('MOGILEFS_ENABLED', true);
 define('MOGILEFS_HOST', 'myhost');
 define('MOGILEFS_PORT', 6001);
 define('MOGILEFS_DOMAIN', 'mydomain');
+define('MOGILEFS_CLASS', 'myclass');
+define('MOGILEFS_DEVICE_COUNT', 2);

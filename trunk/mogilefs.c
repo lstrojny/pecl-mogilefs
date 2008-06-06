@@ -671,6 +671,8 @@ PHP_FUNCTION(mogilefs_put)
     ne_set_request_body_buffer(req, m_buf_file, m_buf_file_len);
     ret = ne_request_dispatch(req);
 
+	efree(m_buf_file);
+
     ne_request_destroy(req);
 
 	if (ret != NE_OK) {
