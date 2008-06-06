@@ -432,11 +432,13 @@ char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC) { 
 	}
 
 	if(strcmp(status, "OK") != 0) {
+		efree(status);
 		*buf_len = 0;
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s", outbuf);
 		return NULL;
 	}
 	*buf_len = strlen(outbuf);
+	efree(status);
 	return outbuf;
 }
 /* }}} */
