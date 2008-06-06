@@ -7,8 +7,18 @@ if (file_exists($config)) {
 /**
  * Returns true if a certain pre-condition for MogileFS tests are not valid
  */
-function mogilfs_skipped() {
+function mogilefs_skipped() {
 	return extension_loaded('mogilefs')
 		and defined(MOGILEFS_ENABLED)
 		and MOGILEFS_ENABLED;
+}
+
+function mogilefs_test_factory()
+{
+	if (mogilefs_skipped()) {
+		die('SKIP');
+	}
+	$client = new MogileFsClient(MOGILEFS_HOST, MOGILEFS_PORT, MOGILEFS_DOMAIN);
+	$client->updateClass(MOGILEFS_DOMAIN, MOGILEFS_CLASS, MOGILEFS_DEVICE_COUNT);
+	return $client;
 }
