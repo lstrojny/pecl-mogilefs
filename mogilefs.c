@@ -586,7 +586,7 @@ PHP_FUNCTION(mogilefs_close)
 			RETURN_FALSE;
 		}
 	}
- 	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 	mogilefs_sock_disconnect(mogilefs_sock TSRMLS_CC);
