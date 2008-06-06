@@ -25,6 +25,8 @@
 #include "ext/standard/info.h"
 #include "ext/standard/url.h"
 #include "zend_extensions.h"
+#include "zend_interfaces.h"
+#include "zend_exceptions.h"
 
 #include "php_mogilefs.h"
 #include <ne_socket.h>
@@ -211,9 +213,14 @@ static void php_mogilefs_init_globals(zend_mogilefs_globals *mogilefs_globals)
 static void mogilefs_destructor_mogilefs_sock(zend_rsrc_list_entry * rsrc TSRMLS_DC)
 {
     MogilefsSock *mogilefs_sock = (MogilefsSock *) rsrc->ptr;
-	efree(mogilefs_sock->host);
-	efree(mogilefs_sock->domain);
-	efree(mogilefs_sock);
+	mogilefs_free_socket(mogilefs_sock);
+}
+
+void mogilefs_free_socket(MogilefsSock *socket)
+{
+	efree(socket->host);
+	efree(socket->domain);
+	efree(socket);
 }
 
 PHP_MINIT_FUNCTION(mogilefs)
@@ -541,16 +548,15 @@ PHP_FUNCTION(mogilefs_connect)
 		RETURN_FALSE;
 	}
 	if (timeout.tv_sec < 0L || timeout.tv_sec > INT_MAX) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid timeout");
+		zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Invalid timeout", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
 	mogilefs_sock = mogilefs_sock_server_init(m_host, m_host_len, m_port, m_domain, m_domain_len, timeout.tv_sec);
 	if (mogilefs_sock_server_open(mogilefs_sock, 1 TSRMLS_CC) < 0) {
-		efree(mogilefs_sock->host);
-		efree(mogilefs_sock->domain);
-		efree(mogilefs_sock);
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Can't connect to %s:%d", m_host, m_port);
+		zend_throw_exception_ex(
+			zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Can't connect to %s:%d", m_host, m_port);
+		mogilefs_free_socket(mogilefs_sock);
 		RETURN_FALSE;
 	}
 
