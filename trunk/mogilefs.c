@@ -352,7 +352,7 @@ int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
 	m_host_len = spprintf(&m_host, 0, "%s:%d", mogilefs_sock->host, mogilefs_sock->port);
 
 	mogilefs_sock->stream = php_stream_xport_create( m_host, m_host_len,
-										   ENFORCE_SAFE_MODE,
+										   ENFORCE_SAFE_MODE & ~REPORT_ERRORS,
 										   STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT,
 										   hash_key, &tv, NULL, &errstr, &err);
 	efree(m_host);
@@ -547,6 +547,9 @@ PHP_FUNCTION(mogilefs_connect)
 
 	mogilefs_sock = mogilefs_sock_server_init(m_host, m_host_len, m_port, m_domain, m_domain_len, timeout.tv_sec);
 	if (mogilefs_sock_server_open(mogilefs_sock, 1 TSRMLS_CC) < 0) {
+		efree(mogilefs_sock->host);
+		efree(mogilefs_sock->domain);
+		efree(mogilefs_sock);
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Can't connect to %s:%d", m_host, m_port);
 		RETURN_FALSE;
 	}
