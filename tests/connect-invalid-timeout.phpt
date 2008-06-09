@@ -2,7 +2,7 @@
 Test for invalid timeouts in the connect method
 --FILE--
 <?php
-$client = new MogileFsClient();
+$client = new MogileFs();
 try {
 	$client->connect('testhost', 1234, 'domain', PHP_INT_MAX + 1);
 } catch (Exception $e) {

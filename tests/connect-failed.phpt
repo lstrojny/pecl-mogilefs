@@ -3,7 +3,7 @@ Host cannot be found
 --FILE--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
-$client = new MogileFsClient();
+$client = new MogileFs();
 try {
 	$client->connect("foobarbaz", 100000, "foodomain");
 } catch (Exception $e) {

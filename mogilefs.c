@@ -227,7 +227,7 @@ PHP_MINIT_FUNCTION(mogilefs)
 {
 	ne_sock_init();
 	zend_class_entry mogilefs_class_entry;
-	INIT_CLASS_ENTRY(mogilefs_class_entry, "MogileFsClient", php_mogilefs_class_functions);
+	INIT_CLASS_ENTRY(mogilefs_class_entry, "MogileFs", php_mogilefs_class_functions);
 	mogilefs_class_entry_ptr = zend_register_internal_class(&mogilefs_class_entry TSRMLS_CC);
 
     le_mogilefs_sock = zend_register_list_destructors_ex
