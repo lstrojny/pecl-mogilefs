@@ -5,12 +5,12 @@ Test for invalid timeouts in the connect method
 $client = new MogileFs();
 try {
 	$client->connect('testhost', 1234, 'domain', PHP_INT_MAX + 1);
-} catch (Exception $e) {
+} catch (MogileFsException $e) {
 	var_dump($e->getMessage(), $e->getCode());
 }
 try {
 	$client->connect('testhost', 1234, 'domain', -1);
-} catch (Exception $e) {
+} catch (MogileFsException $e) {
 	var_dump($e->getMessage(), $e->getCode());
 }
 ?>

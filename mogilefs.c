@@ -447,7 +447,7 @@ char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC) { 
 		char *error;
 		error = estrndup(outbuf, strlen(outbuf));
 		php_url_decode(error, strlen(outbuf));
-		zend_throw_exception(zend_exception_get_default(TSRMLS_C), error, 0 TSRMLS_CC);
+		zend_throw_exception(mogilefs_exception_class_entry_ptr, error, 0 TSRMLS_CC);
 		return NULL;
 	}
 	*buf_len = strlen(outbuf);
@@ -566,14 +566,14 @@ PHP_FUNCTION(mogilefs_connect)
 		RETURN_FALSE;
 	}
 	if (timeout.tv_sec < 0L || timeout.tv_sec > INT_MAX) {
-		zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Invalid timeout", 0 TSRMLS_CC);
+		zend_throw_exception(mogilefs_exception_class_entry_ptr, "Invalid timeout", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
 	mogilefs_sock = mogilefs_sock_server_init(m_host, m_host_len, m_port, m_domain, m_domain_len, timeout.tv_sec);
 	if (mogilefs_sock_server_open(mogilefs_sock, 1 TSRMLS_CC) < 0) {
 		zend_throw_exception_ex(
-			zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "Can't connect to %s:%d", m_host, m_port);
+			mogilefs_exception_class_entry_ptr, 0 TSRMLS_CC, "Can't connect to %s:%d", m_host, m_port);
 		mogilefs_free_socket(mogilefs_sock);
 		RETURN_FALSE;
 	}
