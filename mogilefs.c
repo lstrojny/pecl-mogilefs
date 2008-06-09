@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2008 Timu EREN <selamtux@gmail.com>
- * Copyright (c) 2007 AHSEIN Khalid <mogilefs@capoune.net>
  * Copyright (c) 2008 Lars Strojny <lstrojny@php.net>
+ * Copyright (c) 2008 Timu Eren <selamtux@gmail.com>
+ * Copyright (c) 2007 Khalid Ahsein <mogilefs@capoune.net>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -169,7 +168,6 @@ int mogilefs_create_close(MogilefsSock *, const char * const, const char * const
 int mogilefs_get_uri_path(const char * const, php_url ** TSRMLS_DC);
 /* }}} */
 
-
 /* {{{ mogilefs default_link */
 
 static void mogilefs_set_default_link(int id TSRMLS_DC)
@@ -187,43 +185,27 @@ static int mogilefs_get_default_link(INTERNAL_FUNCTION_PARAMETERS)
 }
 /* }}} */
 
-
-/* {{{ PHP_INI
- */
-/* Remove comments and fill if you need to have entries in php.ini
-PHP_INI_BEGIN()
-    STD_PHP_INI_ENTRY("mogilefs.global_value",      "42", PHP_INI_ALL, OnUpdateLong, global_value, zend_mogilefs_globals, mogilefs_globals)
-    STD_PHP_INI_ENTRY("mogilefs.global_string", "foobar", PHP_INI_ALL, OnUpdateString, global_string, zend_mogilefs_globals, mogilefs_globals)
-PHP_INI_END()
-*/
-/* }}} */
-
-/* {{{ php_mogilefs_init_globals
- */
-/* Uncomment this function if you have INI entries
-static void php_mogilefs_init_globals(zend_mogilefs_globals *mogilefs_globals)
-{
-	mogilefs_globals->global_value = 0;
-	mogilefs_globals->global_string = NULL;
-}
-*/
-/* }}} */
-
-/* {{{ PHP_MINIT_FUNCTION
+/* {{{ static void mogilefs_destructor_mogilefs_sock(zend_rsrc_list_entry * rsrc *TSRMLS_DC)
  */
 static void mogilefs_destructor_mogilefs_sock(zend_rsrc_list_entry * rsrc TSRMLS_DC)
 {
     MogilefsSock *mogilefs_sock = (MogilefsSock *) rsrc->ptr;
 	mogilefs_free_socket(mogilefs_sock);
 }
+/* }}} */
 
+/* {{{ mogilefs_free_socket(MogilefsSock *socket)
+ */
 void mogilefs_free_socket(MogilefsSock *socket)
 {
 	efree(socket->host);
 	efree(socket->domain);
 	efree(socket);
 }
+/* }}} */
 
+/* {{{ PHP_MINIT_FUNCTION
+ */
 PHP_MINIT_FUNCTION(mogilefs)
 {
 	ne_sock_init();
@@ -547,7 +529,6 @@ int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_DC) { /
 	}
 	return -1;
 } /* }}} */
-
 
 /* {{{ proto string mogilefs_connect(string host, string port, string domain [, int timeout])
 	Initialize a new MogileFS Session */
@@ -1001,7 +982,6 @@ PHP_FUNCTION(mogilefs_get_hosts)
 
 /* }}} */
 
-
 /* {{{ proto string mogilefs_get_devices([MogileFS Object,])
 	Get MogileFS devices */
 PHP_FUNCTION(mogilefs_get_devices)
@@ -1040,7 +1020,6 @@ PHP_FUNCTION(mogilefs_get_devices)
 }
 
 /* }}} */
-
 
 /* {{{ proto string mogilefs_sleep([MogileFS Object, ingeter duration])
 	*/
@@ -1302,7 +1281,6 @@ PHP_FUNCTION(mogilefs_delete_domain)
 
 /* }}} */
 
-
 /* {{{ proto string mogilefs_create_class([MogileFS Object], string domain, string class, string mindevcount)
   */
 PHP_FUNCTION(mogilefs_create_class)
@@ -1449,7 +1427,6 @@ PHP_FUNCTION(mogilefs_delete_class)
 }
 
 /* }}} */
-
 
 /* {{{ proto string mogilefs_create_host([MogileFS Object], string domain, string class)
   */
