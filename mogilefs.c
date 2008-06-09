@@ -618,7 +618,7 @@ PHP_FUNCTION(mogilefs_put)
 	ne_session *sess;
     ne_request *req;
 	int multi_dest = 1;
-	int use_file_only = 0;
+	int use_file_only = 1;
 	int m_key_len;
 	int m_class_len;
 	int m_buf_file_len;

@@ -13,7 +13,7 @@ var_dump($result = $client->get('foo'));
 var_dump(file_get_contents(__FILE__) === file_get_contents($result['path1']));
 
 
-var_dump($client->put('foobarbaz', 'bar', MOGILEFS_CLASS));
+var_dump($client->put('foobarbaz', 'bar', MOGILEFS_CLASS, false));
 var_dump($result = $client->get('bar'));
 var_dump('foobarbaz' === file_get_contents($result['path1']));
 
