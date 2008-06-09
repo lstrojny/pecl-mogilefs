@@ -16,6 +16,9 @@ var_dump(file_get_contents(__FILE__) === file_get_contents($result['path1']));
 var_dump($client->put('foobarbaz', 'bar', MOGILEFS_CLASS));
 var_dump($result = $client->get('bar'));
 var_dump('foobarbaz' === file_get_contents($result['path1']));
+
+
+var_dump($client->put('foobarbaz', 'bar', MOGILEFS_CLASS, true));
 ?>
 ==DONE==
 --EXPECTF--
@@ -35,4 +38,5 @@ array(%d) {
   string(%d) "1"
 }
 bool(true)
+bool(false)
 ==DONE==
