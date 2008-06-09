@@ -444,10 +444,11 @@ char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC) { 
 		efree(status);
 		*buf_len = 0;
 		outbuf = php_trim(outbuf, strlen(outbuf), NULL, NULL, NULL, 3);
-		char *error;
-		error = estrndup(outbuf, strlen(outbuf));
-		php_url_decode(error, strlen(outbuf));
-		zend_throw_exception(mogilefs_exception_class_entry_ptr, error, 0 TSRMLS_CC);
+		if ((p = strchr(outbuf, ' '))) {
+			strcpy(outbuf, p+1);
+		}
+		php_url_decode(outbuf, strlen(outbuf));
+		zend_throw_exception(mogilefs_exception_class_entry_ptr, outbuf, 0 TSRMLS_CC);
 		return NULL;
 	}
 	*buf_len = strlen(outbuf);
