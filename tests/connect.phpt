@@ -9,5 +9,8 @@ if (mogilefs_skipped()) print "skip";
 require_once dirname(__FILE__) . '/test-helper.php';
 $client = new MogileFsClient();
 var_dump($client->connect(MOGILEFS_HOST, MOGILEFS_PORT, MOGILEFS_DOMAIN));
+?>
+==DONE==
 --EXPECT--
 bool(true)
+==DONE==

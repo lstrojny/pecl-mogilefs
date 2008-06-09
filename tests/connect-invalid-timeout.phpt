@@ -13,8 +13,11 @@ try {
 } catch (Exception $e) {
 	var_dump($e->getMessage(), $e->getCode());
 }
+?>
+==DONE==
 --EXPECTF--
 string(%d) "Invalid timeout"
 int(0)
 string(%d) "Invalid timeout"
 int(0)
+==DONE==
