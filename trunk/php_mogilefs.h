@@ -1,6 +1,7 @@
 /*
- * Copyright (c) 2008 Timu EREN <selamtux@gmail.com>
- * Copyright (c) 2007 AHSEIN Khalid <mogilefs@capoune.net>
+ * Copyright (c) 2008 Lars Strojny <lstrojny@php.net>
+ * Copyright (c) 2008 Timu Eren <selamtux@gmail.com>
+ * Copyright (c) 2007 Khalid Ahsein <mogilefs@capoune.net>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
