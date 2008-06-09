@@ -4,6 +4,9 @@ Check for mogilefs presence
 <?php if (!extension_loaded("mogilefs")) print "skip"; ?>
 --FILE--
 <?php
-echo "mogilefs extension is available";
+echo "mogilefs extension is available\n";
+?>
+==DONE==
 --EXPECT--
 mogilefs extension is available
+==DONE==
