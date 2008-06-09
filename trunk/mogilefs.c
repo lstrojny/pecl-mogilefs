@@ -434,7 +434,10 @@ char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC) { 
 	if(strcmp(status, "OK") != 0) {
 		efree(status);
 		*buf_len = 0;
-        php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s", outbuf);
+		int outbuf_len = strlen(outbuf);
+		outbuf = php_trim(outbuf, outbuf_len, NULL, NULL, NULL, 3);
+		outbuf = php_url_decode(outbuf, outbuf_len);
+		zend_throw_exception_ex(zend_exception_get_default(TSRMLS_C), 0 TSRMLS_CC, "%s", outbuf);
 		return NULL;
 	}
 	*buf_len = strlen(outbuf);
