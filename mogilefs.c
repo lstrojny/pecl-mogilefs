@@ -45,6 +45,7 @@ ZEND_DECLARE_MODULE_GLOBALS(mogilefs)
 static int le_mogilefs_sock;
 #define le_mogilefs_sock_name "Mogilefs Socket Buffer"
 static zend_class_entry *mogilefs_class_entry_ptr;
+static zend_class_entry *mogilefs_exception_class_entry_ptr;
 
 /* {{{ mogilefs_functions[]
  *
@@ -229,6 +230,11 @@ PHP_MINIT_FUNCTION(mogilefs)
 	zend_class_entry mogilefs_class_entry;
 	INIT_CLASS_ENTRY(mogilefs_class_entry, "MogileFs", php_mogilefs_class_functions);
 	mogilefs_class_entry_ptr = zend_register_internal_class(&mogilefs_class_entry TSRMLS_CC);
+
+	zend_class_entry mogilefs_exception_class_entry;
+	INIT_CLASS_ENTRY(mogilefs_exception_class_entry, "MogileFsException", NULL);
+	mogilefs_exception_class_entry_ptr = zend_register_internal_class_ex(
+		&mogilefs_exception_class_entry, zend_exception_get_default(TSRMLS_C), NULL TSRMLS_CC);
 
     le_mogilefs_sock = zend_register_list_destructors_ex
         (mogilefs_destructor_mogilefs_sock, NULL, le_mogilefs_sock_name, module_number);
