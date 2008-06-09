@@ -22,6 +22,11 @@ try {
 } catch (MogileFsException $e) {
 	var_dump($e->getMessage());
 }
+$data = $client->updateClass(MOGILEFS_DOMAIN, $classname, MOGILEFS_DEVICE_COUNT - 1);
+var_dump($data['domain'] === MOGILEFS_DOMAIN);
+var_dump($data['class'] === $classname);
+var_dump($data['mindevcount'] == MOGILEFS_DEVICE_COUNT - 1);
+var_dump(count($data));
 
 $data = $client->deleteClass(MOGILEFS_DOMAIN, $classname);
 var_dump($data['domain'] === MOGILEFS_DOMAIN);
@@ -35,6 +40,10 @@ bool(true)
 bool(true)
 int(3)
 string(%d) "That class already exists in that domain"
+bool(true)
+bool(true)
+bool(true)
+int(3)
 bool(true)
 bool(true)
 int(2)
