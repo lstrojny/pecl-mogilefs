@@ -617,8 +617,19 @@ PHP_FUNCTION(mogilefs_put)
 	php_url *url;
 	ne_session *sess;
     ne_request *req;
-	int multi_dest = 1, use_file_only = 0,m_key_len, m_class_len, m_buf_file_len, m_file_len, ret;
-	char *m_key = NULL, *m_class = NULL, *m_buf_file, *m_file, *close_request;
+	int multi_dest = 1;
+	int use_file_only = 0;
+	int m_key_len;
+	int m_class_len;
+	int m_buf_file_len;
+	int m_file_len;
+	int ret;
+	int external = 0;
+	char *m_key = NULL;
+	char *m_class = NULL;
+	char *m_buf_file;
+	char *m_file;
+	char *close_request;
 
 		if (mg_object == NULL) {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss|ll", &mg_object,
@@ -651,7 +662,11 @@ PHP_FUNCTION(mogilefs_put)
 		} else if (use_file_only == 1) {
 			RETURN_FALSE;
 		}
+	} else {
+		external = 1;
 	}
+
+
 
 	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
@@ -680,7 +695,9 @@ PHP_FUNCTION(mogilefs_put)
     ne_set_request_body_buffer(req, m_buf_file, m_buf_file_len);
     ret = ne_request_dispatch(req);
 
-	efree(m_buf_file);
+	if (external) {
+		efree(m_buf_file);
+	}
 
     ne_request_destroy(req);
 
