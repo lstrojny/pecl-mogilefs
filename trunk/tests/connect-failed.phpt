@@ -6,7 +6,7 @@ require_once dirname(__FILE__) . '/test-helper.php';
 $client = new MogileFs();
 try {
 	$client->connect("foobarbaz", 100000, "foodomain");
-} catch (Exception $e) {
+} catch (MogileFsException $e) {
 	var_dump($e->getMessage(), $e->getCode());
 }
 ?>
