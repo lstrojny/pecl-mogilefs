@@ -18,7 +18,7 @@ function mogilefs_test_factory()
 	if (mogilefs_skipped()) {
 		die('SKIP');
 	}
-	$client = new MogileFsClient();
+	$client = new MogileFs();
 	assert($client->connect(MOGILEFS_HOST, MOGILEFS_PORT, MOGILEFS_DOMAIN));
 	try {
 		$client->createClass(MOGILEFS_DOMAIN, MOGILEFS_CLASS, MOGILEFS_DEVICE_COUNT);
