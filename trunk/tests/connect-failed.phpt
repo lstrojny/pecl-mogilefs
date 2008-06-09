@@ -9,8 +9,10 @@ try {
 } catch (Exception $e) {
 	var_dump($e->getMessage(), $e->getCode());
 }
+?>
+==DONE==
 --EXPECTF--
 Warning: %s
 string(%d) "Can't connect to %s:%d"
 int(0)
-%s
+==DONE==
