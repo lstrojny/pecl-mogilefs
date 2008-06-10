@@ -55,7 +55,9 @@ $timer = new MogileFsBenchmarkTimer(
 	'Reading %d files between 1KB and 1MB from MogileFS tracker: %fs (%fs per read)'
 );
 for ($a = 0; $a < MOGILEFS_BENCHMARK_ITERATIONS; ++$a) {
-	assert(is_array($client->get('tf' . $a)));
+	$result = $client->get('tf' . $a);
+	assert(is_array($result));
+	assert(strlen(file_get_contents($result['path1'])) >= 1024);
 	$timer->tick();
 }
 echo $timer;
