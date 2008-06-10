@@ -37,9 +37,10 @@ try {
 }
 ?>
 ==DONE==
---EXPECT--
+--EXPECTF--
 bool(true)
-Warning: %s
+
+Warning: %s on line %d
 string(%d) "Can't connect to %s:%d"
 int(0)
 string(%d) "Invalid timeout"
