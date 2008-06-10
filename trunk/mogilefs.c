@@ -299,7 +299,6 @@ int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, const char * 
 		efree(t_data);
     }
 	efree(token);
-	efree(cur_key);
 	return 0;
 }
 /* }}} */
