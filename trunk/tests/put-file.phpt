@@ -27,7 +27,7 @@ array(%d) {
   ["path1"]=>
   string(%d) "http://%s.fid"
   ["paths"]=>
-  string(%d) "1"
+  string(%d) "%d"
 }
 bool(true)
 bool(true)
@@ -35,7 +35,7 @@ array(%d) {
   ["path1"]=>
   string(%d) "http://%s.fid"
   ["paths"]=>
-  string(%d) "1"
+  string(%d) "%d"
 }
 bool(true)
 bool(false)
