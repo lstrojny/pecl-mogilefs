@@ -166,6 +166,7 @@ char * mogilefs_file_to_mem(char *, int * TSRMLS_DC);
 char * mogilefs_create_open(MogilefsSock *, const char * const, const char * const, int TSRMLS_DC);
 int mogilefs_create_close(MogilefsSock *, const char * const, const char * const, const char * const TSRMLS_DC);
 int mogilefs_get_uri_path(const char * const, php_url ** TSRMLS_DC);
+void mogilefs_free_socket(MogilefsSock *socket);
 /* }}} */
 
 /* {{{ mogilefs default_link */
@@ -424,7 +425,7 @@ char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC) { 
 	if(strcmp(status, "OK") != 0) {
 		efree(status);
 		*buf_len = 0;
-		outbuf = php_trim(outbuf, strlen(outbuf), NULL, NULL, NULL, 3);
+		*outbuf = php_trim(outbuf, strlen(outbuf), NULL, NULL, NULL, 3);
 		if ((p = strchr(outbuf, ' '))) {
 			strcpy(outbuf, p+1);
 		}
@@ -472,7 +473,7 @@ char *mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * const m_key
 	if((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
 		return NULL;
 	}
-	close_request = emalloc(response_len +1U);
+	close_request = emalloc(response_len + 1U);
 	memcpy(close_request, response, response_len + 1U);
     return close_request;
 }
@@ -636,14 +637,10 @@ PHP_FUNCTION(mogilefs_put)
 		use_file_only = 1;
 	}
 
-	/* XXX: not supported
-	if(multi_dest != 0 && multi_dest != 1) {
-		multi_dest = 0;
-	} */
 	multi_dest = 0;
 
 	if ((m_buf_file = mogilefs_file_to_mem(m_file, &m_buf_file_len TSRMLS_CC)) == NULL) {
-		if(use_file_only == 0) {
+		if (use_file_only == 0) {
 			m_buf_file = m_file;
 			m_buf_file_len = m_file_len;
 		} else if (use_file_only == 1) {
@@ -653,20 +650,19 @@ PHP_FUNCTION(mogilefs_put)
 		external = 1;
 	}
 
-
-
 	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
-	if((close_request = mogilefs_create_open(mogilefs_sock, m_key, m_class, multi_dest TSRMLS_CC)) == NULL) {
+
+	if ((close_request = mogilefs_create_open(mogilefs_sock, m_key, m_class, multi_dest TSRMLS_CC)) == NULL) {
 		RETURN_FALSE;
 	}
 
-	if(mogilefs_get_uri_path(close_request, &url TSRMLS_CC) < 0) {
+	if (mogilefs_get_uri_path(close_request, &url TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
-	if(url->port == 0) {
+	if (url->port == 0) {
 		url->port = ne_uri_defaultport(url->scheme);
 	}
 	if (url->scheme == NULL) {
@@ -676,6 +672,7 @@ PHP_FUNCTION(mogilefs_put)
 	if ((sess = ne_session_create(url->scheme, url->host, url->port)) == NULL) {
         RETURN_FALSE;
 	}
+
 
     ne_set_read_timeout(sess, (int) MOGILEFS_DAV_SESSION_TIMEOUT);
 	req = ne_request_create(sess, "PUT", url->path);
@@ -693,7 +690,7 @@ PHP_FUNCTION(mogilefs_put)
         RETURN_FALSE;
     }
 
-	if(mogilefs_create_close(mogilefs_sock, m_key, m_class, close_request TSRMLS_CC) < 0) {
+	if (mogilefs_create_close(mogilefs_sock, m_key, m_class, close_request TSRMLS_CC) < 0) {
         RETURN_FALSE;
 	}
 
