@@ -466,12 +466,12 @@ char *mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * const m_key
 
 	request_len = spprintf(&request, 0, "CREATE_OPEN domain=%s&key=%s&class=%s&multi_dest=%d\r\n",
 							mogilefs_sock->domain, m_key, m_class, multi_dest);
-	if(mogilefs_sock_write(mogilefs_sock, request, request_len TSRMLS_CC) < 0) {
+	if (mogilefs_sock_write(mogilefs_sock, request, request_len TSRMLS_CC) < 0) {
 		return NULL;
 	}
 	efree(request);
 
-	if((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
 		return NULL;
 	}
 	close_request = emalloc(response_len + 1U);
@@ -504,37 +504,27 @@ int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_DC) { /
     char *l_key_val,  *last, *token, *splited_key, *splited_uri;
 	int splited_uri_len;
 	token = estrdup(url);
+	int result = -1;
 
-	for ((l_key_val = strtok_r(token, "&", &last)); l_key_val;
-         (l_key_val = strtok_r(NULL, "&", &last))) {
-        if ((splited_key = estrdup(l_key_val)) == NULL) {
-			efree(token);
-            return -1;
-        }
-        if ((splited_key = strtok(splited_key, "=")) == NULL) {
-			efree(splited_key);
-			efree(token);
-            return -1;
-        }
+	printf("URL: %s\n", url);
+	for ((l_key_val = strtok_r(token, "&", &last)); l_key_val; (l_key_val = strtok_r(NULL, "&", &last))) {
+		if ((splited_key = strtok(splited_key, "=")) == NULL) {
+			break;
+		}
 		if (strcmp("path", splited_key) != 0) {
-			efree(splited_key);
 			continue;
 		}
-        if ((splited_key = strtok(NULL, "=")) == NULL) {
-			efree(splited_key);
-			efree(token);
-            return -1;
-        }
 		if ((splited_uri_len = spprintf(&splited_uri, strlen(splited_key), "%s", splited_key)) == 0) {
-			efree(splited_key);
-			efree(token);
-			return -1;
+			break;
 		}
 		*p_url = (php_url *) php_url_parse_ex(splited_uri, splited_uri_len);
-		efree(token);
-		return 0;
+		result = 0;
+		break;
 	}
-	return -1;
+
+	efree(token);
+
+	return result;
 } /* }}} */
 
 /* {{{ proto string mogilefs_connect(string host, string port, string domain [, int timeout])
