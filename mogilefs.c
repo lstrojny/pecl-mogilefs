@@ -42,7 +42,7 @@ ZEND_DECLARE_MODULE_GLOBALS(mogilefs)
 
 /* True global resources - no need for thread safety here */
 static int le_mogilefs_sock;
-#define le_mogilefs_sock_name "Mogilefs Socket Buffer"
+#define mogilefs_sock_name "MogileFS Socket Buffer"
 static zend_class_entry *mogilefs_class_entry_ptr;
 static zend_class_entry *mogilefs_exception_class_entry_ptr;
 
@@ -190,18 +190,19 @@ static int mogilefs_get_default_link(INTERNAL_FUNCTION_PARAMETERS)
  */
 static void mogilefs_destructor_mogilefs_sock(zend_rsrc_list_entry * rsrc TSRMLS_DC)
 {
-    MogilefsSock *mogilefs_sock = (MogilefsSock *) rsrc->ptr;
+	MogilefsSock *mogilefs_sock = (MogilefsSock *) rsrc->ptr;
+	mogilefs_sock_disconnect(mogilefs_sock TSRMLS_CC);
 	mogilefs_free_socket(mogilefs_sock);
 }
 /* }}} */
 
 /* {{{ mogilefs_free_socket(MogilefsSock *socket)
  */
-void mogilefs_free_socket(MogilefsSock *socket)
+void mogilefs_free_socket(MogilefsSock *mogilefs_sock)
 {
-	efree(socket->host);
-	efree(socket->domain);
-	efree(socket);
+	efree(mogilefs_sock->host);
+	efree(mogilefs_sock->domain);
+	efree(mogilefs_sock);
 }
 /* }}} */
 
@@ -220,7 +221,7 @@ PHP_MINIT_FUNCTION(mogilefs)
 		&mogilefs_exception_class_entry, zend_exception_get_default(TSRMLS_C), NULL TSRMLS_CC);
 
     le_mogilefs_sock = zend_register_list_destructors_ex
-        (mogilefs_destructor_mogilefs_sock, NULL, le_mogilefs_sock_name, module_number);
+        (mogilefs_destructor_mogilefs_sock, NULL, mogilefs_sock_name, module_number);
 	return SUCCESS;
 }
 /* }}} */
@@ -329,8 +330,9 @@ MogilefsSock *mogilefs_sock_server_init(char *m_host, int m_host_len, unsigned s
 void mogilefs_sock_disconnect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
 	if (mogilefs_sock->stream != NULL) {
 		mogilefs_sock_write(mogilefs_sock, "quit", 4 TSRMLS_CC);
-		php_stream_close(mogilefs_sock->stream);
 		mogilefs_sock->status = MOGILEFS_SOCK_STATUS_DISCONNECTED;
+		php_stream_close(mogilefs_sock->stream);
+		mogilefs_sock->stream = NULL;
 	}
 }
 /* }}} */
@@ -353,10 +355,11 @@ int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
 										   ENFORCE_SAFE_MODE & ~REPORT_ERRORS,
 										   STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT,
 										   hash_key, &tv, NULL, &errstr, &err);
-	efree(m_host);
 	if (!mogilefs_sock->stream) {
 		return -1;
 	}
+
+	efree(m_host);
 
 	php_stream_auto_cleanup(mogilefs_sock->stream);
 	php_stream_set_option(mogilefs_sock->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, &tv);
@@ -444,15 +447,13 @@ char *mogilefs_file_to_mem(char *m_file, int *m_file_len TSRMLS_DC) /* {{{ */
 	php_stream *stream;
 	char *data = NULL;
 
-	if (!(stream = php_stream_open_wrapper(m_file, "rb", USE_PATH | ENFORCE_SAFE_MODE, NULL))) {
-		return NULL;
+	if ((stream = php_stream_open_wrapper(m_file, "rb", USE_PATH | ENFORCE_SAFE_MODE, NULL)) != NULL) {
+		*m_file_len = php_stream_copy_to_mem(stream, &data, PHP_STREAM_COPY_ALL, 0);
+		if (*m_file_len == 0) {
+			data = estrdup("");
+		}
+		php_stream_close(stream);
 	}
-	*m_file_len = php_stream_copy_to_mem(stream, &data, PHP_STREAM_COPY_ALL, 0);
-	if (*m_file_len == 0) {
-		data = estrdup("");
-	}
-	php_stream_close(stream);
-
 	return data;
 }
 /* }}} */
@@ -507,24 +508,30 @@ int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_DC) { /
 	for ((l_key_val = strtok_r(token, "&", &last)); l_key_val;
          (l_key_val = strtok_r(NULL, "&", &last))) {
         if ((splited_key = estrdup(l_key_val)) == NULL) {
+			efree(token);
             return -1;
         }
         if ((splited_key = strtok(splited_key, "=")) == NULL) {
 			efree(splited_key);
+			efree(token);
             return -1;
         }
-		if(strcmp("path", splited_key) != 0) {
+		if (strcmp("path", splited_key) != 0) {
+			efree(splited_key);
 			continue;
 		}
         if ((splited_key = strtok(NULL, "=")) == NULL) {
 			efree(splited_key);
+			efree(token);
             return -1;
         }
 		if ((splited_uri_len = spprintf(&splited_uri, strlen(splited_key), "%s", splited_key)) == 0) {
 			efree(splited_key);
+			efree(token);
 			return -1;
 		}
 		*p_url = (php_url *) php_url_parse_ex(splited_uri, splited_uri_len);
+		efree(token);
 		return 0;
 	}
 	return -1;
@@ -612,7 +619,7 @@ PHP_FUNCTION(mogilefs_put)
 	int m_buf_file_len;
 	int m_file_len;
 	int ret;
-	int external = 0;
+	int alloc_internal = 0;
 	char *m_key = NULL;
 	char *m_class = NULL;
 	char *m_buf_file;
@@ -647,7 +654,7 @@ PHP_FUNCTION(mogilefs_put)
 			RETURN_FALSE;
 		}
 	} else {
-		external = 1;
+		alloc_internal = 1;
 	}
 
 	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
@@ -673,13 +680,12 @@ PHP_FUNCTION(mogilefs_put)
         RETURN_FALSE;
 	}
 
-
-    ne_set_read_timeout(sess, (int) MOGILEFS_DAV_SESSION_TIMEOUT);
+	ne_set_read_timeout(sess, (int) MOGILEFS_DAV_SESSION_TIMEOUT);
 	req = ne_request_create(sess, "PUT", url->path);
-    ne_set_request_body_buffer(req, m_buf_file, m_buf_file_len);
-    ret = ne_request_dispatch(req);
+	ne_set_request_body_buffer(req, m_buf_file, m_buf_file_len);
+	ret = ne_request_dispatch(req);
 
-	if (external) {
+	if (alloc_internal) {
 		efree(m_buf_file);
 	}
 
@@ -693,6 +699,9 @@ PHP_FUNCTION(mogilefs_put)
 	if (mogilefs_create_close(mogilefs_sock, m_key, m_class, close_request TSRMLS_CC) < 0) {
         RETURN_FALSE;
 	}
+
+	php_url_free(url);
+	efree(close_request);
 
 	RETURN_TRUE;
 }
@@ -1687,16 +1696,16 @@ PHP_FUNCTION(mogilefs_checker)
   }
   request_len = spprintf(&request, 0, "CHECKER domain=%s&disable=%s&level=%s\r\n", mogilefs_sock->domain, disable, level);
 
-  if(mogilefs_sock_write(mogilefs_sock, request, request_len TSRMLS_CC) < 0) {
+  if (mogilefs_sock_write(mogilefs_sock, request, request_len TSRMLS_CC) < 0) {
     RETURN_FALSE;
   }
   efree(request);
 
-  if((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+  if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
     RETURN_FALSE;
   }
 
-  if(mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAM_PASSTHRU, response, response_len) < 0) {
+  if (mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAM_PASSTHRU, response, response_len) < 0) {
     RETURN_FALSE;
   }
   RETURN_TRUE;
@@ -1713,7 +1722,7 @@ PHP_FUNCTION(mogilefs_monitor_round)
   char *request, *response;
   int  request_len, response_len;
 
-  if(mg_object == NULL) {
+  if (mg_object == NULL) {
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &mg_object,
                   mogilefs_class_entry_ptr) == FAILURE) {
       RETURN_FALSE;
@@ -1725,16 +1734,16 @@ PHP_FUNCTION(mogilefs_monitor_round)
   }
   request_len = spprintf(&request, 0, "DO_MONITOR_ROUND domain=%s\r\n",  mogilefs_sock->domain);
 
-  if(mogilefs_sock_write(mogilefs_sock, request, request_len TSRMLS_CC) < 0) {
+  if (mogilefs_sock_write(mogilefs_sock, request, request_len TSRMLS_CC) < 0) {
     RETURN_FALSE;
   }
   efree(request);
 
-  if((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+  if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
     RETURN_FALSE;
   }
 
-  if(mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAM_PASSTHRU, response, response_len) < 0) {
+  if (mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAM_PASSTHRU, response, response_len) < 0) {
     RETURN_FALSE;
   }
 
