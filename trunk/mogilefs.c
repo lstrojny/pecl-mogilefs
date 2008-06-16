@@ -428,12 +428,13 @@ char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC) { 
 	if(strcmp(status, "OK") != 0) {
 		efree(status);
 		*buf_len = 0;
-		*outbuf = php_trim(outbuf, strlen(outbuf), NULL, NULL, NULL, 3);
-		if ((p = strchr(outbuf, ' '))) {
-			strcpy(outbuf, p+1);
+		char *message = php_trim(outbuf, strlen(outbuf), NULL, NULL, NULL, 3);
+		if ((p = strchr(message, ' '))) {
+			strcpy(message, p+1);
 		}
-		php_url_decode(outbuf, strlen(outbuf));
-		zend_throw_exception(mogilefs_exception_class_entry_ptr, outbuf, 0 TSRMLS_CC);
+		php_url_decode(message, strlen(message));
+		zend_throw_exception(mogilefs_exception_class_entry_ptr, message, 0 TSRMLS_CC);
+		efree(message);
 		return NULL;
 	}
 	*buf_len = strlen(outbuf);
@@ -736,7 +737,7 @@ PHP_FUNCTION(mogilefs_get)
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "GET_PATHS domain=%s&key=%s\r\n", mogilefs_sock->domain, m_key);
-	if(mogilefs_sock_write(mogilefs_sock, request, request_len TSRMLS_CC) < 0) {
+	if (mogilefs_sock_write(mogilefs_sock, request, request_len TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 	efree(request);
