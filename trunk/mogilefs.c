@@ -266,7 +266,7 @@ PHP_MINFO_FUNCTION(mogilefs)
 /* }}} */
 
 int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, const char * const result, int result_len) { /* {{{ */
-    char *l_key_val, *last, *token, *splited_key, *t_data, *cur_key = NULL;
+    char *l_key_val, *last, *token, *splited_key, *t_data, *cur_key = NULL, *k;
     int t_data_len;
 
     if ((token = estrndup(result, result_len)) == NULL) {
@@ -284,18 +284,19 @@ int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, const char * 
             return -1;
         }
         MAKE_STD_ZVAL(data);
-        if ((splited_key = strtok(splited_key, "=")) == NULL) {
+        if ((k = strtok(splited_key, "=")) == NULL) {
              // some return values can be null
              // return -1;
-             splited_key ="\0";
+             k = "\0";
         }
         asprintf(&cur_key, "%s", splited_key);
-        if ((splited_key = strtok(NULL, "=")) == NULL) {
+        if ((k = strtok(NULL, "=")) == NULL) {
             // some return values can be null
             // return -1;
-             splited_key ="\0";
+             k = "\0";
         }
-		t_data_len = spprintf(&t_data, 0, "%s", splited_key);
+		t_data_len = spprintf(&t_data, 0, "%s", k);
+		efree(splited_key);
         ZVAL_STRINGL(data, t_data, t_data_len, 1);
         add_assoc_zval(return_value, cur_key, data);
 		efree(t_data);
@@ -509,23 +510,28 @@ int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_DC) { /
 	for ((l_key_val = strtok_r(token, "&", &last)); l_key_val;
          (l_key_val = strtok_r(NULL, "&", &last))) {
         if ((splited_key = estrdup(l_key_val)) == NULL) {
+			efree(token);
             return -1;
         }
         if ((splited_key = strtok(splited_key, "=")) == NULL) {
 			efree(splited_key);
+			efree(token);
             return -1;
         }
 		if(strcmp("path", splited_key) != 0) {
 			continue;
 		}
         if ((splited_key = strtok(NULL, "=")) == NULL) {
+			efree(token);
 			efree(splited_key);
             return -1;
         }
 		if ((splited_uri_len = spprintf(&splited_uri, strlen(splited_key), "%s", splited_key)) == 0) {
+			efree(token);
 			efree(splited_key);
 			return -1;
 		}
+		efree(token);
 		*p_url = (php_url *) php_url_parse_ex(splited_uri, splited_uri_len);
 		return 0;
 	}

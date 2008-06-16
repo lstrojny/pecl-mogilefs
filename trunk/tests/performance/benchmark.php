@@ -10,7 +10,7 @@ require_once __DIR__ . '/timer.php';
 /**
  * Connecting/disconnecting
  */
-$timer = new MogileFsBenchmarkTimer(
+/*$timer = new MogileFsBenchmarkTimer(
 	'Connecting/disconnecting %d times to the MogileFsServer: %fs (%fs per connect)'
 );
 for ($a = 0; $a < MOGILEFS_BENCHMARK_ITERATIONS; ++$a) {
@@ -19,7 +19,7 @@ for ($a = 0; $a < MOGILEFS_BENCHMARK_ITERATIONS; ++$a) {
 	unset($client);
 	$timer->tick();
 }
-echo $timer;
+echo $timer;*/
 
 
 //
@@ -45,7 +45,8 @@ $timer = new MogileFsBenchmarkTimer(
 	'Writing %d files between 1KB and 1MB to MogileFS: %fs (%fs per write)'
 );
 for ($a = 0; $a < MOGILEFS_BENCHMARK_ITERATIONS; ++$a) {
-	assert($client->put($dir . '/' . $a, 'tf' . $a, MOGILEFS_CLASS));
+	var_dump($client->put($dir . '/' . $a, 'tf' . $a, MOGILEFS_CLASS));
+	echo "\n" . $dir . '/' . $a . "\n";
 	$timer->tick();
 }
 echo $timer;
