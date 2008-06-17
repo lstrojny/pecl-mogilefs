@@ -23,9 +23,7 @@
 		<release>alpha</release>
 		<api>beta</api>
 	</stability>
-	<license uri="http://www.opensource.org/licenses/bsd-license.php">
-		BSD License
-	</license>
+	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
 	<notes>
 		* Fixed a bunch of ugly memory leaks
 		* Fixed bug in MogileFS::connect()
@@ -34,6 +32,8 @@
 	<contents>
 		<dir name="/">
 			<file name="README" role="doc"/>
+			<file name="mogilefs.c" role="src"/>
+			<file name="php_mogilefs.h" role="src"/>
 			<dir name="tests">
 				<file name="extension-present.phpt" role="test"/>
 				<file name="put-file.phpt" role="test"/>
