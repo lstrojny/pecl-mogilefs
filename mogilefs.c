@@ -607,7 +607,7 @@ PHP_FUNCTION(mogilefs_close)
 
 PHP_FUNCTION(mogilefs_put)
 {
-	zval *mg_object = getThis();
+	zval *mg_object;
 	MogilefsSock *mogilefs_sock;
 	php_url *url;
 	ne_session *sess;
@@ -715,22 +715,17 @@ end:
 
 PHP_FUNCTION(mogilefs_get)
 {
-	zval *mg_object = getThis();
+	zval *mg_object;
 	MogilefsSock *mogilefs_sock;
 	char *m_key = NULL, *request, *response;
 	int m_key_len, request_len, response_len;
 
-	if(mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Os", &mg_object,
-									mogilefs_class_entry_ptr, &m_key, &m_key_len) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
+									&mg_object, mogilefs_class_entry_ptr,
+									&m_key, &m_key_len) == FAILURE) {
 			RETURN_FALSE;
-		}
-
-	} else {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &m_key, &m_key_len) == FAILURE) {
-			RETURN_FALSE;
-		}
 	}
+
 	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
