@@ -507,24 +507,24 @@ int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_DC) { /
 	token = estrdup(url);
 
 	for ((l_key_val = strtok_r(token, "&", &last)); l_key_val;
-				 (l_key_val = strtok_r(NULL, "&", &last))) {
-				if ((splited_key = estrdup(l_key_val)) == NULL) {
+			 (l_key_val = strtok_r(NULL, "&", &last))) {
+		if ((splited_key = estrdup(l_key_val)) == NULL) {
 			efree(token);
-						return -1;
-				}
-				if ((splited_key = strtok(splited_key, "=")) == NULL) {
+			return -1;
+		}
+		if ((splited_key = strtok(splited_key, "=")) == NULL) {
 			efree(splited_key);
 			efree(token);
-						return -1;
-				}
+			return -1;
+		}
 		if(strcmp("path", splited_key) != 0) {
 			continue;
 		}
-				if ((splited_key = strtok(NULL, "=")) == NULL) {
+		if ((splited_key = strtok(NULL, "=")) == NULL) {
 			efree(token);
 			efree(splited_key);
-						return -1;
-				}
+			return -1;
+		}
 		if ((splited_uri_len = spprintf(&splited_uri, strlen(splited_key), "%s", splited_key)) == 0) {
 			efree(token);
 			efree(splited_key);
