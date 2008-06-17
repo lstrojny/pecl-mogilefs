@@ -626,18 +626,11 @@ PHP_FUNCTION(mogilefs_put)
 	char *m_file;
 	char *close_request;
 
-	if (mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss|ll", &mg_object,
-									mogilefs_class_entry_ptr, &m_file, &m_file_len, &m_key, &m_key_len,
-									&m_class, &m_class_len, &use_file_only, &multi_dest) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(),
+				"Osss|ll", &mg_object, mogilefs_class_entry_ptr,
+				&m_file, &m_file_len, &m_key, &m_key_len,
+				&m_class, &m_class_len, &use_file_only, &multi_dest) == FAILURE) {
 			RETURN_FALSE;
-		}
-
-	} else {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss|ll", &m_file, &m_file_len,
-									&m_key, &m_key_len, &m_class, &m_class_len, &use_file_only, &multi_dest) == FAILURE) {
-			RETURN_FALSE;
-		}
 	}
 
 	if (use_file_only != 0 && use_file_only != 1) {
