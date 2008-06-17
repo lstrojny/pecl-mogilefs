@@ -13,13 +13,14 @@ $result = $client->get('foo');
 var_dump($result['path1']);
 var_dump($result['paths']);
 var_dump(file_get_contents(__FILE__) === file_get_contents($result['path1']));
-
+var_dump($client->delete('foo'));
 
 var_dump($client->put('foobarbaz', 'bar', MOGILEFS_CLASS, false));
 $result = $client->get('bar');
 var_dump($result['path1']);
 var_dump($result['paths']);
 var_dump('foobarbaz' === file_get_contents($result['path1']));
+var_dump($client->delete('bar'));
 
 
 var_dump($client->put('foobarbaz', 'bar', MOGILEFS_CLASS, true));
@@ -36,6 +37,7 @@ $result = mogilefs_get($obj, 'barfoo');
 var_dump($result['path1']);
 var_dump($result['paths']);
 var_dump('foobarbar' === file_get_contents($result['path1']));
+var_dump(mogilefs_delete($obj, 'barfoo'));
 
 var_dump(mogilefs_put($obj, 'foobarbar', 'bazbarfoo', MOGILEFS_CLASS, true));
 ?>
@@ -46,8 +48,10 @@ string(%d) "http://%s.fid"
 string(%d) "%d"
 bool(true)
 bool(true)
+bool(true)
 string(%d) "http://%s.fid"
 string(%d) "%d"
+bool(true)
 bool(true)
 bool(false)
 bool(true)
@@ -57,6 +61,7 @@ bool(true)
 bool(true)
 string(%d) "http://%s.fid"
 string(%d) "%d"
+bool(true)
 bool(true)
 bool(false)
 ==DONE==
