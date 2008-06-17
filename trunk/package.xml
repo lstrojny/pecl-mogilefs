@@ -39,6 +39,8 @@
 				<file name="put-file.phpt" role="test"/>
 				<file name="connect.phpt" role="test"/>
 				<file name="crud-class.phpt" role="test"/>
+				<file name="config.inc.php.example" role="test"/>
+				<file name="test-helper.php" role="test"/>
 				<dir name="regressions">
 					<file name="array-is-managed.phpt" role="test"/>
 				</dir>
