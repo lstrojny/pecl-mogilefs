@@ -1,61 +1,64 @@
-MogileFS is a open source distribued filesystem. www.Danga.com/MogileFS/
+===============================================================================
+===============================================================================
+MogileFS is a open source distribued filesystem (www.danga.com/mogilefs/)
+===============================================================================
+===============================================================================
 
-Maintainers : AHSEIN Khalid < k@capoune.net >
-License : BSD License
+Maintainer: Lars Strojny <lstrojny@php.net>
+License: BSD License
 
-Description
-This extension allows you to communicate with the MogileFS tracker.
-Mogilefs.php is a Class to use mogilefs storage functions easily.
+The PHP MogileFS extension allows to communicate with a MogileFS tracker.
 
 INSTALL MOGILEFS
-
+===============================================================================
 $ phpize
-$ ./configure --with-mogilefs
-# make install
+$ ./configure
+$ make install
 
-FUNCTIONS
-    * bool MogileFsClient::connect (string host, int port, string domain)
-    * bool MogileFsClient::close
-    * bool MogileFsClient::put (file, string key, string class)
-    * array MogileFsClient::getPaths (string key)
-    * bool MogileFsClient::delete (string key)
-    * bool MogileFsClient::rename (string from_key, string to_key)
-    * bool MogileFsClient::listKeys (string prefix, string after, integer limit)
-    * bool MogileFsClient::listFids (integer from, integer to)
-    * array MogileFsClient::getDomains
-    * array MogileFsClient::getHosts
-    * array MogileFsClient::getDevices
-    * bool MogileFsClient::sleep (integer duration)
-    * array MogileFsClient::stats (ingeter all)
-    * bool MogileFsClient::replicate
-    * array MogileFsClient::createDevice (string devid, string status)
-    * array MogileFsClient::createDomain (string domain)
-    * array MogileFsClient::deleteDomain (string domain)
-    * array MogileFsClient::createClass (string domain, string class, string mindevcount)
-    * array MogileFsClient::updateClass (string domain, string class, string mindevcount)
-    * array MogileFsClient::createHost (string hostname)
-    * array MogileFsClient::updateHost (string hostname, string ip, string port, string state[dead, alive]) default alive
-    * bool MogileFsClient::deleteHost (string hostname)
-    * bool MogileFsClient::setWeight (string hostname, string device, string weight)
-    * bool MogileFsClient::setState (string hostname, string device, string state[dead, alive] ) default alive
-    * bool MogileFsClient::checker (string on/off, string level)
+FUNCTIONS/METHODS
+===============================================================================
+ * bool MogileFS::connect (string host, int port, string domain)
+ * bool MogileFS::close
+ * bool MogileFS::put (file, string key, string class)
+ * array MogileFS::getPaths (string key)
+ * bool MogileFS::delete (string key)
+ * bool MogileFS::rename (string from_key, string to_key)
+ * bool MogileFS::listKeys (string prefix, string after, integer limit)
+ * bool MogileFS::listFids (integer from, integer to)
+ * array MogileFS::getDomains
+ * array MogileFS::getHosts
+ * array MogileFS::getDevices
+ * bool MogileFS::sleep (integer duration)
+ * array MogileFS::stats (ingeter all)
+ * bool MogileFS::replicate
+ * array MogileFS::createDevice (string devid, string status)
+ * array MogileFS::createDomain (string domain)
+ * array MogileFS::deleteDomain (string domain)
+ * array MogileFS::createClass (string domain, string class, string mindevcount)
+ * array MogileFS::updateClass (string domain, string class, string mindevcount)
+ * array MogileFS::createHost (string hostname)
+ * array MogileFS::updateHost (string hostname, string ip, string port, string state[dead, alive]) default alive
+ * bool MogileFS::deleteHost (string hostname)
+ * bool MogileFS::setWeight (string hostname, string device, string weight)
+ * bool MogileFS::setState (string hostname, string device, string state[dead, alive] ) default alive
+ * bool MogileFS::checker (string on/off, string level)
 
 EXAMPLE
-
+===============================================================================
 <?php
-/****
-  Example using mogilefs object API
-****/
-$mg = new MogileFsClient();
+/**
+  * Example using mogilefs object API
+  */
+$mg = new MogileFS();
 $mg->connect('192.168.101.1', 6001, 'myDomain');
 $mg->put('/example/file.jpg', 'my_key', 'my_class');
 $paths = $mg->getPaths('my_key');
 $mg->close();
 
 
-/****
-  Example using mogilefs procedural API
-****/
+/**
+  * Example using mogilefs procedural API
+  */
 $mg_object = mogilefs_connect('192.168.101.1', 6001, 'myDomain');
 mogilefs_put($mg_object, '/example/file.jpg', 'my_key', 'my_class');
 $paths = mogilefs_get_paths($mg_object, 'my_key');
