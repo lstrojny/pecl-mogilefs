@@ -422,11 +422,11 @@ char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC) { 
 	s = php_stream_gets(mogilefs_sock->stream, inbuf, 4); /* OK / ERR */
 	status = estrndup(s, 2);
 	outbuf = php_stream_gets(mogilefs_sock->stream, inbuf, MOGILEFS_SOCK_BUF_SIZE);
-	if((p = strchr(outbuf, '\r'))) {
+	if ((p = strchr(outbuf, '\r'))) {
 		*p = '\0';
 	}
 
-	if(strcmp(status, "OK") != 0) {
+	if (strcmp(status, "OK") != 0) {
 		efree(status);
 		*buf_len = 0;
 		char *message = php_trim(outbuf, strlen(outbuf), NULL, NULL, NULL, 3);
