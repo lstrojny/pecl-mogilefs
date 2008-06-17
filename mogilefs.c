@@ -504,7 +504,7 @@ int mogilefs_create_close(MogilefsSock *mogilefs_sock, const char * const m_key,
 int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_DC) { /* {{{ */
 	char *l_key_val, *last, *token, *splited_key, *splited_uri;
 	int splited_uri_len;
-	signed int ret = -1;
+	signed int ret = -2;
 	token = estrdup(url);
 
 	for ((l_key_val = strtok_r(token, "&", &last)); l_key_val; (l_key_val = strtok_r(NULL, "&", &last))) {
