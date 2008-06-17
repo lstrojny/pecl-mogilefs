@@ -504,37 +504,36 @@ int mogilefs_create_close(MogilefsSock *mogilefs_sock, const char * const m_key,
 int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_DC) { /* {{{ */
 	char *l_key_val, *last, *token, *splited_key, *splited_uri;
 	int splited_uri_len;
+	signed int ret = -1;
 	token = estrdup(url);
 
-	for ((l_key_val = strtok_r(token, "&", &last)); l_key_val;
-			 (l_key_val = strtok_r(NULL, "&", &last))) {
+	for ((l_key_val = strtok_r(token, "&", &last)); l_key_val; (l_key_val = strtok_r(NULL, "&", &last))) {
 		if ((splited_key = estrdup(l_key_val)) == NULL) {
-			efree(token);
-			return -1;
+			ret = -1;
+			break;
 		}
 		if ((splited_key = strtok(splited_key, "=")) == NULL) {
-			efree(splited_key);
-			efree(token);
-			return -1;
+			ret = -1;
+			break;
 		}
-		if(strcmp("path", splited_key) != 0) {
+		if (strcmp("path", splited_key) != 0) {
+			efree(splited_key);
 			continue;
 		}
 		if ((splited_key = strtok(NULL, "=")) == NULL) {
-			efree(token);
-			efree(splited_key);
-			return -1;
+			ret = -1;
+			break;
 		}
 		if ((splited_uri_len = spprintf(&splited_uri, strlen(splited_key), "%s", splited_key)) == 0) {
-			efree(token);
-			efree(splited_key);
-			return -1;
+			ret = -1;
+			break;
 		}
-		efree(token);
 		*p_url = (php_url *) php_url_parse_ex(splited_uri, splited_uri_len);
-		return 0;
+		ret = 0;
+		break;
 	}
-	return -1;
+	efree(token);
+	return ret;
 } /* }}} */
 
 /* {{{ proto string mogilefs_connect(string host, string port, string domain [, int timeout])
