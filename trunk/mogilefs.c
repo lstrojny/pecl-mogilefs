@@ -693,7 +693,7 @@ PHP_FUNCTION(mogilefs_put)
     ne_request_destroy(req);
 
 	if (ret != NE_OK) {
-        php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s", ne_get_error(sess));
+		zend_throw_exception_ex(mogilefs_exception_class_entry_ptr, 0 TSRMLS_CC, "%s", ne_get_error(sess));
 		RETVAL_FALSE;
 		goto end;
 	}
