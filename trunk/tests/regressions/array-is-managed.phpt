@@ -12,9 +12,11 @@ var_dump($client->put(__FILE__, 'foo', MOGILEFS_CLASS));
 var_dump(is_array($client->get('foo')));
 var_dump(is_array($client->get('foo')));
 $result = $client->get('foo');
+var_dump(is_array($result));
 ?>
 ==DONE==
 --EXPECTF--
+bool(true)
 bool(true)
 bool(true)
 bool(true)
