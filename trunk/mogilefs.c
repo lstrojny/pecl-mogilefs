@@ -644,7 +644,7 @@ PHP_FUNCTION(mogilefs_put)
 	int m_buf_file_len;
 	int m_file_len;
 	int ret;
-	int alloc_internal = 0;
+	int alloc_internal = 0, alloc_url = 0;
 	char *m_key = NULL;
 	char *m_class = NULL;
 	char *m_buf_file;
@@ -689,6 +689,8 @@ PHP_FUNCTION(mogilefs_put)
 		goto end;
 	}
 
+	alloc_url = 1;
+
 	if (url->port == 0) {
 		url->port = ne_uri_defaultport(url->scheme);
 	}
@@ -728,7 +730,7 @@ end:
 	if (alloc_internal) {
 		efree(m_buf_file);
 	}
-	if (url->scheme != NULL) {
+	if (alloc_url) {
 		php_url_free(url);
 	}
 }
