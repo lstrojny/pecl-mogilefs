@@ -280,7 +280,7 @@ PHP_MINFO_FUNCTION(mogilefs)
 /* }}} */
 
 int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, const char * const result, int result_len) { /* {{{ */
-	char *l_key_val, *last, *token, *splited_key, *t_data, *cur_key = NULL, *k;
+	char *l_key_val, *last, *token, *splitted_key, *t_data, *cur_key = NULL, *k;
 	int t_data_len;
 
 	if ((token = estrndup(result, result_len)) == NULL) {
@@ -293,24 +293,24 @@ int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, const char * 
 			 (l_key_val = strtok_r(NULL, "&", &last))) {
 		zval *data;
 
-		if ((splited_key = estrdup(l_key_val)) == NULL) {
+		if ((splitted_key = estrdup(l_key_val)) == NULL) {
 			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Out of memory");
 			return -1;
 		}
 		MAKE_STD_ZVAL(data);
-		if ((k = strtok(splited_key, "=")) == NULL) {
+		if ((k = strtok(splitted_key, "=")) == NULL) {
 			 // some return values can be null
 			 // return -1;
 			 k = "\0";
 		}
-		asprintf(&cur_key, "%s", splited_key);
+		asprintf(&cur_key, "%s", splitted_key);
 		if ((k = strtok(NULL, "=")) == NULL) {
 			// some return values can be null
 			// return -1;
 			 k = "\0";
 		}
 		t_data_len = spprintf(&t_data, 0, "%s", k);
-		efree(splited_key);
+		efree(splitted_key);
 		ZVAL_STRINGL(data, t_data, t_data_len, 1);
 		add_assoc_zval(return_value, cur_key, data);
 		efree(t_data);
@@ -518,33 +518,33 @@ int mogilefs_create_close(MogilefsSock *mogilefs_sock, const char * const m_key,
 /* }}} */
 
 int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_DC) { /* {{{ */
-	char *l_key_val, *last, *token, *splited_key, *splited_uri;
-	int splited_uri_len;
+	char *l_key_val, *last, *token, *splitted_key, *splitted_uri, *splitted;
+	int splitted_uri_len, c = 0;
 	signed int ret = -2;
 	token = estrdup(url);
 
 	for ((l_key_val = strtok_r(token, "&", &last)); l_key_val; (l_key_val = strtok_r(NULL, "&", &last))) {
-		if ((splited_key = estrdup(l_key_val)) == NULL) {
+		if ((splitted_key = estrdup(l_key_val)) == NULL) {
 			ret = -1;
 			break;
 		}
-		if ((splited_key = strtok(splited_key, "=")) == NULL) {
+		if ((splitted = strtok(splitted_key, "=")) == NULL) {
+			efree(splitted_key);
 			ret = -1;
 			break;
 		}
-		if (strcmp("path", splited_key) != 0) {
-			efree(splited_key);
+		if (strcmp("path", splitted) != 0) {
 			continue;
 		}
-		if ((splited_key = strtok(NULL, "=")) == NULL) {
+		if ((splitted = strtok(NULL, "=")) == NULL) {
 			ret = -1;
 			break;
 		}
-		if ((splited_uri_len = spprintf(&splited_uri, strlen(splited_key), "%s", splited_key)) == 0) {
+		if ((splitted_uri_len = spprintf(&splitted_uri, strlen(splitted), "%s", splitted)) == 0) {
 			ret = -1;
 			break;
 		}
-		*p_url = (php_url *) php_url_parse_ex(splited_uri, splited_uri_len);
+		*p_url = (php_url *) php_url_parse_ex(splitted_uri, splitted_uri_len);
 		ret = 0;
 		break;
 	}
@@ -1290,7 +1290,7 @@ PHP_FUNCTION(mogilefs_delete_domain)
 		RETURN_FALSE;
 	}
 
-	request_len = spprintf(&request, 0, "CREATE_DELETE domain=%s\r\n", domain);
+	request_len = spprintf(&request, 0, "DELETE_DOMAIN domain=%s\r\n", domain);
 
 	if (mogilefs_sock_write(mogilefs_sock, request, request_len TSRMLS_CC) < 0) {
 		RETURN_FALSE;
