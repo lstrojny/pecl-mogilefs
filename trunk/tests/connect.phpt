@@ -35,6 +35,10 @@ try {
 } catch (MogileFsException $e) {
 	var_dump($e->getMessage(), $e->getCode());
 }
+
+// Params
+$client = new MogileFs();
+var_dump($client->connect());
 ?>
 ==DONE==
 --EXPECTF--
@@ -47,4 +51,7 @@ string(%d) "Invalid timeout"
 int(0)
 string(%d) "Invalid timeout"
 int(0)
+
+Warning: MogileFs::connect() expects at least 3 parameters, 0 given in %s on line %d
+bool(false)
 ==DONE==

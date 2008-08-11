@@ -20,7 +20,7 @@
 		<api>0.7.0</api>
 	</version>
 	<stability>
-		<release>alpha</release>
+		<release>beta</release>
 		<api>beta</api>
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>

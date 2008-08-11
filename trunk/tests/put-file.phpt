@@ -24,6 +24,8 @@ var_dump($client->delete('bar'));
 
 
 var_dump($client->put('foobarbaz', 'bar', MOGILEFS_CLASS, true));
+var_dump($client->put());
+
 
 $obj = mogilefs_test_factory(true);
 var_dump(mogilefs_put($obj, __FILE__, 'foobar', MOGILEFS_CLASS));
@@ -40,6 +42,8 @@ var_dump('foobarbar' === file_get_contents($result['path1']));
 var_dump(mogilefs_delete($obj, 'barfoo'));
 
 var_dump(mogilefs_put($obj, 'foobarbar', 'bazbarfoo', MOGILEFS_CLASS, true));
+
+var_dump(mogilefs_put());
 ?>
 ==DONE==
 --EXPECTF--
@@ -54,6 +58,9 @@ string(%d) "%d"
 bool(true)
 bool(true)
 bool(false)
+
+Warning: MogileFs::put() expects at least 3 parameters, 0 given in %s on line %d
+bool(false)
 bool(true)
 string(%d) "http://%s.fid"
 string(%d) "%d"
@@ -63,5 +70,8 @@ string(%d) "http://%s.fid"
 string(%d) "%d"
 bool(true)
 bool(true)
+bool(false)
+
+Warning: mogilefs_put() expects at least 4 parameters, 0 given in %s on line %d
 bool(false)
 ==DONE==
