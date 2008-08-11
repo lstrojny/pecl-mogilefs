@@ -34,10 +34,10 @@ class MogileFsTracker
 	public function getDomain($name); // MogileFsDomain
 	public function getDomains();  // MogileFsDomain[]
 
-	public function createClass(MogileFsClass $class); // bool
-	public function modifyClass(MogileFsClass $class); // bool
-	public function getClass($name); // MogileFsClass
-	public function getClasses(); // MogileFsClass[]
+	public function createClass(MogileFsDomain $domain, MogileFsClass $class); // bool
+	public function modifyClass(MogileFsDomain $domain, MogileFsClass $class); // bool
+	public function getClass(MogileFsDomain $domain, $name); // MogileFsClass
+	public function getClasses(MogileFsDomain $domain); // MogileFsClass[]
 }
 
 class MogileFs
