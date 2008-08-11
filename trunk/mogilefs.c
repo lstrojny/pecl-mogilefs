@@ -310,9 +310,9 @@ int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, const char * 
 			 k = "\0";
 		}
 		t_data_len = spprintf(&t_data, 0, "%s", k);
-		efree(splitted_key);
 		ZVAL_STRINGL(data, t_data, t_data_len, 1);
 		add_assoc_zval(return_value, cur_key, data);
+		efree(splitted_key);
 		efree(t_data);
 	}
 	efree(token);
@@ -366,14 +366,23 @@ int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
 
 	m_host_len = spprintf(&m_host, 0, "%s:%d", mogilefs_sock->host, mogilefs_sock->port);
 
-	mogilefs_sock->stream = php_stream_xport_create( m_host, m_host_len,
-											 ENFORCE_SAFE_MODE & ~REPORT_ERRORS,
-											 STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT,
-											 hash_key, &tv, NULL, &errstr, &err);
+	mogilefs_sock->stream = php_stream_xport_create(
+		m_host,
+		m_host_len,
+		ENFORCE_SAFE_MODE,
+		STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT,
+		hash_key,
+		&tv,
+		NULL,
+		&errstr,
+		&err
+	);
+
 	if (!mogilefs_sock->stream) {
+		efree(m_host);
+		efree(errstr);
 		return -1;
 	}
-
 	efree(m_host);
 
 	php_stream_auto_cleanup(mogilefs_sock->stream);
@@ -547,6 +556,7 @@ int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_DC) { /
 		}
 		if ((splitted_uri_len = spprintf(&splitted_uri, strlen(splitted), "%s", splitted)) == 0) {
 			efree(splitted);
+			efree(splitted_uri);
 			efree(splitted_key);
 			ret = -1;
 			break;
@@ -587,6 +597,7 @@ PHP_FUNCTION(mogilefs_connect)
 
 	mogilefs_sock = mogilefs_sock_server_init(m_host, m_host_len, m_port, m_domain, m_domain_len, timeout.tv_sec);
 	if (mogilefs_sock_server_open(mogilefs_sock, 1 TSRMLS_CC) < 0) {
+		mogilefs_free_socket(mogilefs_sock);
 		zend_throw_exception_ex(
 			mogilefs_exception_class_entry_ptr,
 			0 TSRMLS_CC,
@@ -594,7 +605,6 @@ PHP_FUNCTION(mogilefs_connect)
 			m_host,
 			m_port
 		);
-		mogilefs_free_socket(mogilefs_sock);
 		RETURN_FALSE;
 	}
 
@@ -1591,7 +1601,6 @@ PHP_FUNCTION(mogilefs_delete_host)
 		efree(request);
 		RETURN_FALSE;
 	}
-
 	efree(request);
 
 	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
