@@ -13,7 +13,7 @@ $client = new MogileFs();
 var_dump($client->connect(MOGILEFS_HOST, MOGILEFS_PORT, MOGILEFS_DOMAIN));
 var_dump($client->close());
 var_dump($client->close());
-$client->close("param");
+var_dump($client->close("param"));
 ?>
 ==DONE==
 --EXPECTF--
@@ -22,4 +22,5 @@ bool(true)
 bool(false)
 
 Warning: MogileFs::close() expects exactly 0 parameters, 1 given in %s on line %d
+bool(false)
 ==DONE==
