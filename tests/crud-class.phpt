@@ -9,6 +9,9 @@ if (mogilefs_skipped()) print "skip";
 require_once dirname(__FILE__) . '/test-helper.php';
 $client = mogilefs_test_factory();
 
+// Params
+$client->createClass();
+
 
 $classname = uniqid(uniqid(), true);
 $data = $client->createClass(MOGILEFS_DOMAIN, $classname, MOGILEFS_DEVICE_COUNT);
@@ -35,6 +38,8 @@ var_dump(count($data));
 ?>
 ==DONE==
 --EXPECTF--
+
+Warning: MogileFs::createClass() expects exactly 3 parameters, 0 given in %s on line %d
 bool(true)
 bool(true)
 bool(true)
