@@ -232,10 +232,16 @@ PHP_MINIT_FUNCTION(mogilefs)
 	zend_class_entry mogilefs_exception_class_entry;
 	INIT_CLASS_ENTRY(mogilefs_exception_class_entry, "MogileFsException", NULL);
 	mogilefs_exception_class_entry_ptr = zend_register_internal_class_ex(
-		&mogilefs_exception_class_entry, zend_exception_get_default(TSRMLS_C), NULL TSRMLS_CC);
+		&mogilefs_exception_class_entry,
+		zend_exception_get_default(TSRMLS_C),
+		NULL TSRMLS_CC
+	);
 
-	le_mogilefs_sock = zend_register_list_destructors_ex
-		(mogilefs_destructor_mogilefs_sock, NULL, mogilefs_sock_name, module_number);
+	le_mogilefs_sock = zend_register_list_destructors_ex(
+		mogilefs_destructor_mogilefs_sock,
+		NULL,
+		mogilefs_sock_name, module_number
+	);
 	return SUCCESS;
 }
 /* }}} */
@@ -290,7 +296,8 @@ int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, const char * 
 	array_init(return_value);
 
 	for ((l_key_val = strtok_r(token, "&", &last)); l_key_val;
-			 (l_key_val = strtok_r(NULL, "&", &last))) {
+		(l_key_val = strtok_r(NULL, "&", &last))) {
+
 		zval *data;
 
 		if ((splitted_key = estrdup(l_key_val)) == NULL) {
@@ -787,28 +794,23 @@ PHP_FUNCTION(mogilefs_get)
 
 /* {{{ proto string mogilefs_delete([MogileFS Object,] string key)
 	Delete a MogileFS file */
-
 PHP_FUNCTION(mogilefs_delete)
 {
-	zval *mg_object = getThis();
+	zval *mg_object;
 	MogilefsSock *mogilefs_sock;
-	char *m_key = NULL, *request, *response;
+	char *m_key, *request, *response;
 	int m_key_len, request_len, response_len;
 
-	if (mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Os", &mg_object,
-									mogilefs_class_entry_ptr, &m_key, &m_key_len) == FAILURE) {
-			RETURN_FALSE;
-		}
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
+		&mg_object, mogilefs_class_entry_ptr, &m_key, &m_key_len) == FAILURE) {
 
-	} else {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &m_key, &m_key_len) == FAILURE) {
-			RETURN_FALSE;
-		}
+		RETURN_FALSE;
 	}
+
 	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
+
 	request_len = spprintf(&request, 0, "DELETE domain=%s&key=%s\r\n", mogilefs_sock->domain, m_key);
 	if (mogilefs_sock_write(mogilefs_sock, request, request_len TSRMLS_CC) < 0) {
 		efree(request);
