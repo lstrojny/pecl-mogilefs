@@ -836,18 +836,13 @@ PHP_FUNCTION(mogilefs_rename)
 	char *m_src_key = NULL, *m_dest_key = NULL, *request, *response;
 	int m_src_key_len, m_dest_key_len, request_len, response_len;
 
-	if (mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Oss", &mg_object,
-									mogilefs_class_entry_ptr,	&m_src_key, &m_src_key_len,
-																	&m_dest_key, &m_dest_key_len) == FAILURE) {
-			RETURN_FALSE;
-		}
-	} else {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss", &m_src_key, &m_src_key_len,
-																	&m_dest_key, &m_dest_key_len) == FAILURE) {
-			RETURN_FALSE;
-		}
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss",
+			&mg_object, mogilefs_class_entry_ptr, &m_src_key, &m_src_key_len,
+			&m_dest_key, &m_dest_key_len) == FAILURE) {
+
+		RETURN_FALSE;
 	}
+
 	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
