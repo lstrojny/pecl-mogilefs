@@ -290,8 +290,8 @@ int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, const char * 
 	int t_data_len;
 
 	if ((token = estrndup(result, result_len)) == NULL) {
-			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Out of memory");
-			return -1;
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Out of memory");
+		return -1;
 	}
 	array_init(return_value);
 
@@ -302,6 +302,7 @@ int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, const char * 
 
 		if ((splitted_key = estrdup(l_key_val)) == NULL) {
 			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Out of memory");
+			efree(token);
 			return -1;
 		}
 		MAKE_STD_ZVAL(data);
