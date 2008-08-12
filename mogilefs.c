@@ -289,10 +289,11 @@ int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, const char * 
 	char *l_key_val, *last, *token, *splitted_key, *t_data, *cur_key = NULL, *k;
 	int t_data_len;
 
-	if ((token = estrndup(result, result_len)) == NULL) {
+	if ((token = estrndup(result, result_len + 1)) == NULL) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Out of memory");
 		return -1;
 	}
+
 	array_init(return_value);
 
 	for ((l_key_val = strtok_r(token, "&", &last)); l_key_val;
@@ -463,12 +464,14 @@ char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC) { 
 		efree(status);
 		*buf_len = 0;
 		char *message = php_trim(outbuf, strlen(outbuf), NULL, NULL, NULL, 3);
+		char *cleaned_message = estrdup(message);
 		if ((p = strchr(message, ' '))) {
-			strcpy(message, p+1);
+			strcpy(cleaned_message, p+1);
 		}
-		php_url_decode(message, strlen(message));
-		zend_throw_exception(mogilefs_exception_class_entry_ptr, message, 0 TSRMLS_CC);
+		php_url_decode(cleaned_message, strlen(cleaned_message));
+		zend_throw_exception(mogilefs_exception_class_entry_ptr, cleaned_message, 0 TSRMLS_CC);
 		efree(message);
+		efree(cleaned_message);
 		return NULL;
 	}
 	*buf_len = strlen(outbuf);
@@ -497,7 +500,7 @@ char *mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * const m_key
 						const char * const m_class, int multi_dest TSRMLS_DC)
 {
 	int request_len, response_len;
-	char *request = NULL, *response, *close_request;
+	char *request = NULL, *response, *close_request = NULL;
 
 	request_len = spprintf(&request, 0, "CREATE_OPEN domain=%s&key=%s&class=%s&multi_dest=%d\r\n",
 							mogilefs_sock->domain, m_key, m_class, multi_dest);
@@ -511,6 +514,7 @@ char *mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * const m_key
 	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
 		return NULL;
 	}
+
 	close_request = emalloc(response_len + 1U);
 	memcpy(close_request, response, response_len + 1U);
 	return close_request;
