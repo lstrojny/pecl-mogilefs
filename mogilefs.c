@@ -451,31 +451,33 @@ int mogilefs_sock_write(MogilefsSock *mogilefs_sock, const char *cmd, int cmd_le
 /* }}} */
 
 char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC) { /* {{{ */
-	char *status, inbuf[MOGILEFS_SOCK_BUF_SIZE], *outbuf, *p, *s, *message, *message_clean;
+	char inbuf[MOGILEFS_SOCK_BUF_SIZE], *outbuf, *p, *s, *message, *message_clean;
 
 	s = php_stream_gets(mogilefs_sock->stream, inbuf, 4); /* OK / ERR */
-	status = estrndup(s, 2);
 	outbuf = php_stream_gets(mogilefs_sock->stream, inbuf, MOGILEFS_SOCK_BUF_SIZE);
 	if ((p = strchr(outbuf, '\r'))) {
 		*p = '\0';
 	}
 
-	if (strcmp(status, "OK") != 0) {
-		efree(status);
+	if (strcmp(s, "OK") != 0) {
 		*buf_len = 0;
+
 		*message = php_trim(outbuf, strlen(outbuf), NULL, NULL, NULL, 3);
 		message_clean = estrdup(message);
 		if ((p = strchr(message, ' '))) {
 			strcpy(message_clean, p+1);
 		}
 		php_url_decode(message_clean, strlen(message_clean));
+
 		zend_throw_exception(mogilefs_exception_class_entry_ptr, message_clean, 0 TSRMLS_CC);
+
 		efree(message);
 		efree(message_clean);
+
 		return NULL;
 	}
 	*buf_len = strlen(outbuf);
-	efree(status);
+
 	return outbuf;
 }
 /* }}} */
