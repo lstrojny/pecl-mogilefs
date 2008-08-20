@@ -840,7 +840,7 @@ PHP_FUNCTION(mogilefs_delete)
 
 PHP_FUNCTION(mogilefs_rename)
 {
-	zval *mg_object = getThis();
+	zval *mg_object;
 	MogilefsSock *mogilefs_sock;
 	char *m_src_key = NULL, *m_dest_key = NULL, *request, *response;
 	int m_src_key_len, m_dest_key_len, request_len, response_len;
@@ -875,9 +875,9 @@ PHP_FUNCTION(mogilefs_rename)
 
 PHP_FUNCTION(mogilefs_get_domains)
 {
-	zval *mg_object = getThis();
+	zval *mg_object;
 	MogilefsSock *mogilefs_sock;
-	char	*request, *response;
+	char *request, *response;
 	int	request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O",
