@@ -1,5 +1,5 @@
 --TEST--
-Test MogileFS rename method
+MogileFs::rename(string key, string new_key)
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';

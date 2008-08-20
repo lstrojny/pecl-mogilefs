@@ -1,5 +1,5 @@
 --TEST--
-Test MogileFS close method
+MogileFs::close()
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';

@@ -1,5 +1,5 @@
 --TEST--
-Test for createClass()/updateClass()/deleteClass()
+Mogilefs::createClass(string domain, string class, int device_count) / MogileFs::updateClass(string domain, string class, int device_count) / MogileFs::deleteClass(string domain, string class)
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';

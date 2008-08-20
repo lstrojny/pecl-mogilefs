@@ -1,5 +1,5 @@
 --TEST--
-Test putting a file on the server
+MogileFs::put(string path/content, string key, string class, bool file_only = true)
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
