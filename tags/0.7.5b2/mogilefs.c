@@ -718,6 +718,7 @@ PHP_FUNCTION(mogilefs_put)
 	ret = ne_request_dispatch(req);
 
 	ne_request_destroy(req);
+	ne_session_destroy(sess);
 
 	if (ret != NE_OK) {
 		zend_throw_exception_ex(mogilefs_exception_class_entry_ptr, 0 TSRMLS_CC, "%s", ne_get_error(sess));
