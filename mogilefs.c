@@ -102,7 +102,7 @@ static zend_function_entry php_mogilefs_class_functions[] = {
 	PHP_FALIAS(get, mogilefs_get, NULL)
 	PHP_FALIAS(getPaths, mogilefs_get, NULL)
 	PHP_FALIAS(getDomains, mogilefs_get_domains, NULL)
-	PHP_FALIAS(listkeys, mogilefs_list_keys, NULL)
+	PHP_FALIAS(listKeys, mogilefs_list_keys, NULL)
 	PHP_FALIAS(listFids, mogilefs_list_fids, NULL)
 	PHP_FALIAS(getHosts, mogilefs_get_hosts, NULL)
 	PHP_FALIAS(getDevices, mogilefs_get_devices, NULL)
@@ -912,22 +912,17 @@ PHP_FUNCTION(mogilefs_get_domains)
 
 PHP_FUNCTION(mogilefs_list_keys)
 {
-	zval *mg_object = getThis();
+	zval *mg_object;
 	MogilefsSock *mogilefs_sock;
-	char *m_prefix = NULL, *m_after = NULL, *m_limit = NULL, *request, *response;
+	char *m_prefix = NULL, *m_after = NULL, *request, *response;
+	long m_limit = 1000;
 	int m_prefix_len, m_after_len, m_limit_len, request_len, response_len;
 
-	if (mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss", &mg_object,
-									mogilefs_class_entry_ptr, &m_prefix, &m_prefix_len, &m_after, &m_after_len, &m_limit, &m_limit_len) == FAILURE) {
-			RETURN_FALSE;
-		}
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss|l",
+		&mg_object, mogilefs_class_entry_ptr, &m_prefix, &m_prefix_len,
+		&m_after, &m_after_len, &m_limit) == FAILURE) {
 
-	} else {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss", &m_prefix, &m_prefix_len,
-																	&m_after, &m_after_len, &m_limit, &m_limit_len) == FAILURE) {
-			RETURN_FALSE;
-		}
+		return;
 	}
 
 	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
@@ -935,7 +930,16 @@ PHP_FUNCTION(mogilefs_list_keys)
 	}
 
 
-	request_len = spprintf(&request, 0, "LIST_KEYS domain=%s&prefix=%s&after=%s&limit=%s\r\n", mogilefs_sock->domain, m_prefix, m_after, m_limit);
+	request_len = spprintf(
+		&request,
+		0,
+		"LIST_KEYS domain=%s&prefix=%s&after=%s&limit=%d\r\n",
+		mogilefs_sock->domain,
+		m_prefix,
+		m_after,
+		m_limit
+	);
+
 	if (mogilefs_sock_write(mogilefs_sock, request, request_len TSRMLS_CC) < 0) {
 		efree(request);
 		RETURN_FALSE;
