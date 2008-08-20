@@ -1325,21 +1325,16 @@ PHP_FUNCTION(mogilefs_delete_domain)
 	*/
 PHP_FUNCTION(mogilefs_create_class)
 {
-	zval *mg_object = getThis();
+	zval *mg_object;
 	MogilefsSock *mogilefs_sock;
 	char *domain = NULL, *class, *mindevcount = "0", *request, *response;
 	int	domain_len, class_len, mindevcount_len, request_len, response_len;
 
-	if (mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss", &mg_object,
-					mogilefs_class_entry_ptr, &domain, &domain_len, &class, &class_len, &mindevcount, &mindevcount_len) == FAILURE) {
-			RETURN_FALSE;
-		}
-	} else {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",
-										&domain, &domain_len, &class, &class_len, &mindevcount, &mindevcount_len) == FAILURE) {
-			RETURN_FALSE;
-		}
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Osss",
+		&mg_object, mogilefs_class_entry_ptr, &domain, &domain_len,
+		&class, &class_len, &mindevcount, &mindevcount_len) == FAILURE) {
+
+		return;
 	}
 
 	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
@@ -1350,9 +1345,16 @@ PHP_FUNCTION(mogilefs_create_class)
 		domain = mogilefs_sock->domain;
 	}
 
-	request_len = spprintf(&request, 0, "CREATE_CLASS domain=%s&class=%s&mindevcount=%s\r\n", domain, class, mindevcount);
+	request_len = spprintf(
+		&request,
+		0,
+		"CREATE_CLASS domain=%s&class=%s&mindevcount=%s\r\n",
+		domain,
+		class,
+		mindevcount
+	);
 
-	if(mogilefs_sock_write(mogilefs_sock, request, request_len TSRMLS_CC) < 0) {
+	if (mogilefs_sock_write(mogilefs_sock, request, request_len TSRMLS_CC) < 0) {
 		efree(request);
 		RETURN_FALSE;
 	}
