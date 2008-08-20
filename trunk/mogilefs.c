@@ -289,7 +289,7 @@ int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, const char * 
 	char *l_key_val, *last, *token, *splitted_key, *t_data, *cur_key = NULL, *k;
 	int t_data_len;
 
-	if ((token = estrndup(result, result_len + 1)) == NULL) {
+	if ((token = estrndup(result, result_len)) == NULL) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Out of memory");
 		return -1;
 	}
@@ -451,20 +451,21 @@ int mogilefs_sock_write(MogilefsSock *mogilefs_sock, const char *cmd, int cmd_le
 /* }}} */
 
 char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC) { /* {{{ */
-	char inbuf[MOGILEFS_SOCK_BUF_SIZE], *outbuf, *p, *s, *message, *message_clean;
+	char inbuf[MOGILEFS_SOCK_BUF_SIZE], *outbuf, *p, *s, *status, *message, *message_clean;
 
 	s = php_stream_gets(mogilefs_sock->stream, inbuf, 4); /* OK / ERR */
+	status = estrndup(s, 2);
 	outbuf = php_stream_gets(mogilefs_sock->stream, inbuf, MOGILEFS_SOCK_BUF_SIZE);
 	if ((p = strchr(outbuf, '\r'))) {
 		*p = '\0';
 	}
 
-	if (strcmp(s, "OK") != 0) {
+	if (strcmp(status, "OK") != 0) {
 		*buf_len = 0;
 
-		*message = php_trim(outbuf, strlen(outbuf), NULL, NULL, NULL, 3);
+		message = php_trim(outbuf, strlen(outbuf), NULL, NULL, NULL, 3);
 		message_clean = estrdup(message);
-		if ((p = strchr(message, ' '))) {
+		if ((p = strchr(message_clean, ' '))) {
 			strcpy(message_clean, p+1);
 		}
 		php_url_decode(message_clean, strlen(message_clean));
@@ -473,10 +474,11 @@ char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC) { 
 
 		efree(message);
 		efree(message_clean);
-
+		efree(status);
 		return NULL;
 	}
 	*buf_len = strlen(outbuf);
+	efree(status);
 
 	return outbuf;
 }
