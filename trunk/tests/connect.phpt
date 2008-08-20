@@ -1,5 +1,5 @@
 --TEST--
-Test MogileFS connection method
+MogileFs::connect(string host, int port, string domain)
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';

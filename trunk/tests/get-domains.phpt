@@ -1,5 +1,5 @@
 --TEST--
-Test MogileFS getDomains method
+MogileFS::getDomains()
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';

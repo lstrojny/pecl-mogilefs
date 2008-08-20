@@ -1,5 +1,5 @@
 --TEST--
-MogileFs::sleep()
+MogileFs::sleep(int time)
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';

@@ -1,5 +1,5 @@
 --TEST--
-Test for MogileFs::createDomain() / MogileFs::deleteDomain()
+MogileFs::createDomain(string domain) / MogileFs::deleteDomain(string domain)
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
@@ -20,6 +20,13 @@ var_dump($client->createDomain(new stdClass()));
 
 var_dump($client->deleteDomain());
 var_dump($client->deleteDomain(new stdClass()));
+
+
+try {
+	$client->deleteDomain('unknown-domain');
+} catch (MogileFsException $e) {
+	var_dump($e->getMessage());
+}
 ?>
 ==DONE==
 --EXPECTF--
@@ -43,4 +50,5 @@ NULL
 
 Warning: MogileFs::deleteDomain() expects parameter 1 to be string, object given in %s on line %d
 NULL
+string(%d) "Domain not found"
 ==DONE==
