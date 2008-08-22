@@ -80,6 +80,7 @@ PHP_FUNCTION(mogilefs_monitor_round);
 PHP_FUNCTION(mogilefs_put);
 PHP_FUNCTION(mogilefs_delete);
 PHP_FUNCTION(mogilefs_rename);
+PHP_FUNCTION(mogilefs_is_connected);
 
 ZEND_BEGIN_MODULE_GLOBALS(mogilefs)
 	int default_link;

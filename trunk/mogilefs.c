@@ -94,6 +94,7 @@ zend_function_entry mogilefs_functions[] = {
 	PHP_FE(mogilefs_close, NULL)
 	PHP_FE(mogilefs_delete, NULL)
 	PHP_FE(mogilefs_rename, NULL)
+	PHP_FE(mogilefs_is_connected, NULL)
 	{NULL, NULL, NULL}	/* Must be the last line in mogilefs_functions[] */
 };
 
@@ -126,6 +127,7 @@ static zend_function_entry php_mogilefs_class_functions[] = {
 	PHP_FALIAS(close, mogilefs_close, NULL)
 	PHP_FALIAS(delete, mogilefs_delete, NULL)
 	PHP_FALIAS(rename, mogilefs_rename, NULL)
+	PHP_FALIAS(isConnected, mogilefs_is_connected, NULL)
 	{NULL, NULL, NULL}
 };
 /* }}} */
@@ -1787,7 +1789,27 @@ PHP_FUNCTION(mogilefs_monitor_round)
 
 	RETURN_TRUE;
 }
+/* }}} */
 
+/* {{{ proto string mogilefs_is_connected([MogileFS Object])
+ */
+PHP_FUNCTION(mogilefs_is_connected)
+{
+	zval *mg_object;
+	MogilefsSock *mogilefs_sock;
+
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O",
+		&mg_object, mogilefs_class_entry_ptr) == FAILURE) {
+
+		return;
+	}
+
+	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+		RETURN_FALSE;
+	}
+
+	RETURN_BOOL(mogilefs_sock->status == MOGILEFS_SOCK_STATUS_CONNECTED);
+}
 /* }}} */
 
 /*
