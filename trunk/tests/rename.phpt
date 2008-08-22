@@ -3,7 +3,17 @@ MogileFs::rename(string key, string new_key)
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
-if (mogilefs_skipped()) print "skip";
+if (mogilefs_skipped()) {
+	print "skip";
+} else {
+	$client = mogilefs_test_factory();
+	try {
+		$client->delete('test');
+	} catch (MogileFsException $e) {}
+	try {
+		$client->delete('test2');
+	} catch (MogileFsException $e) {}
+}
 --FILE--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
