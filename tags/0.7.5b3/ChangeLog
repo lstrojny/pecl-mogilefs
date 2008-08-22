@@ -1,0 +1,9 @@
+php-mogilefs 0.7.5 beta3:
+	* New API: MogileFs::isConnected() and mogilefs_is_connected()
+	* Fixed segfault in MogileFs::put() if client was not connected before
+	* Various new tests added
+	* Mor robust MogileFs::rename()-test
+
+php-mogilefs 0.7.5 beta2:
+	* Fixed file handle leak because of missing ne_session_destroy() in
+	MogileFs::put()
