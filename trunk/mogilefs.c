@@ -693,6 +693,10 @@ PHP_FUNCTION(mogilefs_put)
 
 	multi_dest = 0;
 
+	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+		RETURN_FALSE;
+	}
+
 	if ((m_buf_file = mogilefs_file_to_mem(m_file, &m_buf_file_len TSRMLS_CC)) == NULL) {
 		if (use_file_only == 0) {
 			m_buf_file = m_file;
@@ -702,10 +706,6 @@ PHP_FUNCTION(mogilefs_put)
 		}
 	} else {
 		alloc_internal = 1;
-	}
-
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
-		RETVAL_FALSE;
 	}
 
 	if ((close_request = mogilefs_create_open(mogilefs_sock, m_key, m_class, multi_dest TSRMLS_CC)) == NULL) {
