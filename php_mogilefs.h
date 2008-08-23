@@ -112,6 +112,7 @@ ZEND_END_MODULE_GLOBALS(mogilefs)
 #define MOGILEFS_SOCK_STATUS_CONNECTED 3
 
 
+
 typedef struct MogilefsSock_ {
 	php_stream *stream;
 	char					*host;

@@ -53,5 +53,5 @@ string(%d) "Invalid timeout"
 int(0)
 
 Warning: MogileFs::connect() expects at least 3 parameters, 0 given in %s on line %d
-bool(false)
+NULL
 ==DONE==
