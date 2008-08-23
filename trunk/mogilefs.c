@@ -125,6 +125,7 @@ static zend_function_entry php_mogilefs_class_functions[] = {
 	PHP_FALIAS(monitorRound, mogilefs_monitor_round, NULL)
 	PHP_FALIAS(put, mogilefs_put, NULL)
 	PHP_FALIAS(close, mogilefs_close, NULL)
+	PHP_FALIAS(disconnect, mogilefs_close, NULL)
 	PHP_FALIAS(delete, mogilefs_delete, NULL)
 	PHP_FALIAS(rename, mogilefs_rename, NULL)
 	PHP_FALIAS(isConnected, mogilefs_is_connected, NULL)
@@ -653,7 +654,7 @@ PHP_FUNCTION(mogilefs_close)
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O",
 		&mg_object, mogilefs_class_entry_ptr) == FAILURE) {
 
-		RETURN_FALSE;
+		return;
 	}
 
 	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
