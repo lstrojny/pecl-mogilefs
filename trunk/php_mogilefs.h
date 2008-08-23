@@ -86,15 +86,12 @@ ZEND_BEGIN_MODULE_GLOBALS(mogilefs)
 	int default_link;
 ZEND_END_MODULE_GLOBALS(mogilefs)
 
-/* In every utility function you add that needs to use variables
-   in php_mogilefs_globals, call TSRMLS_FETCH(); after declaring other
-   variables used by that function, or better yet, pass in TSRMLS_CC
-   after the last function argument and declare your utility function
-   with TSRMLS_DC after the last declared argument.  Always refer to
-   the globals in your function as MOGILEFS_G(variable).  You are
-   encouraged to rename these macros something shorter, see
-   examples in any other php module directory.
-*/
+#define mogilefs_sock_name "MogileFS Socket Buffer"
+
+#define MOGILEFS_SOCK_WRITE_FREE(socket, cmd, cmd_len) \
+	mogilefs_sock_write (socket, cmd, cmd_len, 1 TSRMLS_CC)
+#define MOGILEFS_SOCK_WRITE(socket, cmd, cmd_len) \
+	mogilefs_sock_write (socket, cmd, cmd_len, 0 TSRMLS_CC);
 
 #ifdef ZTS
 #define MOGILEFS_G(v) TSRMG(mogilefs_globals_id, zend_mogilefs_globals *, v)
@@ -111,8 +108,7 @@ ZEND_END_MODULE_GLOBALS(mogilefs)
 #define MOGILEFS_SOCK_STATUS_UNKNOWN 2
 #define MOGILEFS_SOCK_STATUS_CONNECTED 3
 
-
-
+/* {{{ struct MogilefsSock */
 typedef struct MogilefsSock_ {
 	php_stream *stream;
 	char					*host;
@@ -122,6 +118,23 @@ typedef struct MogilefsSock_ {
 	long					failed;
 	int						status;
 } MogilefsSock;
+/* }}} */
+
+/* {{{ internal function protos */
+PHPAPI int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, const char * const result, int result_len);
+PHPAPI MogilefsSock* mogilefs_sock_server_init(char *m_host, int m_host_len, unsigned short m_port, char *m_domain, int m_domain_len, long timeout);
+PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC);
+PHPAPI int mogilefs_sock_disconnect(MogilefsSock *mogilefs_sock TSRMLS_DC);
+PHPAPI int mogilefs_sock_server_open(MogilefsSock *mogilefs_sock, int TSRMLS_DC);
+PHPAPI int mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock TSRMLS_DC);
+PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, int cmd_len, int free_cmd TSRMLS_DC);
+PHPAPI char * mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC);
+PHPAPI char * mogilefs_file_to_mem(char *m_file, int *m_file_len TSRMLS_DC);
+PHPAPI char * mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * const, const char * const, int TSRMLS_DC);
+PHPAPI int mogilefs_create_close(MogilefsSock *mogilefs_sock, const char * const m_key, const char * const m_class, const char * const close_request TSRMLS_DC);
+PHPAPI int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_DC);
+PHPAPI void mogilefs_free_socket(MogilefsSock *mogilefs_sock);
+/* }}} */
 
 
 /*
