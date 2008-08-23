@@ -51,9 +51,6 @@
 #include <ne_auth.h>
 #include <ne_basic.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-
 ZEND_DECLARE_MODULE_GLOBALS(mogilefs)
 
 /* True global resources - no need for thread safety here */
