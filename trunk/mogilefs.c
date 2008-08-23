@@ -44,13 +44,13 @@
 #include "zend_exceptions.h"
 
 #include "php_mogilefs.h"
+
 #include <ne_socket.h>
 #include <ne_session.h>
 #include <ne_utils.h>
 #include <ne_auth.h>
 #include <ne_basic.h>
 
-#include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
 
