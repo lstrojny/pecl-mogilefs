@@ -29,5 +29,5 @@ bool(false)
 bool(true)
 bool(false)
 
-Invalid parameters for MogileFs::isConnected()
+Warning: MogileFs::isConnected() expects exactly 0 parameters, 1 given in %s on line %d
 NULL
