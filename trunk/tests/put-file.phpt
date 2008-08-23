@@ -60,7 +60,7 @@ bool(true)
 bool(false)
 
 Warning: MogileFs::put() expects at least 3 parameters, 0 given in %s on line %d
-bool(false)
+NULL
 bool(true)
 string(%d) "http://%s.fid"
 string(%d) "%d"
@@ -73,5 +73,5 @@ bool(true)
 bool(false)
 
 Warning: mogilefs_put() expects at least 4 parameters, 0 given in %s on line %d
-bool(false)
+NULL
 ==DONE==
