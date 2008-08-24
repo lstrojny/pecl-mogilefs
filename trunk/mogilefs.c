@@ -426,7 +426,7 @@ PHPAPI int mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock TSRMLS_DC) {
 }
 /* }}} */
 
-PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, int cmd_len, int free_cmd TSRMLS_DC) { /* {{{ */
+PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, int cmd_len, short free_cmd TSRMLS_DC) { /* {{{ */
 	int retval = 0;
 
 #ifdef MOGILEFS_DEBUG
