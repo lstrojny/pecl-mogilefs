@@ -459,6 +459,11 @@ PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS
 		*buf_len = 0;
 
 		message = php_trim(outbuf, strlen(outbuf), NULL, 0, NULL, 3 TSRMLS_CC);
+
+#ifdef MOGILEFS_DEBUG
+		php_printf("ERROR: %s\n", message);
+#endif
+
 		message_clean = estrdup(message);
 		if ((p = strchr(message_clean, ' '))) {
 			strcpy(message_clean, p+1);
