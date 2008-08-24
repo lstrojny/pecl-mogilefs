@@ -1161,7 +1161,6 @@ PHP_METHOD(MogileFs, createDevice)
 		RETURN_FALSE;
 	}
 }
-
 /* }}} */
 
 /* {{{ proto bool MogileFs::createDomain(string domain)
