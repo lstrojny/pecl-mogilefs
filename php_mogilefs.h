@@ -37,12 +37,6 @@
 extern zend_module_entry mogilefs_module_entry;
 #define phpext_mogilefs_ptr &mogilefs_module_entry
 
-#ifdef PHP_WIN32
-#define PHP_MOGILEFS_API __declspec(dllexport)
-#else
-#define PHP_MOGILEFS_API
-#endif
-
 #ifdef ZTS
 #include "TSRM.h"
 #endif
@@ -91,7 +85,7 @@ ZEND_END_MODULE_GLOBALS(mogilefs)
 #define MOGILEFS_SOCK_WRITE_FREE(socket, cmd, cmd_len) \
 	mogilefs_sock_write (socket, cmd, cmd_len, 1 TSRMLS_CC)
 #define MOGILEFS_SOCK_WRITE(socket, cmd, cmd_len) \
-	mogilefs_sock_write (socket, cmd, cmd_len, 0 TSRMLS_CC);
+	mogilefs_sock_write (socket, cmd, cmd_len, 0 TSRMLS_CC)
 
 #ifdef ZTS
 #define MOGILEFS_G(v) TSRMG(mogilefs_globals_id, zend_mogilefs_globals *, v)
@@ -99,7 +93,7 @@ ZEND_END_MODULE_GLOBALS(mogilefs)
 #define MOGILEFS_G(v) (mogilefs_globals.v)
 #endif
 
-#endif	/* PHP_MOGILEFS_H */
+#endif /* PHP_MOGILEFS_H */
 
 #define MOGILEFS_SOCK_BUF_SIZE 4096
 #define MOGILEFS_DAV_SESSION_TIMEOUT 8
@@ -111,12 +105,12 @@ ZEND_END_MODULE_GLOBALS(mogilefs)
 /* {{{ struct MogilefsSock */
 typedef struct MogilefsSock_ {
 	php_stream *stream;
-	char					*host;
-	char					*domain;
-	unsigned short			port;
-	long					timeout;
-	long					failed;
-	int						status;
+	char				*host;
+	char				*domain;
+	unsigned short		port;
+	long				timeout;
+	long				failed;
+	int					status;
 } MogilefsSock;
 /* }}} */
 
@@ -127,7 +121,7 @@ PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC);
 PHPAPI int mogilefs_sock_disconnect(MogilefsSock *mogilefs_sock TSRMLS_DC);
 PHPAPI int mogilefs_sock_server_open(MogilefsSock *mogilefs_sock, int TSRMLS_DC);
 PHPAPI int mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock TSRMLS_DC);
-PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, int cmd_len, int free_cmd TSRMLS_DC);
+PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, int cmd_len, short free_cmd TSRMLS_DC);
 PHPAPI char * mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC);
 PHPAPI char * mogilefs_file_to_mem(char *m_file, int *m_file_len TSRMLS_DC);
 PHPAPI char * mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * const, const char * const, int TSRMLS_DC);
@@ -135,7 +129,6 @@ PHPAPI int mogilefs_create_close(MogilefsSock *mogilefs_sock, const char * const
 PHPAPI int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_DC);
 PHPAPI void mogilefs_free_socket(MogilefsSock *mogilefs_sock);
 /* }}} */
-
 
 /*
  * Local variables:
