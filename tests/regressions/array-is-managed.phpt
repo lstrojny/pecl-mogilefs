@@ -1,5 +1,5 @@
 --TEST--
-Array is managed by ZE and must not free the token
+REGRESSION: Array is managed by ZE and must not free the token
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/../test-helper.php';

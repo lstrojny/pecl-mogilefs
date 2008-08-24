@@ -1,5 +1,5 @@
 --TEST--
-Socket is cleaned after operation
+REGRESSION: Socket is cleaned after operation
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/../test-helper.php';

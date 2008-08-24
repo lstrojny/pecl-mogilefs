@@ -1,5 +1,5 @@
 --TEST--
-MogileFs::put() returns false if not connected
+REGRESSION: MogileFs::put() segfaults if not connected
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/../test-helper.php';
