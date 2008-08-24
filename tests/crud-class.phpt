@@ -3,7 +3,14 @@ Mogilefs::createClass(string domain, string class, int device_count) / MogileFs:
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
-if (mogilefs_skipped()) print "skip";
+if (mogilefs_skipped()) {
+	print "skip";
+} else {
+	$client = mogilefs_test_factory();
+	try {
+		$client->deleteClass(MOGILEFS_DOMAIN, 'crud-test-class');
+	} catch (MogileFsException $e) {}
+}
 --FILE--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
@@ -13,7 +20,7 @@ $client = mogilefs_test_factory();
 $client->createClass();
 
 
-$classname = uniqid(uniqid(), true);
+$classname = 'crud-test-class';
 $data = $client->createClass(MOGILEFS_DOMAIN, $classname, MOGILEFS_DEVICE_COUNT);
 var_dump($data['domain'] === MOGILEFS_DOMAIN);
 var_dump($data['class'] === $classname);
@@ -25,6 +32,8 @@ try {
 } catch (MogileFsException $e) {
 	var_dump($e->getMessage());
 }
+
+sleep(5);
 $data = $client->updateClass(MOGILEFS_DOMAIN, $classname, MOGILEFS_DEVICE_COUNT - 1);
 var_dump($data['domain'] === MOGILEFS_DOMAIN);
 var_dump($data['class'] === $classname);
