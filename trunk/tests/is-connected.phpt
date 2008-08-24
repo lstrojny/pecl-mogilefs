@@ -15,16 +15,8 @@ $client->close();
 var_dump($client->isConnected());
 
 
-$client = mogilefs_test_factory(true);
-var_dump(mogilefs_is_connected($client));
-mogilefs_close($client);
-var_dump(mogilefs_is_connected($client));
-
-
 var_dump($client->isConnected('invalid param'));
 --EXPECTF--
-bool(false)
-bool(true)
 bool(false)
 bool(true)
 bool(false)
