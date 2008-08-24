@@ -504,14 +504,21 @@ PHPAPI char *mogilefs_file_to_mem(char *m_file, int *m_file_len TSRMLS_DC) /* {{
 }
 /* }}} */
 
-PHPAPI char *mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * const m_key,	/* {{{ */
-						const char * const m_class, int multi_dest TSRMLS_DC)
+PHPAPI char *mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * const key,	/* {{{ */
+						const char * const class, int multi_dest TSRMLS_DC)
 {
 	int request_len, response_len;
 	char *request = NULL, *response, *close_request = NULL;
 
-	request_len = spprintf(&request, 0, "CREATE_OPEN domain=%s&key=%s&class=%s&multi_dest=%d\r\n",
-							mogilefs_sock->domain, m_key, m_class, multi_dest);
+	request_len = spprintf(
+		&request,
+		0,
+		"CREATE_OPEN domain=%s&key=%s&class=%s&multi_dest=%d\r\n",
+		mogilefs_sock->domain,
+		key,
+		class,
+		multi_dest
+	);
 
 	if (MOGILEFS_SOCK_WRITE_FREE(mogilefs_sock, request, request_len) < 0) {
 		return NULL;
@@ -527,14 +534,14 @@ PHPAPI char *mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * cons
 }
 /* }}} */
 
-PHPAPI int mogilefs_create_close(MogilefsSock *mogilefs_sock, const char * const m_key, /* {{{ */
-						 const char * const m_class, const char * const close_request TSRMLS_DC)
+PHPAPI int mogilefs_create_close(MogilefsSock *mogilefs_sock, const char * const key, /* {{{ */
+						 const char * const class, const char * const close_request TSRMLS_DC)
 {
 	int request_len, response_len;
 	char *request = NULL, *response;
 
 	request_len = spprintf(&request, 0, "CREATE_CLOSE domain=%s&key=%s&class=%s&%s\r\n",
-							mogilefs_sock->domain, m_key, m_class, close_request);
+							mogilefs_sock->domain, key, class, close_request);
 	if (MOGILEFS_SOCK_WRITE_FREE(mogilefs_sock, request, request_len) < 0) {
 		return -1;
 	}
@@ -599,7 +606,7 @@ PHP_FUNCTION(mogilefs_connect)
 	long m_port;
 	struct timeval timeout = { 5L, 0L };
 	MogilefsSock *mogilefs_sock = NULL;
-	zval *mg_object = getThis();
+	zval *object = getThis();
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sls|l",
 							 &m_host, &m_host_len, &m_port,
@@ -628,13 +635,13 @@ PHP_FUNCTION(mogilefs_connect)
 	}
 
 
-	if (!mg_object) {
+	if (!object) {
 		object_init_ex(return_value, mogilefs_class_entry_ptr);
 		id = zend_list_insert(mogilefs_sock, le_mogilefs_sock);
 		add_property_resource(return_value, "socket", id);
 	} else {
 		id = zend_list_insert(mogilefs_sock, le_mogilefs_sock);
-		add_property_resource(mg_object, "socket", id);
+		add_property_resource(object, "socket", id);
 		RETURN_TRUE;
 	}
 }
@@ -646,16 +653,16 @@ PHP_FUNCTION(mogilefs_connect)
 
 PHP_FUNCTION(mogilefs_close)
 {
-	zval *mg_object;
+	zval *object;
 	MogilefsSock *mogilefs_sock = NULL;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O",
-		&mg_object, mogilefs_class_entry_ptr) == FAILURE) {
+		&object, mogilefs_class_entry_ptr) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -672,19 +679,19 @@ PHP_FUNCTION(mogilefs_close)
 
 PHP_FUNCTION(mogilefs_put)
 {
-	zval *mg_object;
+	zval *object;
 	MogilefsSock *mogilefs_sock;
 	php_url *url;
 	ne_session *sess;
 	ne_request *req;
-	int multi_dest = 1, use_file_only = 1, m_key_len, m_class_len, m_buf_file_len;
+	int multi_dest = 1, use_file_only = 1, key_len, class_len, m_buf_file_len;
 	int m_file_len, ret, alloc_internal = 0, alloc_url = 0;
-	char *m_key = NULL, *m_class = NULL, *m_buf_file, *m_file, *close_request;
+	char *key = NULL, *class = NULL, *m_buf_file, *m_file, *close_request;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(),
-				"Osss|ll", &mg_object, mogilefs_class_entry_ptr,
-				&m_file, &m_file_len, &m_key, &m_key_len,
-				&m_class, &m_class_len, &use_file_only, &multi_dest) == FAILURE) {
+				"Osss|ll", &object, mogilefs_class_entry_ptr,
+				&m_file, &m_file_len, &key, &key_len,
+				&class, &class_len, &use_file_only, &multi_dest) == FAILURE) {
 
 			return;
 	}
@@ -695,7 +702,7 @@ PHP_FUNCTION(mogilefs_put)
 
 	multi_dest = 0;
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -710,7 +717,7 @@ PHP_FUNCTION(mogilefs_put)
 		alloc_internal = 1;
 	}
 
-	if ((close_request = mogilefs_create_open(mogilefs_sock, m_key, m_class, multi_dest TSRMLS_CC)) == NULL) {
+	if ((close_request = mogilefs_create_open(mogilefs_sock, key, class, multi_dest TSRMLS_CC)) == NULL) {
 		RETVAL_FALSE;
 		goto end;
 	}
@@ -748,7 +755,7 @@ PHP_FUNCTION(mogilefs_put)
 		goto end;
 	}
 
-	if (mogilefs_create_close(mogilefs_sock, m_key, m_class, close_request TSRMLS_CC) < 0) {
+	if (mogilefs_create_close(mogilefs_sock, key, class, close_request TSRMLS_CC) < 0) {
 				RETVAL_FALSE;
 		goto end;
 	}
@@ -773,21 +780,21 @@ end:
 
 PHP_FUNCTION(mogilefs_get)
 {
-	zval *mg_object;
+	zval *object;
 	MogilefsSock *mogilefs_sock;
-	char *m_key = NULL, *request, *response;
-	int m_key_len, request_len, response_len;
+	char *key = NULL, *request, *response;
+	int key_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
-									&mg_object, mogilefs_class_entry_ptr,
-									&m_key, &m_key_len) == FAILURE) {
+									&object, mogilefs_class_entry_ptr,
+									&key, &key_len) == FAILURE) {
 			return;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
-	request_len = spprintf(&request, 0, "GET_PATHS domain=%s&key=%s\r\n", mogilefs_sock->domain, m_key);
+	request_len = spprintf(&request, 0, "GET_PATHS domain=%s&key=%s\r\n", mogilefs_sock->domain, key);
 	if (MOGILEFS_SOCK_WRITE_FREE(mogilefs_sock, request, request_len) < 0) {
 		RETURN_FALSE;
 	}
@@ -806,22 +813,22 @@ PHP_FUNCTION(mogilefs_get)
 	Delete a MogileFS file */
 PHP_FUNCTION(mogilefs_delete)
 {
-	zval *mg_object;
+	zval *object;
 	MogilefsSock *mogilefs_sock;
-	char *m_key = NULL, *request, *response;
-	int m_key_len, request_len, response_len;
+	char *key = NULL, *request, *response;
+	int key_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
-		&mg_object, mogilefs_class_entry_ptr, &m_key, &m_key_len) == FAILURE) {
+		&object, mogilefs_class_entry_ptr, &key, &key_len) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
-	request_len = spprintf(&request, 0, "DELETE domain=%s&key=%s\r\n", mogilefs_sock->domain, m_key);
+	request_len = spprintf(&request, 0, "DELETE domain=%s&key=%s\r\n", mogilefs_sock->domain, key);
 	if (MOGILEFS_SOCK_WRITE_FREE(mogilefs_sock, request, request_len) < 0) {
 		RETURN_FALSE;
 	}
@@ -839,22 +846,22 @@ PHP_FUNCTION(mogilefs_delete)
 
 PHP_FUNCTION(mogilefs_rename)
 {
-	zval *mg_object;
+	zval *object;
 	MogilefsSock *mogilefs_sock;
 	char *m_src_key = NULL, *m_dest_key = NULL, *request, *response;
 	int m_src_key_len, m_dest_key_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss",
-			&mg_object, mogilefs_class_entry_ptr, &m_src_key, &m_src_key_len,
+			&object, mogilefs_class_entry_ptr, &m_src_key, &m_src_key_len,
 			&m_dest_key, &m_dest_key_len) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
-	request_len = spprintf(&request, 0, "RENAME domain=%s&from_key=%s&to_key=%s\r\n", mogilefs_sock->domain, m_src_key, m_dest_key);
+	request_len = spprintf(&request, 0, "RENAME domain=%s&frokey=%s&to_key=%s\r\n", mogilefs_sock->domain, m_src_key, m_dest_key);
 	if (MOGILEFS_SOCK_WRITE_FREE(mogilefs_sock, request, request_len) < 0) {
 		RETURN_FALSE;
 	}
@@ -872,18 +879,18 @@ PHP_FUNCTION(mogilefs_rename)
 
 PHP_FUNCTION(mogilefs_get_domains)
 {
-	zval *mg_object;
+	zval *object;
 	MogilefsSock *mogilefs_sock;
 	char *request, *response;
 	int	request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O",
-			&mg_object, mogilefs_class_entry_ptr) == FAILURE) {
+			&object, mogilefs_class_entry_ptr) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "GET_DOMAINS\r\n", mogilefs_sock->domain);
@@ -906,20 +913,20 @@ PHP_FUNCTION(mogilefs_get_domains)
 
 PHP_FUNCTION(mogilefs_list_keys)
 {
-	zval *mg_object;
+	zval *object;
 	MogilefsSock *mogilefs_sock;
 	char *m_prefix = NULL, *m_after = NULL, *request, *response;
 	long m_limit = 1000;
 	int m_prefix_len, m_after_len, m_limit_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss|l",
-		&mg_object, mogilefs_class_entry_ptr, &m_prefix, &m_prefix_len,
+		&object, mogilefs_class_entry_ptr, &m_prefix, &m_prefix_len,
 		&m_after, &m_after_len, &m_limit) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -951,13 +958,13 @@ PHP_FUNCTION(mogilefs_list_keys)
 	Get MogileFS file ids */
 PHP_FUNCTION(mogilefs_list_fids)
 {
-	zval *mg_object = getThis();
+	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
 	char *m_to = "100", *m_from = "0", *request, *response;
 	int	m_to_len, m_from_len, request_len, response_len;
 
-	if (mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|ss", &mg_object,
+	if (object == NULL) {
+		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|ss", &object,
 									mogilefs_class_entry_ptr, &m_from, &m_from_len, &m_to, &m_to_len) == FAILURE) {
 			RETURN_FALSE;
 		}
@@ -969,7 +976,7 @@ PHP_FUNCTION(mogilefs_list_fids)
 		}
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -995,19 +1002,19 @@ PHP_FUNCTION(mogilefs_list_fids)
 	Get MogileFS hosts */
 PHP_FUNCTION(mogilefs_get_hosts)
 {
-	zval *mg_object = getThis();
+	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
 	char *request, *response;
 	int request_len, response_len;
 
-	if (mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &mg_object,
+	if (object == NULL) {
+		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &object,
 									mogilefs_class_entry_ptr) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -1033,19 +1040,19 @@ PHP_FUNCTION(mogilefs_get_hosts)
 	Get MogileFS devices */
 PHP_FUNCTION(mogilefs_get_devices)
 {
-	zval *mg_object = getThis();
+	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
 	char *request, *response;
 	int request_len, response_len;
 
-	if(mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &mg_object,
+	if(object == NULL) {
+		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &object,
 									mogilefs_class_entry_ptr) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -1071,19 +1078,19 @@ PHP_FUNCTION(mogilefs_get_devices)
 	*/
 PHP_FUNCTION(mogilefs_sleep)
 {
-	zval *mg_object;
+	zval *object;
 	MogilefsSock *mogilefs_sock;
 	char *request, *response;
 	long duration;
 	int	request_len, response_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O|l", &mg_object,
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O|l", &object,
 		mogilefs_class_entry_ptr, &duration) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -1106,13 +1113,13 @@ PHP_FUNCTION(mogilefs_sleep)
 	*/
 PHP_FUNCTION(mogilefs_stats)
 {
-	zval *mg_object = getThis();
+	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
 	char *m_all = "1", *request, *response;
 	int	m_all_len, request_len, response_len;
 
-	if(mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|s", &mg_object,
+	if(object == NULL) {
+		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|s", &object,
 									mogilefs_class_entry_ptr, &m_all, &m_all_len) == FAILURE) {
 			RETURN_FALSE;
 		}
@@ -1124,7 +1131,7 @@ PHP_FUNCTION(mogilefs_stats)
 		}
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -1149,19 +1156,19 @@ PHP_FUNCTION(mogilefs_stats)
 	*/
 PHP_FUNCTION(mogilefs_replicate)
 {
-	zval *mg_object = getThis();
+	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
 	char	*request, *response;
 	int	 request_len, response_len;
 
-	if(mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &mg_object,
+	if(object == NULL) {
+		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &object,
 									mogilefs_class_entry_ptr) == FAILURE) {
 			RETURN_FALSE;
 		}
 
 	}
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -1187,13 +1194,13 @@ PHP_FUNCTION(mogilefs_replicate)
 	*/
 PHP_FUNCTION(mogilefs_create_device)
 {
-	zval *mg_object = getThis();
+	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
 	char *status, *devid, *request, *response;
 	int	status_len, devid_len, request_len, response_len;
 
-	if(mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Oss", &mg_object,
+	if(object == NULL) {
+		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Oss", &object,
 									mogilefs_class_entry_ptr, &devid, &devid_len, &status, &status_len ) == FAILURE) {
 			RETURN_FALSE;
 		}
@@ -1204,7 +1211,7 @@ PHP_FUNCTION(mogilefs_create_device)
 		}
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -1229,18 +1236,18 @@ PHP_FUNCTION(mogilefs_create_device)
 	*/
 PHP_FUNCTION(mogilefs_create_domain)
 {
-	zval *mg_object;
+	zval *object;
 	MogilefsSock *mogilefs_sock;
 	char *domain, *request, *response;
 	int	domain_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
-		&mg_object, mogilefs_class_entry_ptr, &domain, &domain_len) == FAILURE) {
+		&object, mogilefs_class_entry_ptr, &domain, &domain_len) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -1266,18 +1273,18 @@ PHP_FUNCTION(mogilefs_create_domain)
 	*/
 PHP_FUNCTION(mogilefs_delete_domain)
 {
-	zval *mg_object;
+	zval *object;
 	MogilefsSock *mogilefs_sock;
 	char *domain, *request, *response;
 	int	domain_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
-		&mg_object, mogilefs_class_entry_ptr, &domain, &domain_len) == FAILURE) {
+		&object, mogilefs_class_entry_ptr, &domain, &domain_len) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -1303,19 +1310,19 @@ PHP_FUNCTION(mogilefs_delete_domain)
 	*/
 PHP_FUNCTION(mogilefs_create_class)
 {
-	zval *mg_object;
+	zval *object;
 	MogilefsSock *mogilefs_sock;
 	char *domain = NULL, *class, *mindevcount = "0", *request, *response;
 	int	domain_len, class_len, mindevcount_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Osss",
-		&mg_object, mogilefs_class_entry_ptr, &domain, &domain_len,
+		&object, mogilefs_class_entry_ptr, &domain, &domain_len,
 		&class, &class_len, &mindevcount, &mindevcount_len) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -1351,19 +1358,19 @@ PHP_FUNCTION(mogilefs_create_class)
 	*/
 PHP_FUNCTION(mogilefs_update_class)
 {
-	zval *mg_object;
+	zval *object;
 	MogilefsSock *mogilefs_sock;
 	char *domain = NULL, *class, *mindevcount = "0", *request, *response;
 	int	domain_len, class_len, mindevcount_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Osss",
-		&mg_object, mogilefs_class_entry_ptr, &domain, &domain_len,
+		&object, mogilefs_class_entry_ptr, &domain, &domain_len,
 		&class, &class_len, &mindevcount, &mindevcount_len) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -1400,19 +1407,19 @@ PHP_FUNCTION(mogilefs_update_class)
 	*/
 PHP_FUNCTION(mogilefs_delete_class)
 {
-	zval *mg_object;
+	zval *object;
 	MogilefsSock *mogilefs_sock;
 	char *domain = NULL, *class, *request, *response;
 	int	domain_len, class_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss",
-		&mg_object, mogilefs_class_entry_ptr, &domain, &domain_len,
+		&object, mogilefs_class_entry_ptr, &domain, &domain_len,
 		&class, &class_len) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -1441,13 +1448,13 @@ PHP_FUNCTION(mogilefs_delete_class)
 	*/
 PHP_FUNCTION(mogilefs_create_host)
 {
-	zval *mg_object = getThis();
+	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
 	char *host, *ip, *port, *request, *response;
 	int	host_len, ip_len, port_len, request_len, response_len;
 
-	if (mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss", &mg_object,
+	if (object == NULL) {
+		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss", &object,
 									mogilefs_class_entry_ptr, &host, &host_len, &ip, &ip_len, &port, &port_len) == FAILURE) {
 			RETURN_FALSE;
 		}
@@ -1458,7 +1465,7 @@ PHP_FUNCTION(mogilefs_create_host)
 		}
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "CREATE_HOST domain=%s&host=%s&ip=%s&port=%s\r\n", mogilefs_sock->domain, host, ip, port);
@@ -1481,13 +1488,13 @@ PHP_FUNCTION(mogilefs_create_host)
 	*/
 PHP_FUNCTION(mogilefs_update_host)
 {
-	zval *mg_object = getThis();
+	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
 	char *host, *ip, *port, *status = "alive", *request, *response;
 	int	host_len, ip_len, port_len, status_len, request_len, response_len;
 
-	if (mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss|s", &mg_object,
+	if (object == NULL) {
+		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss|s", &object,
 				mogilefs_class_entry_ptr, &host, &host_len, &ip, &ip_len, &port, &port_len, &status, &status_len) == FAILURE) {
 			RETURN_FALSE;
 		}
@@ -1503,7 +1510,7 @@ PHP_FUNCTION(mogilefs_update_host)
 		RETURN_FALSE;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "UPDATE_HOST domain=%s&host=%s&ip=%s&port=%s&status=%s&update=1\r\n", mogilefs_sock->domain, host, ip, port, status);
@@ -1527,13 +1534,13 @@ PHP_FUNCTION(mogilefs_update_host)
 	*/
 PHP_FUNCTION(mogilefs_delete_host)
 {
-	zval *mg_object = getThis();
+	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
 	char *host,	*request, *response;
 	int host_len, request_len, response_len;
 
-	if (mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Os", &mg_object,
+	if (object == NULL) {
+		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Os", &object,
 									mogilefs_class_entry_ptr, &host, &host_len) == FAILURE) {
 			RETURN_FALSE;
 		}
@@ -1545,7 +1552,7 @@ PHP_FUNCTION(mogilefs_delete_host)
 	}
 
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "DELETE_HOST domain=%s&host=%s\r\n", mogilefs_sock->domain, host);
@@ -1571,13 +1578,13 @@ PHP_FUNCTION(mogilefs_delete_host)
 	*/
 PHP_FUNCTION(mogilefs_set_weight)
 {
-	zval *mg_object = getThis();
+	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
 	char *host,	*device, *weight,	*request, *response;
 	int	host_len, device_len, weight_len, request_len, response_len;
 
-	if (mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss", &mg_object,
+	if (object == NULL) {
+		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss", &object,
 						mogilefs_class_entry_ptr, &host, &host_len, &device, &device_len, &weight, &weight_len) == FAILURE) {
 			RETURN_FALSE;
 		}
@@ -1588,7 +1595,7 @@ PHP_FUNCTION(mogilefs_set_weight)
 		}
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "SET_WEIGHT domain=%s&host=%s&device=%s&weight=%s\r\n", mogilefs_sock->domain, host, device, weight);
@@ -1613,13 +1620,13 @@ PHP_FUNCTION(mogilefs_set_weight)
 	*/
 PHP_FUNCTION(mogilefs_set_state)
 {
-	zval *mg_object = getThis();
+	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
 	char *host,	*device, *state = "alive",	*request, *response;
 	int	host_len, device_len, state_len, request_len, response_len;
 
-	if (mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss", &mg_object,
+	if (object == NULL) {
+		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss", &object,
 						mogilefs_class_entry_ptr, &host, &host_len, &device, &device_len, &state, &state_len) == FAILURE) {
 			RETURN_FALSE;
 		}
@@ -1635,7 +1642,7 @@ PHP_FUNCTION(mogilefs_set_state)
 		RETURN_FALSE;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "SET_STATE domain=%s&host=%s&device=%s&state=%s\r\n", mogilefs_sock->domain, host, device, state);
@@ -1660,13 +1667,13 @@ PHP_FUNCTION(mogilefs_set_state)
 	*/
 PHP_FUNCTION(mogilefs_checker)
 {
-	zval *mg_object = getThis();
+	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
 	char *disable="off", *level="1",	*request, *response;
 	int	disable_len, level_len, request_len, response_len;
 
-	if (mg_object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|ss", &mg_object,
+	if (object == NULL) {
+		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|ss", &object,
 									mogilefs_class_entry_ptr, &disable, &disable_len, &level, &level_len) == FAILURE) {
 			RETURN_FALSE;
 		}
@@ -1683,7 +1690,7 @@ PHP_FUNCTION(mogilefs_checker)
 		RETURN_FALSE;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "CHECKER domain=%s&disable=%s&level=%s\r\n", mogilefs_sock->domain, disable, level);
@@ -1708,18 +1715,18 @@ PHP_FUNCTION(mogilefs_checker)
 	*/
 PHP_FUNCTION(mogilefs_monitor_round)
 {
-	zval *mg_object;
+	zval *object;
 	MogilefsSock *mogilefs_sock;
 	char *request, *response;
 	int	request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O",
-		&mg_object, mogilefs_class_entry_ptr) == FAILURE) {
+		&object, mogilefs_class_entry_ptr) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -1750,16 +1757,16 @@ PHP_FUNCTION(mogilefs_monitor_round)
  */
 PHP_FUNCTION(mogilefs_is_connected)
 {
-	zval *mg_object;
+	zval *object;
 	MogilefsSock *mogilefs_sock;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O",
-		&mg_object, mogilefs_class_entry_ptr) == FAILURE) {
+		&object, mogilefs_class_entry_ptr) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(mg_object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
 
