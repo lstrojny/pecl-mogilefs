@@ -3,14 +3,7 @@ Mogilefs::createClass(string domain, string class, int device_count) / MogileFs:
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
-if (mogilefs_skipped()) {
-	print "skip";
-} else {
-	$client = mogilefs_test_factory();
-	try {
-		$client->deleteClass(MOGILEFS_DOMAIN, 'crud-test-class');
-	} catch (MogileFsException $e) {}
-}
+if (mogilefs_skipped()) print "skip";
 --FILE--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
@@ -19,11 +12,11 @@ $client = mogilefs_test_factory();
 // Params
 $client->createClass();
 
-
 $classname = 'crud-test-class';
+
 $data = $client->createClass(MOGILEFS_DOMAIN, $classname, MOGILEFS_DEVICE_COUNT);
-var_dump($data['domain'] === MOGILEFS_DOMAIN);
-var_dump($data['class'] === $classname);
+var_dump($data['domain'] == MOGILEFS_DOMAIN);
+var_dump($data['class'] == $classname);
 var_dump($data['mindevcount'] == MOGILEFS_DEVICE_COUNT);
 var_dump(count($data));
 
@@ -33,16 +26,15 @@ try {
 	var_dump($e->getMessage());
 }
 
-sleep(5);
-$data = $client->updateClass(MOGILEFS_DOMAIN, $classname, MOGILEFS_DEVICE_COUNT - 1);
-var_dump($data['domain'] === MOGILEFS_DOMAIN);
-var_dump($data['class'] === $classname);
-var_dump($data['mindevcount'] == MOGILEFS_DEVICE_COUNT - 1);
+$data = $client->updateClass(MOGILEFS_DOMAIN, $classname, 1);
+var_dump($data['domain'] == MOGILEFS_DOMAIN);
+var_dump($data['class'] == $classname);
+var_dump($data['mindevcount'] == 1);
 var_dump(count($data));
 
 $data = $client->deleteClass(MOGILEFS_DOMAIN, $classname);
-var_dump($data['domain'] === MOGILEFS_DOMAIN);
-var_dump($data['class'] === $classname);
+var_dump($data['domain'] == MOGILEFS_DOMAIN);
+var_dump($data['class'] == $classname);
 var_dump(count($data));
 ?>
 ==DONE==

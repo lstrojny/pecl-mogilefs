@@ -77,6 +77,7 @@ PHP_METHOD(MogileFs, close);
 PHP_METHOD(MogileFs, disconnect);
 PHP_METHOD(MogileFs, delete);
 PHP_METHOD(MogileFs, rename);
+PHP_METHOD(MogileFs, isInDebuggingMode);
 
 ZEND_BEGIN_MODULE_GLOBALS(mogilefs)
 	int default_link;

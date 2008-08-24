@@ -94,6 +94,7 @@ zend_function_entry php_mogilefs_methods[] = {
 	PHP_ME(MogileFs, close, NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, delete, NULL, ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, rename, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, isInDebuggingMode, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	/* Aliases */
 	PHP_MALIAS(MogileFs, disconnect, close, NULL, ZEND_ACC_PUBLIC)
 	{NULL, NULL, NULL}
@@ -287,14 +288,15 @@ PHPAPI MogilefsSock *mogilefs_sock_server_init(char *m_host, int m_host_len, uns
 /* }}} */
 
 PHPAPI int mogilefs_sock_disconnect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
-	if (mogilefs_sock->stream != NULL) {
-		MOGILEFS_SOCK_WRITE(mogilefs_sock, "quit", 4);
-		mogilefs_sock->status = MOGILEFS_SOCK_STATUS_DISCONNECTED;
-		php_stream_close(mogilefs_sock->stream);
-		mogilefs_sock->stream = NULL;
-		return 1;
+	if (mogilefs_sock->stream == NULL) {
+		return 0;
 	}
-	return 0;
+
+	MOGILEFS_SOCK_WRITE(mogilefs_sock, "QUIT", 4);
+	mogilefs_sock->status = MOGILEFS_SOCK_STATUS_DISCONNECTED;
+	php_stream_close(mogilefs_sock->stream);
+	mogilefs_sock->stream = NULL;
+	return 1;
 }
 /* }}} */
 
@@ -381,7 +383,7 @@ PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, int cmd_l
 	int retval = 0;
 
 #ifdef MOGILEFS_DEBUG
-	php_printf("REQUEST: %s\n", cmd);
+	php_printf("REQUEST: %s", cmd);
 #endif
 
 	if (php_stream_write(mogilefs_sock->stream, cmd, cmd_len) != cmd_len) {
@@ -584,16 +586,9 @@ PHP_METHOD(MogileFs, connect)
 		RETURN_FALSE;
 	}
 
-
-	if (!object) {
-		object_init_ex(return_value, mogilefs_class_entry_ptr);
-		id = zend_list_insert(mogilefs_sock, le_mogilefs_sock);
-		add_property_resource(return_value, "socket", id);
-	} else {
-		id = zend_list_insert(mogilefs_sock, le_mogilefs_sock);
-		add_property_resource(object, "socket", id);
-		RETURN_TRUE;
-	}
+	id = zend_list_insert(mogilefs_sock, le_mogilefs_sock);
+	add_property_resource(object, "socket", id);
+	RETURN_TRUE;
 }
 
 /* }}} */
@@ -1248,12 +1243,12 @@ PHP_METHOD(MogileFs, createClass)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
-	char *domain = NULL, *class, *mindevcount = "0", *request, *response;
-	int	domain_len, class_len, mindevcount_len, request_len, response_len;
+	char *domain = NULL, *class, *request, *response;
+	int	domain_len, class_len, mindevcount, request_len, response_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Osss",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Ossl",
 		&object, mogilefs_class_entry_ptr, &domain, &domain_len,
-		&class, &class_len, &mindevcount, &mindevcount_len) == FAILURE) {
+		&class, &class_len, &mindevcount) == FAILURE) {
 
 		return;
 	}
@@ -1269,7 +1264,7 @@ PHP_METHOD(MogileFs, createClass)
 	request_len = spprintf(
 		&request,
 		0,
-		"CREATE_CLASS domain=%s&class=%s&mindevcount=%s\r\n",
+		"CREATE_CLASS domain=%s&class=%s&mindevcount=%d\r\n",
 		domain,
 		class,
 		mindevcount
@@ -1296,12 +1291,13 @@ PHP_METHOD(MogileFs, updateClass)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
-	char *domain = NULL, *class, *mindevcount = "0", *request, *response;
-	int	domain_len, class_len, mindevcount_len, request_len, response_len;
+	char *domain = NULL, *class, *request, *response;
+	int	domain_len, class_len, request_len, response_len;
+	long mindevcount;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Osss",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Ossl",
 		&object, mogilefs_class_entry_ptr, &domain, &domain_len,
-		&class, &class_len, &mindevcount, &mindevcount_len) == FAILURE) {
+		&class, &class_len, &mindevcount) == FAILURE) {
 
 		return;
 	}
@@ -1317,7 +1313,7 @@ PHP_METHOD(MogileFs, updateClass)
 	request_len = spprintf(
 		&request,
 		0,
-		"UPDATE_CLASS domain=%s&class=%s&mindevcount=%s&update=1\r\n",
+		"UPDATE_CLASS domain=%s&class=%s&mindevcount=%d&update=1\r\n",
 		domain,
 		class,
 		mindevcount
@@ -1709,6 +1705,20 @@ PHP_METHOD(MogileFs, isConnected)
 	RETURN_BOOL(mogilefs_sock->status == MOGILEFS_SOCK_STATUS_CONNECTED);
 }
 /* }}} */
+
+/* {{{ proto bool MogileFs::isInDebuggingMode() */
+PHP_METHOD(MogileFs, isInDebuggingMode)
+{
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "") == FAILURE) {
+		return;
+	}
+
+#ifdef MOGILEFS_DEBUG
+	RETURN_TRUE;
+#else
+	RETURN_FALSE;
+#endif
+}
 
 /*
  * Local variables:
