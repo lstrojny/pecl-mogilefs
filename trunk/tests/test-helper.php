@@ -9,6 +9,7 @@ if (file_exists($config)) {
  */
 function mogilefs_skipped() {
 	return extension_loaded('mogilefs')
+		and !MogileFs::isInDebuggingMode()
 		and defined(MOGILEFS_ENABLED)
 		and MOGILEFS_ENABLED;
 }
