@@ -19,7 +19,7 @@ if (mogilefs_skipped()) {
 require_once dirname(__FILE__) . '/test-helper.php';
 
 $client = mogilefs_test_factory();
-$client->put(__FILE__, 'test', MOGILEFS_CLASS);
+var_dump($client->put(__FILE__, 'test', MOGILEFS_CLASS));
 $result1 = $client->get('test');
 $content1 = file_get_contents($result1['path1']);
 $client->rename('test', 'test2');
@@ -42,6 +42,7 @@ var_dump($client->delete('test2'));
 ?>
 ==DONE==
 --EXPECTF--
+bool(true)
 bool(true)
 string(%d) "unknown_key"
 string(%d) "Target key name already exists; can't overwrite."

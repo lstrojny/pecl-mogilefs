@@ -58,77 +58,46 @@ static int le_mogilefs_sock;
 static zend_class_entry *mogilefs_class_entry_ptr;
 static zend_class_entry *mogilefs_exception_class_entry_ptr;
 
-/* {{{ mogilefs_functions[]
- *
- * Every user visible function must have an entry in mogilefs_functions[].
- */
-zend_function_entry mogilefs_functions[] = {
-	PHP_FE(mogilefs_connect, NULL)
-	PHP_FE(mogilefs_get, NULL)
-	PHP_FE(mogilefs_get_domains, NULL)
-	PHP_FE(mogilefs_list_keys, NULL)
-	PHP_FE(mogilefs_list_fids, NULL)
-	PHP_FE(mogilefs_get_hosts, NULL)
-	PHP_FE(mogilefs_get_devices, NULL)
-	PHP_FE(mogilefs_sleep, NULL)
-	PHP_FE(mogilefs_stats, NULL)
-	PHP_FE(mogilefs_replicate, NULL)
-	PHP_FE(mogilefs_create_device, NULL)
-	PHP_FE(mogilefs_create_domain, NULL)
-	PHP_FE(mogilefs_delete_domain, NULL)
-	PHP_FE(mogilefs_create_class, NULL)
-	PHP_FE(mogilefs_update_class, NULL)
-	PHP_FE(mogilefs_delete_class, NULL)
-	PHP_FE(mogilefs_create_host, NULL)
-	PHP_FE(mogilefs_update_host, NULL)
-	PHP_FE(mogilefs_delete_host, NULL)
-	PHP_FE(mogilefs_set_weight, NULL)
-	PHP_FE(mogilefs_set_state, NULL)
-	PHP_FE(mogilefs_checker, NULL)
-	PHP_FE(mogilefs_monitor_round, NULL)
-	PHP_FALIAS(mogilefs_get_paths, mogilefs_get, NULL)
-	PHP_FE(mogilefs_put, NULL)
-	PHP_FE(mogilefs_close, NULL)
-	PHP_FE(mogilefs_delete, NULL)
-	PHP_FE(mogilefs_rename, NULL)
-	PHP_FE(mogilefs_is_connected, NULL)
-	{NULL, NULL, NULL}	/* Must be the last line in mogilefs_functions[] */
-};
-
-static zend_function_entry php_mogilefs_class_functions[] = {
-	PHP_FALIAS(connect, mogilefs_connect, NULL)
-	PHP_FALIAS(get, mogilefs_get, NULL)
-	PHP_FALIAS(getPaths, mogilefs_get, NULL)
-	PHP_FALIAS(getDomains, mogilefs_get_domains, NULL)
-	PHP_FALIAS(listKeys, mogilefs_list_keys, NULL)
-	PHP_FALIAS(listFids, mogilefs_list_fids, NULL)
-	PHP_FALIAS(getHosts, mogilefs_get_hosts, NULL)
-	PHP_FALIAS(getDevices, mogilefs_get_devices, NULL)
-	PHP_FALIAS(sleep, mogilefs_sleep, NULL)
-	PHP_FALIAS(stats, mogilefs_stats, NULL)
-	PHP_FALIAS(replicate, mogilefs_replicate, NULL)
-	PHP_FALIAS(createDevice, mogilefs_create_device, NULL)
-	PHP_FALIAS(createDomain, mogilefs_create_domain, NULL)
-	PHP_FALIAS(deleteDomain, mogilefs_delete_domain, NULL)
-	PHP_FALIAS(createClass, mogilefs_create_class, NULL)
-	PHP_FALIAS(updateClass, mogilefs_update_class, NULL)
-	PHP_FALIAS(deleteClass, mogilefs_delete_class, NULL)
-	PHP_FALIAS(createHost, mogilefs_create_host, NULL)
-	PHP_FALIAS(updateHost, mogilefs_update_host, NULL)
-	PHP_FALIAS(deleteHost, mogilefs_delete_host, NULL)
-	PHP_FALIAS(setWeight, mogilefs_set_weight, NULL)
-	PHP_FALIAS(setState, mogilefs_set_state, NULL)
-	PHP_FALIAS(checker, mogilefs_checker, NULL)
-	PHP_FALIAS(monitorRound, mogilefs_monitor_round, NULL)
-	PHP_FALIAS(put, mogilefs_put, NULL)
-	PHP_FALIAS(close, mogilefs_close, NULL)
-	PHP_FALIAS(disconnect, mogilefs_close, NULL)
-	PHP_FALIAS(delete, mogilefs_delete, NULL)
-	PHP_FALIAS(rename, mogilefs_rename, NULL)
-	PHP_FALIAS(isConnected, mogilefs_is_connected, NULL)
+static
+zend_function_entry php_mogilefs_class_functions[] = {
 	{NULL, NULL, NULL}
 };
 /* }}} */
+
+static
+zend_function_entry php_mogilefs_methods[] = {
+	PHP_ME(MogileFs, isConnected, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, connect, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, get, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, getDomains, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, listKeys, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, listFids, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, getHosts, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, getDevices, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, sleep, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, stats, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, replicate, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, createDevice, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, createDomain, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, deleteDomain, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, createClass, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, updateClass, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, deleteClass, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, createHost, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, updateHost, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, deleteHost, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, setWeight, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, setState, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, checker, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, monitorRound, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, put, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, close, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, delete, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, rename, NULL, ZEND_ACC_PUBLIC)
+	/* Aliases */
+	PHP_MALIAS(MogileFs, disconnect, close, NULL, ZEND_ACC_PUBLIC)
+	{NULL, NULL, NULL}
+};
 
 /* {{{ mogilefs_module_entry */
 static zend_module_dep mogilefs_module_deps[] = {
@@ -144,7 +113,7 @@ zend_module_entry mogilefs_module_entry = {
 	STANDARD_MODULE_HEADER,
 #endif
 	"mogilefs",
-	mogilefs_functions,
+	NULL,
 	PHP_MINIT(mogilefs),
 	PHP_MSHUTDOWN(mogilefs),
 	PHP_RINIT(mogilefs),
@@ -200,7 +169,7 @@ PHP_MINIT_FUNCTION(mogilefs) /* {{{ */
 {
 	ne_sock_init();
 	zend_class_entry mogilefs_class_entry;
-	INIT_CLASS_ENTRY(mogilefs_class_entry, "MogileFs", php_mogilefs_class_functions);
+	INIT_CLASS_ENTRY(mogilefs_class_entry, "MogileFs", php_mogilefs_methods);
 	mogilefs_class_entry_ptr = zend_register_internal_class(&mogilefs_class_entry TSRMLS_CC);
 
 	zend_class_entry mogilefs_exception_class_entry;
@@ -470,14 +439,14 @@ PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS
 }
 /* }}} */
 
-PHPAPI char *mogilefs_file_to_mem(char *m_file, int *m_file_len TSRMLS_DC) /* {{{ */
+PHPAPI char *mogilefs_file_to_mem(char *filename, int *file_buffer_len TSRMLS_DC) /* {{{ */
 {
 	php_stream *stream;
 	char *data = NULL;
 
-	if ((stream = php_stream_open_wrapper(m_file, "rb", USE_PATH | ENFORCE_SAFE_MODE, NULL)) != NULL) {
-		*m_file_len = php_stream_copy_to_mem(stream, &data, PHP_STREAM_COPY_ALL, 0);
-		if (*m_file_len == 0) {
+	if ((stream = php_stream_open_wrapper(filename, "rb", USE_PATH | ENFORCE_SAFE_MODE, NULL)) != NULL) {
+		*file_buffer_len = php_stream_copy_to_mem(stream, &data, PHP_STREAM_COPY_ALL, 0);
+		if (*file_buffer_len == 0) {
 			data = estrdup("");
 		}
 		php_stream_close(stream);
@@ -578,9 +547,9 @@ PHPAPI int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_
 	return ret;
 } /* }}} */
 
-/* {{{ proto string mogilefs_connect(string host, string port, string domain [, int timeout])
-	Initialize a new MogileFS Session */
-PHP_FUNCTION(mogilefs_connect)
+/* {{{ proto bool MogileFs::connect(string host, string port, string domain [, int timeout])
+	Initialize a new MogileFs Session */
+PHP_METHOD(MogileFs, connect)
 {
 	char *m_host = NULL, *m_domain = NULL;
 	int m_host_len, m_domain_len, id;
@@ -629,9 +598,9 @@ PHP_FUNCTION(mogilefs_connect)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_close()
-	Close a MogileFS Session */
-PHP_FUNCTION(mogilefs_close)
+/* {{{ proto string MogileFs::close()
+	Close a MogileFs Session */
+PHP_METHOD(MogileFs, close)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock = NULL;
@@ -654,29 +623,24 @@ PHP_FUNCTION(mogilefs_close)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_put([MogileFS Object,] string file, string key, string class [, bool use_file_only [, bool multi_dest]])
-	Get MogileFS path */
-PHP_FUNCTION(mogilefs_put)
+/* {{{ proto bool MogileFs::put(string file, string key, string class [, bool use_file = true [, bool multi_dest]])
+	Put a file to the MogileFs tracker */
+PHP_METHOD(MogileFs, put)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
 	php_url *url;
 	ne_session *sess;
 	ne_request *req;
-	int multi_dest = 1, use_file_only = 1, key_len, class_len, m_buf_file_len;
-	int m_file_len, ret, alloc_internal = 0, alloc_url = 0;
-	char *key = NULL, *class = NULL, *m_buf_file, *m_file, *close_request;
+	int multi_dest = 1, use_file = 1, key_len, class_len, file_buffer_len, filename_len, ret, alloc_file = 0, alloc_url = 0;
+	char *key = NULL, *class = NULL, *file_buffer, *filename, *close_request;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(),
-				"Osss|ll", &object, mogilefs_class_entry_ptr,
-				&m_file, &m_file_len, &key, &key_len,
-				&class, &class_len, &use_file_only, &multi_dest) == FAILURE) {
+				"Osss|bl", &object, mogilefs_class_entry_ptr,
+				&filename, &filename_len, &key, &key_len,
+				&class, &class_len, &use_file, &multi_dest) == FAILURE) {
 
 			return;
-	}
-
-	if (use_file_only != 0 && use_file_only != 1) {
-		use_file_only = 1;
 	}
 
 	multi_dest = 0;
@@ -685,15 +649,14 @@ PHP_FUNCTION(mogilefs_put)
 		RETURN_FALSE;
 	}
 
-	if ((m_buf_file = mogilefs_file_to_mem(m_file, &m_buf_file_len TSRMLS_CC)) == NULL) {
-		if (use_file_only == 0) {
-			m_buf_file = m_file;
-			m_buf_file_len = m_file_len;
-		} else if (use_file_only == 1) {
+	if (use_file) {
+		if ((file_buffer = mogilefs_file_to_mem(filename, &file_buffer_len TSRMLS_CC)) == NULL) {
 			RETURN_FALSE;
 		}
+		alloc_file = 1;
 	} else {
-		alloc_internal = 1;
+		file_buffer = filename;
+		file_buffer_len = filename_len;
 	}
 
 	if ((close_request = mogilefs_create_open(mogilefs_sock, key, class, multi_dest TSRMLS_CC)) == NULL) {
@@ -722,7 +685,7 @@ PHP_FUNCTION(mogilefs_put)
 
 	ne_set_read_timeout(sess, (int) MOGILEFS_DAV_SESSION_TIMEOUT);
 	req = ne_request_create(sess, "PUT", url->path);
-	ne_set_request_body_buffer(req, m_buf_file, m_buf_file_len);
+	ne_set_request_body_buffer(req, file_buffer, file_buffer_len);
 	ret = ne_request_dispatch(req);
 
 	ne_request_destroy(req);
@@ -735,7 +698,7 @@ PHP_FUNCTION(mogilefs_put)
 	}
 
 	if (mogilefs_create_close(mogilefs_sock, key, class, close_request TSRMLS_CC) < 0) {
-				RETVAL_FALSE;
+		RETVAL_FALSE;
 		goto end;
 	}
 
@@ -745,8 +708,8 @@ end:
 	if (close_request) {
 		efree(close_request);
 	}
-	if (alloc_internal) {
-		efree(m_buf_file);
+	if (alloc_file) {
+		efree(file_buffer);
 	}
 	if (alloc_url) {
 		php_url_free(url);
@@ -754,9 +717,9 @@ end:
 }
 /* }}} */
 
-/* {{{ proto string mogilefs_get([MogileFS Object,] string key)
-	Get MogileFS path */
-PHP_FUNCTION(mogilefs_get)
+/* {{{ proto string mogilefs_get(string key)
+	Get MogileFs path */
+PHP_METHOD(MogileFs, get)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
@@ -787,9 +750,9 @@ PHP_FUNCTION(mogilefs_get)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_delete([MogileFS Object,] string key)
-	Delete a MogileFS file */
-PHP_FUNCTION(mogilefs_delete)
+/* {{{ proto bool MogileFs::delete(string key)
+	Delete a MogileFs file */
+PHP_METHOD(MogileFs, delete)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
@@ -819,9 +782,9 @@ PHP_FUNCTION(mogilefs_delete)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_rename([MogileFS Object,] string src_key, string_dest_key)
-	Move a MogileFS file */
-PHP_FUNCTION(mogilefs_rename)
+/* {{{ proto string mogilefs_rename(string src, string dest)
+	Move a MogileFs file */
+PHP_METHOD(MogileFs, rename)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
@@ -838,7 +801,7 @@ PHP_FUNCTION(mogilefs_rename)
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
-	request_len = spprintf(&request, 0, "RENAME domain=%s&frokey=%s&to_key=%s\r\n", mogilefs_sock->domain, m_src_key, m_dest_key);
+	request_len = spprintf(&request, 0, "RENAME domain=%s&from_key=%s&to_key=%s\r\n", mogilefs_sock->domain, m_src_key, m_dest_key);
 	if (MOGILEFS_SOCK_WRITE_FREE(mogilefs_sock, request, request_len) < 0) {
 		RETURN_FALSE;
 	}
@@ -851,9 +814,9 @@ PHP_FUNCTION(mogilefs_rename)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_get_domains([MogileFS Object,])
-	Get MogileFS domains */
-PHP_FUNCTION(mogilefs_get_domains)
+/* {{{ proto array MogileFs::getDomains()
+	Get MogileFs domains */
+PHP_METHOD(MogileFs, getDomains)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
@@ -884,9 +847,9 @@ PHP_FUNCTION(mogilefs_get_domains)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_list_keys([MogileFS Object,])
-	Get MogileFS file keys */
-PHP_FUNCTION(mogilefs_list_keys)
+/* {{{ proto array MogileFs::listKeys()
+	Get MogileFs file keys */
+PHP_METHOD(MogileFs, listKeys)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
@@ -929,9 +892,9 @@ PHP_FUNCTION(mogilefs_list_keys)
 }
 /* }}} */
 
-/* {{{ proto string mogilefs_list_fids([MogileFS Object,])
-	Get MogileFS file ids */
-PHP_FUNCTION(mogilefs_list_fids)
+/* {{{ proto array MogileFs::listFids()
+	Get MogileFs file ids */
+PHP_METHOD(MogileFs, listFids)
 {
 	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
@@ -973,9 +936,9 @@ PHP_FUNCTION(mogilefs_list_fids)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_get_hosts([MogileFS Object,])
-	Get MogileFS hosts */
-PHP_FUNCTION(mogilefs_get_hosts)
+/* {{{ proto array MogileFs::getHosts()
+	Get MogileFs hosts */
+PHP_METHOD(MogileFs, getHosts)
 {
 	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
@@ -1011,9 +974,9 @@ PHP_FUNCTION(mogilefs_get_hosts)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_get_devices([MogileFS Object,])
-	Get MogileFS devices */
-PHP_FUNCTION(mogilefs_get_devices)
+/* {{{ proto array MogileFs::getDevices()
+	Get MogileFs devices */
+PHP_METHOD(MogileFs, getDevices)
 {
 	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
@@ -1048,9 +1011,9 @@ PHP_FUNCTION(mogilefs_get_devices)
 }
 /* }}} */
 
-/* {{{ proto string mogilefs_sleep([MogileFS Object, ingeter duration])
+/* {{{ proto bool MogileFs::sleep(ingeter duration)
  */
-PHP_FUNCTION(mogilefs_sleep)
+PHP_METHOD(MogileFs, sleep)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
@@ -1083,9 +1046,9 @@ PHP_FUNCTION(mogilefs_sleep)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_stats([MogileFS Object], string all)
+/* {{{ proto array MogileFs::stats([bool all])
  */
-PHP_FUNCTION(mogilefs_stats)
+PHP_METHOD(MogileFs, stats)
 {
 	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
@@ -1126,9 +1089,9 @@ PHP_FUNCTION(mogilefs_stats)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_replicate([MogileFS Object])
+/* {{{ proto array MogileFs::replicate()
  */
-PHP_FUNCTION(mogilefs_replicate)
+PHP_METHOD(MogileFs, replicate)
 {
 	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
@@ -1164,9 +1127,9 @@ PHP_FUNCTION(mogilefs_replicate)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_create_device([MogileFS Object], string devid, string status)
+/* {{{ proto bool MogileFs::createDevice(string devid, string status)
  */
-PHP_FUNCTION(mogilefs_create_device)
+PHP_METHOD(MogileFs, createDevice)
 {
 	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
@@ -1206,9 +1169,9 @@ PHP_FUNCTION(mogilefs_create_device)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_create_domain([MogileFS Object], string domain)
+/* {{{ proto bool MogileFs::createDomain(string domain)
  */
-PHP_FUNCTION(mogilefs_create_domain)
+PHP_METHOD(MogileFs, createDomain)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
@@ -1242,9 +1205,9 @@ PHP_FUNCTION(mogilefs_create_domain)
 }
 /* }}} */
 
-/* {{{ proto string mogilefs_delete_domain([MogileFS Object], string domain)
+/* {{{ proto bool MogileFs::deleteDomain(string domain)
  */
-PHP_FUNCTION(mogilefs_delete_domain)
+PHP_METHOD(MogileFs, deleteDomain)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
@@ -1279,9 +1242,9 @@ PHP_FUNCTION(mogilefs_delete_domain)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_create_class([MogileFS Object], string domain, string class, string mindevcount)
+/* {{{ proto bool MogileFs::createClass(string domain, string class, string mindevcount)
  */
-PHP_FUNCTION(mogilefs_create_class)
+PHP_METHOD(MogileFs, createClass)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
@@ -1327,9 +1290,9 @@ PHP_FUNCTION(mogilefs_create_class)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_update_class([MogileFS Object], string domain, string class, string mindevcount)
+/* {{{ proto bool MogileFs::updateClass(string domain, string class, string mindevcount)
  */
-PHP_FUNCTION(mogilefs_update_class)
+PHP_METHOD(MogileFs, updateClass)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
@@ -1376,9 +1339,9 @@ PHP_FUNCTION(mogilefs_update_class)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_delete_class([MogileFS Object], string domain, string class)
+/* {{{ proto bool MogileFs::deleteClass(string domain, string class)
  */
-PHP_FUNCTION(mogilefs_delete_class)
+PHP_METHOD(MogileFs, deleteClass)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
@@ -1417,9 +1380,9 @@ PHP_FUNCTION(mogilefs_delete_class)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_create_host([MogileFS Object], string domain, string class)
+/* {{{ proto array MogileFs::createHost(string domain, string host, string ip, int port)
  */
-PHP_FUNCTION(mogilefs_create_host)
+PHP_METHOD(MogileFs, createHost)
 {
 	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
@@ -1457,9 +1420,9 @@ PHP_FUNCTION(mogilefs_create_host)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_update_host([MogileFS Object], string hostname, string ip, string port, string status[dead, alive])
+/* {{{ proto bool MogileFs::updateHost(string hostname, string ip, string port, string status[dead, alive])
  */
-PHP_FUNCTION(mogilefs_update_host)
+PHP_METHOD(MogileFs, updateHost)
 {
 	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
@@ -1503,9 +1466,9 @@ PHP_FUNCTION(mogilefs_update_host)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_delete_host([MogileFS Object], string host)
+/* {{{ proto bool MogileFs::deleteHost(string host)
  */
-PHP_FUNCTION(mogilefs_delete_host)
+PHP_METHOD(MogileFs, deleteHost)
 {
 	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
@@ -1547,9 +1510,9 @@ PHP_FUNCTION(mogilefs_delete_host)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_set_weight([MogileFS Object], string host)
+/* {{{ proto array MogileFs::setWeight(string host, string device, int weight)
  */
-PHP_FUNCTION(mogilefs_set_weight)
+PHP_METHOD(MogileFs, setWeight)
 {
 	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
@@ -1589,9 +1552,9 @@ PHP_FUNCTION(mogilefs_set_weight)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_set_state([MogileFS Object], string host, string device, string state)
+/* {{{ proto array MogileFs::setState(string host, string device, string state)
  */
-PHP_FUNCTION(mogilefs_set_state)
+PHP_METHOD(MogileFs, setState)
 {
 	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
@@ -1636,13 +1599,13 @@ PHP_FUNCTION(mogilefs_set_state)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_checker([MogileFS Object], string disable, string level)
+/* {{{ proto array MogileFs::checker(string disable, string level)
  */
-PHP_FUNCTION(mogilefs_checker)
+PHP_METHOD(MogileFs, checker)
 {
 	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
-	char *disable="off", *level="1",	*request, *response;
+	char *disable="off", *level="1", *request, *response;
 	int	disable_len, level_len, request_len, response_len;
 
 	if (object == NULL) {
@@ -1684,9 +1647,9 @@ PHP_FUNCTION(mogilefs_checker)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_monitor_round([MogileFS Object])
+/* {{{ proto array MogileFs::monitorRound()
  */
-PHP_FUNCTION(mogilefs_monitor_round)
+PHP_METHOD(MogileFs, monitorRound)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
@@ -1726,9 +1689,9 @@ PHP_FUNCTION(mogilefs_monitor_round)
 }
 /* }}} */
 
-/* {{{ proto string mogilefs_is_connected([MogileFS Object])
+/* {{{ proto bool MogileFs::isConnected()
  */
-PHP_FUNCTION(mogilefs_is_connected)
+PHP_METHOD(MogileFs, isConnected)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
