@@ -429,6 +429,10 @@ PHPAPI int mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock TSRMLS_DC) {
 PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, int cmd_len, int free_cmd TSRMLS_DC) { /* {{{ */
 	int retval = 0;
 
+#ifdef MOGILEFS_DEBUG
+	php_printf("REQUEST: %s\n", cmd);
+#endif
+
 	if (php_stream_write(mogilefs_sock->stream, cmd, cmd_len) != cmd_len) {
 		retval = -1;
 	}
@@ -470,6 +474,10 @@ PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS
 	}
 	*buf_len = strlen(outbuf);
 	efree(status);
+
+#ifdef MOGILEFS_DEBUG
+	php_printf("RESPONSE: %s\n", outbuf);
+#endif
 
 	return outbuf;
 }
@@ -1330,7 +1338,6 @@ PHP_FUNCTION(mogilefs_create_class)
 	if (mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAM_PASSTHRU, response, response_len) < 0) {
 		RETURN_FALSE;
 	}
-
 }
 
 /* }}} */
