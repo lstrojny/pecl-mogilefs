@@ -98,6 +98,12 @@ ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_delete, 0)
 ZEND_END_ARG_INFO()
 
 static
+ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_rename, 0)
+	ZEND_ARG_INFO(0, key)
+	ZEND_ARG_INFO(0, destination)
+ZEND_END_ARG_INFO()
+
+static
 ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_isInDebuggingMode, 0)
 ZEND_END_ARG_INFO()
 /* }}} */
@@ -137,7 +143,7 @@ zend_function_entry php_mogilefs_methods[] = {
 	PHP_ME(MogileFs, put,				arginfo_MogileFs_put,				ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, close,				arginfo_MogileFs_close,				ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, delete,			arginfo_MogileFs_delete,			ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, rename,			NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, rename,			arginfo_MogileFs_rename,			ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, isInDebuggingMode, arginfo_MogileFs_isInDebuggingMode,	ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	/* Aliases */
 	PHP_MALIAS(MogileFs, disconnect, close, arginfo_MogileFs_close, ZEND_ACC_PUBLIC)
