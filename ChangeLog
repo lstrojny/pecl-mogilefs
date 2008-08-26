@@ -1,5 +1,5 @@
 php-mogilefs 0.7.5 beta3:
-	* New API: MogileFs::isConnected() and mogilefs_is_connected()
+	* New API: MogileFs::isConnected()
 	* Fixed segfault in MogileFs::put() if client was not connected before
 	* Various new tests added
 	* More robust MogileFs::rename()-test
