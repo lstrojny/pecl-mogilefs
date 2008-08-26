@@ -58,12 +58,7 @@ static int le_mogilefs_sock;
 static zend_class_entry *mogilefs_class_entry_ptr;
 static zend_class_entry *mogilefs_exception_class_entry_ptr;
 
-static
-zend_function_entry php_mogilefs_class_functions[] = {
-	{NULL, NULL, NULL}
-};
-/* }}} */
-
+/* {{{ */
 static
 zend_function_entry php_mogilefs_methods[] = {
 	PHP_ME(MogileFs, isConnected, NULL, ZEND_ACC_PUBLIC)
@@ -99,6 +94,7 @@ zend_function_entry php_mogilefs_methods[] = {
 	PHP_MALIAS(MogileFs, disconnect, close, NULL, ZEND_ACC_PUBLIC)
 	{NULL, NULL, NULL}
 };
+/* }}} */
 
 /* {{{ mogilefs_module_entry */
 static zend_module_dep mogilefs_module_deps[] = {
