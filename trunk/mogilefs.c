@@ -158,10 +158,7 @@ static zend_module_dep mogilefs_module_deps[] = {
 
 
 zend_module_entry mogilefs_module_entry = {
-#if ZEND_EXTENSION_API_NO >= 220050617
-	STANDARD_MODULE_HEADER_EX, NULL,
-	mogilefs_module_deps,
-#else
+#if ZEND_EXTENSION_API_NO >= 20010901
 	STANDARD_MODULE_HEADER,
 #endif
 	"mogilefs",
