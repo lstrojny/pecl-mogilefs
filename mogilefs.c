@@ -53,6 +53,42 @@
 
 ZEND_DECLARE_MODULE_GLOBALS(mogilefs)
 
+/* {{{ arginfo */
+static
+ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_isConnected, 0)
+ZEND_END_ARG_INFO()
+
+static
+ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_connect, 0)
+	ZEND_ARG_INFO(0, host)
+	ZEND_ARG_INFO(0, port)
+	ZEND_ARG_INFO(0, domain)
+	ZEND_ARG_INFO(0, timeout)
+ZEND_END_ARG_INFO()
+
+static
+ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_get, 0)
+	ZEND_ARG_INFO(0, key)
+ZEND_END_ARG_INFO()
+
+static
+ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_getDomains, 0)
+ZEND_END_ARG_INFO()
+
+static
+ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_isInDebuggingMode, 0)
+ZEND_END_ARG_INFO()
+
+static
+ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_close, 0)
+ZEND_END_ARG_INFO()
+
+static
+ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_delete, 0)
+	ZEND_ARG_INFO(0, key)
+ZEND_END_ARG_INFO()
+/* }}} */
+
 /* True global resources - no need for thread safety here */
 static int le_mogilefs_sock;
 static zend_class_entry *mogilefs_class_entry_ptr;
@@ -61,37 +97,37 @@ static zend_class_entry *mogilefs_exception_class_entry_ptr;
 /* {{{ */
 static
 zend_function_entry php_mogilefs_methods[] = {
-	PHP_ME(MogileFs, isConnected, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, connect, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, get, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, getDomains, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, listKeys, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, listFids, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, getHosts, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, getDevices, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, sleep, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, stats, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, replicate, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, createDevice, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, createDomain, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, deleteDomain, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, createClass, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, updateClass, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, deleteClass, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, createHost, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, updateHost, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, deleteHost, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, setWeight, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, setState, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, checker, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, monitorRound, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, put, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, close, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, delete, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, rename, NULL, ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, isInDebuggingMode, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+	PHP_ME(MogileFs, isConnected,		arginfo_MogileFs_isConnected,		ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, connect,			arginfo_MogileFs_connect,			ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, get,				arginfo_MogileFs_get,				ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, getDomains,		arginfo_MogileFs_getDomains,		ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, listKeys,			NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, listFids,			NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, getHosts,			NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, getDevices,		NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, sleep,				NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, stats,				NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, replicate,			NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, createDevice,		NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, createDomain,		NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, deleteDomain,		NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, createClass,		NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, updateClass,		NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, deleteClass,		NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, createHost,		NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, updateHost,		NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, deleteHost,		NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, setWeight,			NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, setState,			NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, checker,			NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, monitorRound,		NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, put,				NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, close,				arginfo_MogileFs_close,				ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, delete,			NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, rename,			NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, isInDebuggingMode, arginfo_MogileFs_isInDebuggingMode,	ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
 	/* Aliases */
-	PHP_MALIAS(MogileFs, disconnect, close, NULL, ZEND_ACC_PUBLIC)
+	PHP_MALIAS(MogileFs, disconnect, close, arginfo_MogileFs_close, ZEND_ACC_PUBLIC)
 	{NULL, NULL, NULL}
 };
 /* }}} */
