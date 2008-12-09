@@ -1,7 +1,7 @@
 <package version="2.0">
-	<name>PHP MogileFS</name>
-	<channel>pear.usrportage.de</channel>
-	<summary>A client library to communicate with MogileFS</summary>
+	<name>mogilefs</name>
+	<channel>pecl.php.net</channel>
+	<summary>PHP client library to communicate with the MogileFS storage</summary>
 	<description>
 		PHP MogileFS is a client library to communicate with MogileFS trackers.
 		Those trackers are part of the distributed filesystem MogileFS created
@@ -14,9 +14,9 @@
 		<email>lstrojny@php.net</email>
 		<active>yes</active>
 	</lead>
-	<date>2007-06-17</date>
+	<date>2008-12-05</date>
 	<version>
-		<release>0.7.5</release>
+		<release>0.7.5b4</release>
 		<api>0.7.0</api>
 	</version>
 	<stability>
@@ -25,9 +25,10 @@
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
 	<notes>
-		* Fixed a bunch of ugly memory leaks
-		* Fixed bug in MogileFS::connect()
-		* Renamed MogileFsClient back to MogileFS
+		- Moved to pecl.php.net
+		- Fixed a bunch of ugly memory leaks
+		- Fixed bug in MogileFS::connect()
+		- Renamed MogileFsClient back to MogileFS
 	</notes>
 	<contents>
 		<dir name="/">
@@ -35,14 +36,28 @@
 			<file name="mogilefs.c" role="src"/>
 			<file name="php_mogilefs.h" role="src"/>
 			<dir name="tests">
-				<file name="extension-present.phpt" role="test"/>
-				<file name="put-file.phpt" role="test"/>
-				<file name="connect.phpt" role="test"/>
-				<file name="crud-class.phpt" role="test"/>
+				<!-- Inventory -->
 				<file name="config.inc.php.example" role="test"/>
 				<file name="test-helper.php" role="test"/>
+
+				<!-- Tests -->
+				<file name="close.phpt" role="test"/>
+				<file name="connect.phpt" role="test"/>
+				<file name="crud-class.phpt" role="test"/>
+				<file name="crud-domain.phpt" role="test"/>
+				<file name="extension-present.phpt" role="test"/>
+				<file name="get-domains.phpt" role="test"/>
+				<file name="is-connected.phpt" role="test"/>
+				<file name="list-keys.phpt" role="test"/>
+				<file name="put-file.phpt" role="test"/>
+				<file name="rename.phpt" role="test"/>
+				<file name="sleep.phpt" role="test"/>
 				<dir name="regressions">
 					<file name="array-is-managed.phpt" role="test"/>
+				</dir>
+				<dir name="performance">
+					<file name="benchmark.php" role="test"/>
+					<file name="timer.php" role="test"/>
 				</dir>
 			</dir>
 		</dir>
