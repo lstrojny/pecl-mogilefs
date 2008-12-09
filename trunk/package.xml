@@ -16,7 +16,7 @@
 	</lead>
 	<date>2008-12-05</date>
 	<version>
-		<release>0.7.5b4</release>
+		<release>0.7.5b5-dev</release>
 		<api>0.7.0</api>
 	</version>
 	<stability>
@@ -25,10 +25,7 @@
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
 	<notes>
-		- Moved to pecl.php.net
-		- Fixed a bunch of ugly memory leaks
-		- Fixed bug in MogileFS::connect()
-		- Renamed MogileFsClient back to MogileFS
+		- Added config.m4 to package.xml to allow installation via pecl/pear
 	</notes>
 	<contents>
 		<dir name="/">
