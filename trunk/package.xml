@@ -33,7 +33,6 @@
 	<contents>
 		<dir name="/">
 			<file name="README" role="doc"/>
-			<file name="config.m4" role="src"/>
 			<file name="mogilefs.c" role="src"/>
 			<file name="php_mogilefs.h" role="src"/>
 			<dir name="tests">
