@@ -1,0 +1,76 @@
+<package version="2.0">
+	<name>mogilefs</name>
+	<channel>pecl.php.net</channel>
+	<summary>PHP client library to communicate with the MogileFS storage</summary>
+	<description>
+		PHP MogileFS is a client library to communicate with MogileFS trackers.
+		Those trackers are part of the distributed filesystem MogileFS created
+		by Danga Interactive (http://www.danga.com/) and used in serveral large
+		scale projects like LiveJournal.
+	</description>
+	<lead>
+		<name>Lars Strojny</name>
+		<user>lstrojny</user>
+		<email>lstrojny@php.net</email>
+		<active>yes</active>
+	</lead>
+	<date>2008-12-05</date>
+	<version>
+		<release>0.7.5b5</release>
+		<api>0.7.0</api>
+	</version>
+	<stability>
+		<release>beta</release>
+		<api>beta</api>
+	</stability>
+	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
+	<notes>
+		- Added config.m4 to package.xml to allow installation via pecl/pear
+	</notes>
+	<contents>
+		<dir name="/">
+			<file name="README" role="doc"/>
+			<file name="config.m4" role="src"/>
+			<file name="mogilefs.c" role="src"/>
+			<file name="php_mogilefs.h" role="src"/>
+			<dir name="tests">
+				<!-- Inventory -->
+				<file name="config.inc.php.example" role="test"/>
+				<file name="test-helper.php" role="test"/>
+
+				<!-- Tests -->
+				<file name="close.phpt" role="test"/>
+				<file name="connect.phpt" role="test"/>
+				<file name="crud-class.phpt" role="test"/>
+				<file name="crud-domain.phpt" role="test"/>
+				<file name="extension-present.phpt" role="test"/>
+				<file name="get-domains.phpt" role="test"/>
+				<file name="is-connected.phpt" role="test"/>
+				<file name="list-keys.phpt" role="test"/>
+				<file name="put-file.phpt" role="test"/>
+				<file name="rename.phpt" role="test"/>
+				<file name="sleep.phpt" role="test"/>
+				<dir name="regressions">
+					<file name="array-is-managed.phpt" role="test"/>
+				</dir>
+				<dir name="performance">
+					<file name="benchmark.php" role="test"/>
+					<file name="timer.php" role="test"/>
+				</dir>
+			</dir>
+		</dir>
+	</contents>
+	<dependencies>
+		<required>
+			<php>
+				<min>5.2</min>
+				<max>5.3</max>
+			</php>
+			<pearinstaller>
+				<min>1.4.3</min>
+			</pearinstaller>
+		</required>
+	</dependencies>
+	<providesextension>mogilefs</providesextension>
+	<extsrcrelease/>
+</package>
