@@ -1310,7 +1310,7 @@ PHP_METHOD(MogileFs, createClass)
 		RETURN_FALSE;
 	}
 
-	if (domain == NULL || domain == "\0" || strlen(domain) == 0) {
+	if (domain == NULL || strcmp(domain, "\0") == 0 || strlen(domain) == 0) {
 		domain = mogilefs_sock->domain;
 	}
 
@@ -1359,7 +1359,7 @@ PHP_METHOD(MogileFs, updateClass)
 		RETURN_FALSE;
 	}
 
-	if (domain == NULL || domain == "\0" || strlen(domain) == 0) {
+	if (domain == NULL || strcmp(domain, "\0") == 0 || strlen(domain) == 0) {
 		domain = mogilefs_sock->domain;
 	}
 
@@ -1408,7 +1408,7 @@ PHP_METHOD(MogileFs, deleteClass)
 		RETURN_FALSE;
 	}
 
-	if (domain == NULL || domain == "\0" || strlen(domain) == 0) {
+	if (domain == NULL || strcmp(domain, "\0") == 0 || strlen(domain) == 0) {
 		domain = mogilefs_sock->domain;
 	}
 
