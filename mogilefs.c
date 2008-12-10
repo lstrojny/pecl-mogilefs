@@ -51,14 +51,20 @@
 #include <ne_auth.h>
 #include <ne_basic.h>
 
+#if (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION > 2) || PHP_MAJOR_VERSION > 5
+# define MOGILEFS_ARG_INFO
+#else
+# define MOGILEFS_ARG_INFO static
+#endif
+
 ZEND_DECLARE_MODULE_GLOBALS(mogilefs)
 
 /* {{{ arginfo */
-static
+MOGILEFS_ARG_INFO
 ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_isConnected, 0)
 ZEND_END_ARG_INFO()
 
-static
+MOGILEFS_ARG_INFO
 ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_connect, 0)
 	ZEND_ARG_INFO(0, host)
 	ZEND_ARG_INFO(0, port)
@@ -66,21 +72,21 @@ ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_connect, 0)
 	ZEND_ARG_INFO(0, timeout)
 ZEND_END_ARG_INFO()
 
-static
+MOGILEFS_ARG_INFO
 ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_get, 0)
 	ZEND_ARG_INFO(0, key)
 ZEND_END_ARG_INFO()
 
-static
+MOGILEFS_ARG_INFO
 ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_getDomains, 0)
 ZEND_END_ARG_INFO()
 
-static
+MOGILEFS_ARG_INFO
 ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_sleep, 0)
 	ZEND_ARG_INFO(0, seconds)
 ZEND_END_ARG_INFO()
 
-static
+MOGILEFS_ARG_INFO
 ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_put, 0)
 	ZEND_ARG_INFO(0, filename)
 	ZEND_ARG_INFO(0, key)
@@ -88,22 +94,22 @@ ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_put, 0)
 	ZEND_ARG_INFO(0, file_only)
 ZEND_END_ARG_INFO()
 
-static
+MOGILEFS_ARG_INFO
 ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_close, 0)
 ZEND_END_ARG_INFO()
 
-static
+MOGILEFS_ARG_INFO
 ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_delete, 0)
 	ZEND_ARG_INFO(0, key)
 ZEND_END_ARG_INFO()
 
-static
+MOGILEFS_ARG_INFO
 ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_rename, 0)
 	ZEND_ARG_INFO(0, key)
 	ZEND_ARG_INFO(0, destination)
 ZEND_END_ARG_INFO()
 
-static
+MOGILEFS_ARG_INFO
 ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_isInDebuggingMode, 0)
 ZEND_END_ARG_INFO()
 /* }}} */
