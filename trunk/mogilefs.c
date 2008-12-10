@@ -603,6 +603,13 @@ PHPAPI int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_
 	return ret;
 } /* }}} */
 
+PHPAPI void mogilefs_get_default_domain(MogilefsSock *mogilefs_sock, char **domain) /* {{{ */
+{
+	if (*domain == NULL || strcmp(*domain, "\0") == 0 || strlen(*domain) == 0) {
+		*domain = mogilefs_sock->domain;
+	}
+} /* }}} */
+
 /* {{{ proto bool MogileFs::connect(string host, string port, string domain [, int timeout])
 	Initialize a new MogileFs Session */
 PHP_METHOD(MogileFs, connect)
@@ -1310,9 +1317,7 @@ PHP_METHOD(MogileFs, createClass)
 		RETURN_FALSE;
 	}
 
-	if (domain == NULL || strcmp(domain, "\0") == 0 || strlen(domain) == 0) {
-		domain = mogilefs_sock->domain;
-	}
+	mogilefs_get_default_domain(mogilefs_sock, &domain);
 
 	request_len = spprintf(
 		&request,
@@ -1359,9 +1364,7 @@ PHP_METHOD(MogileFs, updateClass)
 		RETURN_FALSE;
 	}
 
-	if (domain == NULL || strcmp(domain, "\0") == 0 || strlen(domain) == 0) {
-		domain = mogilefs_sock->domain;
-	}
+	mogilefs_get_default_domain(mogilefs_sock, &domain);
 
 	request_len = spprintf(
 		&request,
@@ -1408,9 +1411,7 @@ PHP_METHOD(MogileFs, deleteClass)
 		RETURN_FALSE;
 	}
 
-	if (domain == NULL || strcmp(domain, "\0") == 0 || strlen(domain) == 0) {
-		domain = mogilefs_sock->domain;
-	}
+	mogilefs_get_default_domain(mogilefs_sock, &domain);
 
 	request_len = spprintf(&request, 0, "DELETE_CLASS domain=%s&class=%s\r\n", domain, class);
 

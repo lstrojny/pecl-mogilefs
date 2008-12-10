@@ -28,6 +28,7 @@
 		- 5.3 compatibility for ARG_INFO definition (ZEND_BEGIN_ARG_INFO with implicit static)
 		- http://pecl.php.net/bugs/bug.php?id=15284: Invalid format string
 		- http://pecl.php.net/bugs/bug.php?id=15283: Invalid comparison with string literal (patch by crrodriguez@opensuse.org)
+		- Refactored retrieval of the default domain to use new mogilefs_get_default_domain()
 	</notes>
 	<contents>
 		<dir name="/">
