@@ -881,7 +881,7 @@ PHP_METHOD(MogileFs, getDomains)
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
-	request_len = spprintf(&request, 0, "GET_DOMAINS\r\n", mogilefs_sock->domain);
+	request_len = spprintf(&request, 0, "GET_DOMAINS\r\n");
 	if (MOGILEFS_SOCK_WRITE_FREE(mogilefs_sock, request, request_len) < 0) {
 		RETURN_FALSE;
 	}

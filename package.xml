@@ -26,6 +26,7 @@
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
 	<notes>
 		- 5.3 compatibility for ARG_INFO definition (ZEND_BEGIN_ARG_INFO with implicit static)
+		- http://pecl.php.net/bugs/bug.php?id=15284: Invalid format string
 	</notes>
 	<contents>
 		<dir name="/">
