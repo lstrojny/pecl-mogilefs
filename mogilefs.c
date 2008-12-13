@@ -160,12 +160,6 @@ zend_function_entry php_mogilefs_methods[] = {
 };
 /* }}} */
 
-/* {{{ mogilefs_module_entry */
-/*static zend_module_dep mogilefs_module_deps[] = {
-	{NULL, NULL, NULL, 0}
-};*/
-
-
 zend_module_entry mogilefs_module_entry = {
 #if ZEND_EXTENSION_API_NO >= 20010901
 	STANDARD_MODULE_HEADER,
@@ -174,17 +168,13 @@ zend_module_entry mogilefs_module_entry = {
 	NULL,
 	PHP_MINIT(mogilefs),
 	PHP_MSHUTDOWN(mogilefs),
-	PHP_RINIT(mogilefs),
-	PHP_RSHUTDOWN(mogilefs),
+	NULL,
+	NULL,
 	PHP_MINFO(mogilefs),
 #if ZEND_MODULE_API_NO >= 20010901
 	PHP_MOGILEFS_VERSION,
 #endif
-	PHP_MODULE_GLOBALS(mogilefs),
-	NULL,
-	NULL,
-	NULL,
-	STANDARD_MODULE_PROPERTIES_EX
+	STANDARD_MODULE_PROPERTIES
 };
 
 #ifdef COMPILE_DL_MOGILEFS
@@ -239,19 +229,6 @@ PHP_MSHUTDOWN_FUNCTION(mogilefs) /* {{{ */
 	return SUCCESS;
 }
 /** }}} */
-
-PHP_RINIT_FUNCTION(mogilefs) /* {{{ */
-{
-	MOGILEFS_G(default_link) = -1;
-	return SUCCESS;
-}
-/* }}} */
-
-PHP_RSHUTDOWN_FUNCTION(mogilefs) /* {{{ */
-{
-	return SUCCESS;
-}
-/* }}} */
 
 PHP_MINFO_FUNCTION(mogilefs) /* {{{ */
 {

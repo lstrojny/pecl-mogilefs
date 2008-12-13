@@ -43,8 +43,6 @@ extern zend_module_entry mogilefs_module_entry;
 
 PHP_MINIT_FUNCTION(mogilefs);
 PHP_MSHUTDOWN_FUNCTION(mogilefs);
-PHP_RINIT_FUNCTION(mogilefs);
-PHP_RSHUTDOWN_FUNCTION(mogilefs);
 PHP_MINFO_FUNCTION(mogilefs);
 
 PHP_METHOD(MogileFs, isConnected);
@@ -78,10 +76,6 @@ PHP_METHOD(MogileFs, disconnect);
 PHP_METHOD(MogileFs, delete);
 PHP_METHOD(MogileFs, rename);
 PHP_METHOD(MogileFs, isInDebuggingMode);
-
-ZEND_BEGIN_MODULE_GLOBALS(mogilefs)
-	int default_link;
-ZEND_END_MODULE_GLOBALS(mogilefs)
 
 #define mogilefs_sock_name "MogileFS Socket Buffer"
 
