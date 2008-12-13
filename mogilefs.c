@@ -30,6 +30,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define _GNU_SOURCE
+#include <stdio.h>
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -158,9 +161,9 @@ zend_function_entry php_mogilefs_methods[] = {
 /* }}} */
 
 /* {{{ mogilefs_module_entry */
-static zend_module_dep mogilefs_module_deps[] = {
+/*static zend_module_dep mogilefs_module_deps[] = {
 	{NULL, NULL, NULL, 0}
-};
+};*/
 
 
 zend_module_entry mogilefs_module_entry = {
@@ -187,21 +190,6 @@ zend_module_entry mogilefs_module_entry = {
 #ifdef COMPILE_DL_MOGILEFS
 ZEND_GET_MODULE(mogilefs)
 #endif
-/* }}} */
-
-static void mogilefs_set_default_link(int id TSRMLS_DC) /* {{{ */
-{
-	if (MOGILEFS_G(default_link) != -1) {
-		zend_list_delete(MOGILEFS_G(default_link));
-	}
-	MOGILEFS_G(default_link) = id;
-	zend_list_addref(id);
-}
-
-static int mogilefs_get_default_link(INTERNAL_FUNCTION_PARAMETERS)
-{
-	return MOGILEFS_G(default_link);
-}
 /* }}} */
 
 static void mogilefs_destructor_mogilefs_sock(zend_rsrc_list_entry * rsrc TSRMLS_DC) /* {{{ */
@@ -911,7 +899,7 @@ PHP_METHOD(MogileFs, listKeys)
 	MogilefsSock *mogilefs_sock;
 	char *m_prefix = NULL, *m_after = NULL, *request, *response;
 	long m_limit = 1000;
-	int m_prefix_len, m_after_len, m_limit_len, request_len, response_len;
+	int m_prefix_len, m_after_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss|l",
 		&object, mogilefs_class_entry_ptr, &m_prefix, &m_prefix_len,
@@ -932,7 +920,7 @@ PHP_METHOD(MogileFs, listKeys)
 		mogilefs_sock->domain,
 		m_prefix,
 		m_after,
-		m_limit
+		(int) m_limit
 	);
 
 	if (MOGILEFS_SOCK_WRITE_FREE(mogilefs_sock, request, request_len) < 0) {
@@ -1087,7 +1075,7 @@ PHP_METHOD(MogileFs, sleep)
 		RETURN_FALSE;
 	}
 
-	request_len = spprintf(&request, 0, "SLEEP domain=%s&duration=%d\r\n", mogilefs_sock->domain, duration);
+	request_len = spprintf(&request, 0, "SLEEP domain=%s&duration=%d\r\n", mogilefs_sock->domain, (int) duration);
 
 	if (MOGILEFS_SOCK_WRITE_FREE(mogilefs_sock, request, request_len) < 0) {
 		RETURN_FALSE;
@@ -1372,7 +1360,7 @@ PHP_METHOD(MogileFs, updateClass)
 		"UPDATE_CLASS domain=%s&class=%s&mindevcount=%d&update=1\r\n",
 		domain,
 		class,
-		mindevcount
+		(int) mindevcount
 	);
 
 	if (MOGILEFS_SOCK_WRITE_FREE(mogilefs_sock, request, request_len) < 0) {
