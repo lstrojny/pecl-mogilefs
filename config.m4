@@ -10,6 +10,10 @@ if test "$PHP_MOGILEFS" != "no"; then
 		fi
 	done
 
+	if test -z "$NEON_CONFIG"; then
+		AC_MSG_ERROR(Cannot find libneon)
+	fi
+
 	MOGILEFS_LIBS=$($NEON_CONFIG --libs)
 	MOGILEFS_INCS=$($NEON_CONFIG --cflags)
 
