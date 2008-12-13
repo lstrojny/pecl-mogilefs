@@ -29,6 +29,8 @@
 		- http://pecl.php.net/bugs/bug.php?id=15284: Invalid format string
 		- http://pecl.php.net/bugs/bug.php?id=15283: Invalid comparison with string literal (patch by crrodriguez@opensuse.org)
 		- Refactored retrieval of the default domain to use new mogilefs_get_default_domain()
+		- QA fixes for really strict compiler options
+		- Removed unused artefacts from earlier version like module globals and RINIT
 	</notes>
 	<contents>
 		<dir name="/">
