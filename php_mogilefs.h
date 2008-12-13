@@ -84,7 +84,6 @@ PHP_METHOD(MogileFs, isInDebuggingMode);
 #define MOGILEFS_SOCK_WRITE(socket, cmd, cmd_len) \
 	mogilefs_sock_write (socket, cmd, cmd_len, 0 TSRMLS_CC)
 
-#endif /* PHP_MOGILEFS_H */
 
 #define MOGILEFS_SOCK_BUF_SIZE 4096
 #define MOGILEFS_DAV_SESSION_TIMEOUT 8
@@ -120,6 +119,8 @@ PHPAPI int mogilefs_create_close(MogilefsSock *mogilefs_sock, const char * const
 PHPAPI int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_DC);
 PHPAPI void mogilefs_free_socket(MogilefsSock *mogilefs_sock);
 /* }}} */
+
+#endif /* PHP_MOGILEFS_H */
 
 /*
  * Local variables:
