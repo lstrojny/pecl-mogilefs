@@ -60,8 +60,6 @@
 # define MOGILEFS_ARG_INFO static
 #endif
 
-ZEND_DECLARE_MODULE_GLOBALS(mogilefs)
-
 /* {{{ arginfo */
 MOGILEFS_ARG_INFO
 ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_isConnected, 0)

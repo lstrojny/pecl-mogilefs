@@ -84,12 +84,6 @@ PHP_METHOD(MogileFs, isInDebuggingMode);
 #define MOGILEFS_SOCK_WRITE(socket, cmd, cmd_len) \
 	mogilefs_sock_write (socket, cmd, cmd_len, 0 TSRMLS_CC)
 
-#ifdef ZTS
-#define MOGILEFS_G(v) TSRMG(mogilefs_globals_id, zend_mogilefs_globals *, v)
-#else
-#define MOGILEFS_G(v) (mogilefs_globals.v)
-#endif
-
 #endif /* PHP_MOGILEFS_H */
 
 #define MOGILEFS_SOCK_BUF_SIZE 4096
