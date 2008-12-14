@@ -283,22 +283,22 @@ PHPAPI int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, const 
 }
 /* }}} */
 
-PHPAPI MogilefsSock *mogilefs_sock_server_init(char *m_host, int m_host_len, unsigned short m_port, /* {{{ */
-										char *m_domain, int m_domain_len, long timeout) {
+PHPAPI MogilefsSock *mogilefs_sock_server_init(char *host, int host_len, unsigned short port, /* {{{ */
+										char *domain, int domain_len, long timeout) {
 	MogilefsSock *mogilefs_sock;
 
 	mogilefs_sock = emalloc(sizeof *mogilefs_sock);
-	mogilefs_sock->host = emalloc(m_host_len + 1);
-	mogilefs_sock->domain = emalloc(m_domain_len + 1);
+	mogilefs_sock->host = emalloc(host_len + 1);
+	mogilefs_sock->domain = emalloc(domain_len + 1);
 	mogilefs_sock->stream = NULL;
 	mogilefs_sock->status = MOGILEFS_SOCK_STATUS_DISCONNECTED;
 
-	memcpy(mogilefs_sock->host, m_host, m_host_len);
-	memcpy(mogilefs_sock->domain, m_domain, m_domain_len);
-	mogilefs_sock->host[m_host_len] = '\0';
-	mogilefs_sock->domain[m_domain_len] = '\0';
+	memcpy(mogilefs_sock->host, host, host_len);
+	memcpy(mogilefs_sock->domain, domain, domain_len);
+	mogilefs_sock->host[host_len] = '\0';
+	mogilefs_sock->domain[domain_len] = '\0';
 
-	mogilefs_sock->port = m_port;
+	mogilefs_sock->port = port;
 	mogilefs_sock->timeout = timeout;
 
 	return mogilefs_sock;
@@ -320,8 +320,8 @@ PHPAPI int mogilefs_sock_disconnect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* 
 
 PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
 	struct timeval tv;
-	char *m_host = NULL, *hash_key = NULL, *errstr = NULL;
-	int	m_host_len, err = 0;
+	char *host = NULL, *hash_key = NULL, *errstr = NULL;
+	int	host_len, err = 0;
 
 	if (mogilefs_sock->stream != NULL) {
 		mogilefs_sock_disconnect(mogilefs_sock TSRMLS_CC);
@@ -330,11 +330,11 @@ PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{
 	tv.tv_sec = mogilefs_sock->timeout;
 	tv.tv_usec = 0;
 
-	m_host_len = spprintf(&m_host, 0, "%s:%d", mogilefs_sock->host, mogilefs_sock->port);
+	host_len = spprintf(&host, 0, "%s:%d", mogilefs_sock->host, mogilefs_sock->port);
 
 	mogilefs_sock->stream = php_stream_xport_create(
-		m_host,
-		m_host_len,
+		host,
+		host_len,
 		ENFORCE_SAFE_MODE,
 		STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT,
 		hash_key,
@@ -345,11 +345,11 @@ PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{
 	);
 
 	if (!mogilefs_sock->stream) {
-		efree(m_host);
+		efree(host);
 		efree(errstr);
 		return -1;
 	}
-	efree(m_host);
+	efree(host);
 
 	php_stream_auto_cleanup(mogilefs_sock->stream);
 	php_stream_set_option(mogilefs_sock->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, &tv);
@@ -578,16 +578,16 @@ PHPAPI void mogilefs_get_default_domain(MogilefsSock *mogilefs_sock, char **doma
 	Initialize a new MogileFs Session */
 PHP_METHOD(MogileFs, connect)
 {
-	char *m_host = NULL, *m_domain = NULL;
-	int m_host_len, m_domain_len, id;
-	long m_port;
+	int host_len, domain_len, id;
+	char *host = NULL, *domain = NULL;
+	long port;
 	struct timeval timeout = { 5L, 0L };
 	MogilefsSock *mogilefs_sock = NULL;
-	zval *object = getThis();
+	zval *object;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sls|l",
-							 &m_host, &m_host_len, &m_port,
-							 &m_domain, &m_domain_len, &timeout.tv_sec) == FAILURE) {
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(),
+		"Osls|l", &object, mogilefs_class_entry_ptr, &host, &host_len, &port,
+		&domain, &domain_len, &timeout.tv_sec) == FAILURE) {
 
 		return;
 	}
@@ -598,15 +598,15 @@ PHP_METHOD(MogileFs, connect)
 		RETURN_FALSE;
 	}
 
-	mogilefs_sock = mogilefs_sock_server_init(m_host, m_host_len, m_port, m_domain, m_domain_len, timeout.tv_sec);
+	mogilefs_sock = mogilefs_sock_server_init(host, host_len, port, domain, domain_len, timeout.tv_sec);
 	if (mogilefs_sock_server_open(mogilefs_sock, 1 TSRMLS_CC) < 0) {
 		mogilefs_free_socket(mogilefs_sock);
 		zend_throw_exception_ex(
 			mogilefs_exception_class_entry_ptr,
 			0 TSRMLS_CC,
 			"Can't connect to %s:%d",
-			m_host,
-			m_port
+			host,
+			port
 		);
 		RETURN_FALSE;
 	}
@@ -808,12 +808,12 @@ PHP_METHOD(MogileFs, rename)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
-	char *m_src_key = NULL, *m_dest_key = NULL, *request, *response;
-	int m_src_key_len, m_dest_key_len, request_len, response_len;
+	char *src_key = NULL, *dest_key = NULL, *request, *response;
+	int src_key_len, dest_key_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss",
-			&object, mogilefs_class_entry_ptr, &m_src_key, &m_src_key_len,
-			&m_dest_key, &m_dest_key_len) == FAILURE) {
+			&object, mogilefs_class_entry_ptr, &src_key, &src_key_len,
+			&dest_key, &dest_key_len) == FAILURE) {
 
 		return;
 	}
@@ -821,7 +821,7 @@ PHP_METHOD(MogileFs, rename)
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
 	}
-	request_len = spprintf(&request, 0, "RENAME domain=%s&from_key=%s&to_key=%s\r\n", mogilefs_sock->domain, m_src_key, m_dest_key);
+	request_len = spprintf(&request, 0, "RENAME domain=%s&from_key=%s&to_key=%s\r\n", mogilefs_sock->domain, src_key, dest_key);
 	if (MOGILEFS_SOCK_WRITE_FREE(mogilefs_sock, request, request_len) < 0) {
 		RETURN_FALSE;
 	}
@@ -873,13 +873,13 @@ PHP_METHOD(MogileFs, listKeys)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
-	char *m_prefix = NULL, *m_after = NULL, *request, *response;
-	long m_limit = 1000;
-	int m_prefix_len, m_after_len, request_len, response_len;
+	char *prefix = NULL, *after = NULL, *request, *response;
+	long limit = 1000;
+	int prefix_len, after_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss|l",
-		&object, mogilefs_class_entry_ptr, &m_prefix, &m_prefix_len,
-		&m_after, &m_after_len, &m_limit) == FAILURE) {
+		&object, mogilefs_class_entry_ptr, &prefix, &prefix_len,
+		&after, &after_len, &limit) == FAILURE) {
 
 		return;
 	}
@@ -894,9 +894,9 @@ PHP_METHOD(MogileFs, listKeys)
 		0,
 		"LIST_KEYS domain=%s&prefix=%s&after=%s&limit=%d\r\n",
 		mogilefs_sock->domain,
-		m_prefix,
-		m_after,
-		(int) m_limit
+		prefix,
+		after,
+		(int) limit
 	);
 
 	if (MOGILEFS_SOCK_WRITE_FREE(mogilefs_sock, request, request_len) < 0) {
@@ -918,18 +918,18 @@ PHP_METHOD(MogileFs, listFids)
 {
 	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
-	char *m_to = "100", *m_from = "0", *request, *response;
-	int	m_to_len, m_from_len, request_len, response_len;
+	char *to = "100", *from = "0", *request, *response;
+	int	to_len, from_len, request_len, response_len;
 
 	if (object == NULL) {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|ss", &object,
-									mogilefs_class_entry_ptr, &m_from, &m_from_len, &m_to, &m_to_len) == FAILURE) {
+									mogilefs_class_entry_ptr, &from, &from_len, &to, &to_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 
 	} else {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|ss",
-															&m_from, &m_from_len, &m_to, &m_to_len) == FAILURE) {
+															&from, &from_len, &to, &to_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}
@@ -938,7 +938,7 @@ PHP_METHOD(MogileFs, listFids)
 		RETURN_FALSE;
 	}
 
-	request_len = spprintf(&request, 0, "LIST_FIDS domain=%s&from=%s&to=%s\r\n", mogilefs_sock->domain, m_from, m_to);
+	request_len = spprintf(&request, 0, "LIST_FIDS domain=%s&from=%s&to=%s\r\n", mogilefs_sock->domain, from, to);
 
 	if (MOGILEFS_SOCK_WRITE_FREE(mogilefs_sock, request, request_len) < 0) {
 		RETURN_FALSE;
@@ -1072,18 +1072,18 @@ PHP_METHOD(MogileFs, stats)
 {
 	zval *object = getThis();
 	MogilefsSock *mogilefs_sock;
-	char *m_all = "1", *request, *response;
-	int	m_all_len, request_len, response_len;
+	char *all = "1", *request, *response;
+	int	all_len, request_len, response_len;
 
 	if(object == NULL) {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|s", &object,
-									mogilefs_class_entry_ptr, &m_all, &m_all_len) == FAILURE) {
+									mogilefs_class_entry_ptr, &all, &all_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 
 	}else {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s",
-															&m_all, &m_all_len) == FAILURE) {
+															&all, &all_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}
@@ -1092,7 +1092,7 @@ PHP_METHOD(MogileFs, stats)
 		RETURN_FALSE;
 	}
 
-	request_len = spprintf(&request, 0, "STATS domain=%s&all=%s\r\n", mogilefs_sock->domain, m_all);
+	request_len = spprintf(&request, 0, "STATS domain=%s&all=%s\r\n", mogilefs_sock->domain, all);
 
 	if (MOGILEFS_SOCK_WRITE_FREE(mogilefs_sock, request, request_len) < 0) {
 		RETURN_FALSE;
