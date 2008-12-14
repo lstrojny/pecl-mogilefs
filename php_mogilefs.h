@@ -45,6 +45,7 @@ PHP_MINIT_FUNCTION(mogilefs);
 PHP_MSHUTDOWN_FUNCTION(mogilefs);
 PHP_MINFO_FUNCTION(mogilefs);
 
+PHP_METHOD(MogileFs, __construct);
 PHP_METHOD(MogileFs, isConnected);
 PHP_METHOD(MogileFs, connect);
 PHP_METHOD(MogileFs, get);

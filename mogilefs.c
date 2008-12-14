@@ -124,6 +124,7 @@ static zend_class_entry *mogilefs_exception_class_entry_ptr;
 /* {{{ zend_function_entry */
 static
 zend_function_entry php_mogilefs_methods[] = {
+	PHP_ME(MogileFs, __construct,		NULL,								ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, isConnected,		arginfo_MogileFs_isConnected,		ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, connect,			arginfo_MogileFs_connect,			ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, get,				arginfo_MogileFs_get,				ZEND_ACC_PUBLIC)
@@ -573,6 +574,13 @@ PHPAPI void mogilefs_get_default_domain(MogilefsSock *mogilefs_sock, char **doma
 		*domain = mogilefs_sock->domain;
 	}
 } /* }}} */
+
+PHP_METHOD(MogileFs, __construct)
+{
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "") == FAILURE) {
+		return;
+	}
+}
 
 /* {{{ proto bool MogileFs::connect(string host, string port, string domain [, int timeout])
 	Initialize a new MogileFs Session */
