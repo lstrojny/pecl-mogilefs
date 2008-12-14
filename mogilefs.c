@@ -118,8 +118,8 @@ ZEND_END_ARG_INFO()
 
 /* True global resources - no need for thread safety here */
 static int le_mogilefs_sock;
-static zend_class_entry *mogilefs_class_entry_ptr;
-static zend_class_entry *mogilefs_exception_class_entry_ptr;
+static zend_class_entry *mogilefs_ce;
+static zend_class_entry *mogilefs_exception_ce;
 
 /* {{{ zend_function_entry */
 static
@@ -203,11 +203,11 @@ PHP_MINIT_FUNCTION(mogilefs) /* {{{ */
 	ne_sock_init();
 	zend_class_entry mogilefs_class_entry;
 	INIT_CLASS_ENTRY(mogilefs_class_entry, "MogileFs", php_mogilefs_methods);
-	mogilefs_class_entry_ptr = zend_register_internal_class(&mogilefs_class_entry TSRMLS_CC);
+	mogilefs_ce = zend_register_internal_class(&mogilefs_class_entry TSRMLS_CC);
 
 	zend_class_entry mogilefs_exception_class_entry;
 	INIT_CLASS_ENTRY(mogilefs_exception_class_entry, "MogileFsException", NULL);
-	mogilefs_exception_class_entry_ptr = zend_register_internal_class_ex(
+	mogilefs_exception_ce = zend_register_internal_class_ex(
 		&mogilefs_exception_class_entry,
 		zend_exception_get_default(TSRMLS_C),
 		NULL TSRMLS_CC
@@ -442,7 +442,7 @@ PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS
 		}
 		php_url_decode(message_clean, strlen(message_clean));
 
-		zend_throw_exception(mogilefs_exception_class_entry_ptr, message_clean, 0 TSRMLS_CC);
+		zend_throw_exception(mogilefs_exception_ce, message_clean, 0 TSRMLS_CC);
 
 		efree(message);
 		efree(message_clean);
@@ -594,7 +594,7 @@ PHP_METHOD(MogileFs, connect)
 	zval *object;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(),
-		"Osls|l", &object, mogilefs_class_entry_ptr, &host, &host_len, &port,
+		"Osls|l", &object, mogilefs_ce, &host, &host_len, &port,
 		&domain, &domain_len, &timeout.tv_sec) == FAILURE) {
 
 		return;
@@ -602,7 +602,7 @@ PHP_METHOD(MogileFs, connect)
 
 
 	if (timeout.tv_sec < 0L || timeout.tv_sec > INT_MAX) {
-		zend_throw_exception(mogilefs_exception_class_entry_ptr, "Invalid timeout", 0 TSRMLS_CC);
+		zend_throw_exception(mogilefs_exception_ce, "Invalid timeout", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -610,7 +610,7 @@ PHP_METHOD(MogileFs, connect)
 	if (mogilefs_sock_server_open(mogilefs_sock, 1 TSRMLS_CC) < 0) {
 		mogilefs_free_socket(mogilefs_sock);
 		zend_throw_exception_ex(
-			mogilefs_exception_class_entry_ptr,
+			mogilefs_exception_ce,
 			0 TSRMLS_CC,
 			"Can't connect to %s:%d",
 			host,
@@ -634,7 +634,7 @@ PHP_METHOD(MogileFs, close)
 	MogilefsSock *mogilefs_sock = NULL;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O",
-		&object, mogilefs_class_entry_ptr) == FAILURE) {
+		&object, mogilefs_ce) == FAILURE) {
 
 		return;
 	}
@@ -664,7 +664,7 @@ PHP_METHOD(MogileFs, put)
 	char *key = NULL, *class = NULL, *file_buffer, *filename, *close_request;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(),
-				"Osss|bl", &object, mogilefs_class_entry_ptr,
+				"Osss|bl", &object, mogilefs_ce,
 				&filename, &filename_len, &key, &key_len,
 				&class, &class_len, &use_file, &multi_dest) == FAILURE) {
 
@@ -720,7 +720,7 @@ PHP_METHOD(MogileFs, put)
 	ne_session_destroy(sess);
 
 	if (ret != NE_OK) {
-		zend_throw_exception_ex(mogilefs_exception_class_entry_ptr, 0 TSRMLS_CC, "%s", ne_get_error(sess));
+		zend_throw_exception_ex(mogilefs_exception_ce, 0 TSRMLS_CC, "%s", ne_get_error(sess));
 		RETVAL_FALSE;
 		goto end;
 	}
@@ -755,7 +755,7 @@ PHP_METHOD(MogileFs, get)
 	int key_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
-									&object, mogilefs_class_entry_ptr,
+									&object, mogilefs_ce,
 									&key, &key_len) == FAILURE) {
 			return;
 	}
@@ -788,7 +788,7 @@ PHP_METHOD(MogileFs, delete)
 	int key_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
-		&object, mogilefs_class_entry_ptr, &key, &key_len) == FAILURE) {
+		&object, mogilefs_ce, &key, &key_len) == FAILURE) {
 
 		return;
 	}
@@ -820,7 +820,7 @@ PHP_METHOD(MogileFs, rename)
 	int src_key_len, dest_key_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss",
-			&object, mogilefs_class_entry_ptr, &src_key, &src_key_len,
+			&object, mogilefs_ce, &src_key, &src_key_len,
 			&dest_key, &dest_key_len) == FAILURE) {
 
 		return;
@@ -852,7 +852,7 @@ PHP_METHOD(MogileFs, getDomains)
 	int	request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O",
-			&object, mogilefs_class_entry_ptr) == FAILURE) {
+			&object, mogilefs_ce) == FAILURE) {
 
 		return;
 	}
@@ -886,7 +886,7 @@ PHP_METHOD(MogileFs, listKeys)
 	int prefix_len, after_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss|l",
-		&object, mogilefs_class_entry_ptr, &prefix, &prefix_len,
+		&object, mogilefs_ce, &prefix, &prefix_len,
 		&after, &after_len, &limit) == FAILURE) {
 
 		return;
@@ -931,7 +931,7 @@ PHP_METHOD(MogileFs, listFids)
 
 	if (object == NULL) {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|ss", &object,
-									mogilefs_class_entry_ptr, &from, &from_len, &to, &to_len) == FAILURE) {
+			mogilefs_ce, &from, &from_len, &to, &to_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 
@@ -975,7 +975,7 @@ PHP_METHOD(MogileFs, getHosts)
 
 	if (object == NULL) {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &object,
-									mogilefs_class_entry_ptr) == FAILURE) {
+									mogilefs_ce) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}
@@ -1013,7 +1013,7 @@ PHP_METHOD(MogileFs, getDevices)
 
 	if(object == NULL) {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &object,
-									mogilefs_class_entry_ptr) == FAILURE) {
+									mogilefs_ce) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}
@@ -1050,7 +1050,7 @@ PHP_METHOD(MogileFs, sleep)
 	int	request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O|l", &object,
-		mogilefs_class_entry_ptr, &duration) == FAILURE) {
+		mogilefs_ce, &duration) == FAILURE) {
 
 		return;
 	}
@@ -1085,7 +1085,7 @@ PHP_METHOD(MogileFs, stats)
 
 	if(object == NULL) {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|s", &object,
-									mogilefs_class_entry_ptr, &all, &all_len) == FAILURE) {
+									mogilefs_ce, &all, &all_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 
@@ -1128,7 +1128,7 @@ PHP_METHOD(MogileFs, replicate)
 
 	if(object == NULL) {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &object,
-									mogilefs_class_entry_ptr) == FAILURE) {
+									mogilefs_ce) == FAILURE) {
 			RETURN_FALSE;
 		}
 
@@ -1166,7 +1166,7 @@ PHP_METHOD(MogileFs, createDevice)
 
 	if(object == NULL) {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Oss", &object,
-									mogilefs_class_entry_ptr, &devid, &devid_len, &status, &status_len ) == FAILURE) {
+									mogilefs_ce, &devid, &devid_len, &status, &status_len ) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}else {
@@ -1206,7 +1206,7 @@ PHP_METHOD(MogileFs, createDomain)
 	int	domain_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
-		&object, mogilefs_class_entry_ptr, &domain, &domain_len) == FAILURE) {
+		&object, mogilefs_ce, &domain, &domain_len) == FAILURE) {
 
 		return;
 	}
@@ -1242,7 +1242,7 @@ PHP_METHOD(MogileFs, deleteDomain)
 	int	domain_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
-		&object, mogilefs_class_entry_ptr, &domain, &domain_len) == FAILURE) {
+		&object, mogilefs_ce, &domain, &domain_len) == FAILURE) {
 
 		return;
 	}
@@ -1279,7 +1279,7 @@ PHP_METHOD(MogileFs, createClass)
 	int	domain_len, class_len, mindevcount, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Ossl",
-		&object, mogilefs_class_entry_ptr, &domain, &domain_len,
+		&object, mogilefs_ce, &domain, &domain_len,
 		&class, &class_len, &mindevcount) == FAILURE) {
 
 		return;
@@ -1326,7 +1326,7 @@ PHP_METHOD(MogileFs, updateClass)
 	long mindevcount;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Ossl",
-		&object, mogilefs_class_entry_ptr, &domain, &domain_len,
+		&object, mogilefs_ce, &domain, &domain_len,
 		&class, &class_len, &mindevcount) == FAILURE) {
 
 		return;
@@ -1373,7 +1373,7 @@ PHP_METHOD(MogileFs, deleteClass)
 	int	domain_len, class_len, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss",
-		&object, mogilefs_class_entry_ptr, &domain, &domain_len,
+		&object, mogilefs_ce, &domain, &domain_len,
 		&class, &class_len) == FAILURE) {
 
 		return;
@@ -1413,7 +1413,7 @@ PHP_METHOD(MogileFs, createHost)
 
 	if (object == NULL) {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss", &object,
-									mogilefs_class_entry_ptr, &host, &host_len, &ip, &ip_len, &port, &port_len) == FAILURE) {
+									mogilefs_ce, &host, &host_len, &ip, &ip_len, &port, &port_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	} else {
@@ -1453,7 +1453,7 @@ PHP_METHOD(MogileFs, updateHost)
 
 	if (object == NULL) {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss|s", &object,
-				mogilefs_class_entry_ptr, &host, &host_len, &ip, &ip_len, &port, &port_len, &status, &status_len) == FAILURE) {
+				mogilefs_ce, &host, &host_len, &ip, &ip_len, &port, &port_len, &status, &status_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	} else {
@@ -1464,7 +1464,7 @@ PHP_METHOD(MogileFs, updateHost)
 	}
 
 	if (!strcmp("alive", status) && !strcmp("dead", status)) {
-		zend_throw_exception(mogilefs_exception_class_entry_ptr, "Invalid connection status", 0 TSRMLS_CC);
+		zend_throw_exception(mogilefs_exception_ce, "Invalid connection status", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -1499,7 +1499,7 @@ PHP_METHOD(MogileFs, deleteHost)
 
 	if (object == NULL) {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Os", &object,
-									mogilefs_class_entry_ptr, &host, &host_len) == FAILURE) {
+									mogilefs_ce, &host, &host_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	} else {
@@ -1543,7 +1543,7 @@ PHP_METHOD(MogileFs, setWeight)
 
 	if (object == NULL) {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss", &object,
-						mogilefs_class_entry_ptr, &host, &host_len, &device, &device_len, &weight, &weight_len) == FAILURE) {
+						mogilefs_ce, &host, &host_len, &device, &device_len, &weight, &weight_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	} else {
@@ -1585,7 +1585,7 @@ PHP_METHOD(MogileFs, setState)
 
 	if (object == NULL) {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss", &object,
-						mogilefs_class_entry_ptr, &host, &host_len, &device, &device_len, &state, &state_len) == FAILURE) {
+						mogilefs_ce, &host, &host_len, &device, &device_len, &state, &state_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	} else {
@@ -1632,7 +1632,7 @@ PHP_METHOD(MogileFs, checker)
 
 	if (object == NULL) {
 		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|ss", &object,
-									mogilefs_class_entry_ptr, &disable, &disable_len, &level, &level_len) == FAILURE) {
+									mogilefs_ce, &disable, &disable_len, &level, &level_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	} else {
@@ -1679,7 +1679,7 @@ PHP_METHOD(MogileFs, monitorRound)
 	int	request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O",
-		&object, mogilefs_class_entry_ptr) == FAILURE) {
+		&object, mogilefs_ce) == FAILURE) {
 
 		return;
 	}
@@ -1719,7 +1719,7 @@ PHP_METHOD(MogileFs, isConnected)
 	MogilefsSock *mogilefs_sock;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O",
-		&object, mogilefs_class_entry_ptr) == FAILURE) {
+		&object, mogilefs_ce) == FAILURE) {
 
 		return;
 	}
