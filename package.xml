@@ -16,7 +16,7 @@
 	</lead>
 	<date>2008-12-05</date>
 	<version>
-		<release>0.7.5b8-dev</release>
+		<release>0.7.5RC1-dev</release>
 		<api>0.7.0</api>
 	</version>
 	<stability>
@@ -25,12 +25,8 @@
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
 	<notes>
-		- 5.3 compatibility for ARG_INFO definition (ZEND_BEGIN_ARG_INFO with implicit static)
-		- http://pecl.php.net/bugs/bug.php?id=15284: Invalid format string
-		- http://pecl.php.net/bugs/bug.php?id=15283: Invalid comparison with string literal (patch by crrodriguez@opensuse.org)
-		- Refactored retrieval of the default domain to use new mogilefs_get_default_domain()
-		- QA fixes for really strict compiler options
-		- Removed unused artefacts from earlier version like module globals and RINIT
+		- Fixed a number of memory leaks/invalid reads. PECL mogilefs is now leak free
+		- Fixed protos
 	</notes>
 	<contents>
 		<dir name="/">
