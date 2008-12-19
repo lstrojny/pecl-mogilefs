@@ -580,12 +580,15 @@ PHPAPI void mogilefs_get_default_domain(MogilefsSock *mogilefs_sock, char **doma
 	}
 } /* }}} */
 
+/* {{{ proto Mogilefs MogileFs::__construct()
+	Create new MogileFs instance */
 PHP_METHOD(MogileFs, __construct)
 {
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "") == FAILURE) {
 		return;
 	}
 }
+/* }}} */
 
 /* {{{ proto bool MogileFs::connect(string host, string port, string domain [, int timeout])
 	Initialize a new MogileFs Session */
@@ -750,7 +753,7 @@ end:
 }
 /* }}} */
 
-/* {{{ proto string mogilefs_get(string key)
+/* {{{ proto string MogileFs::get(string key)
 	Get MogileFs path */
 PHP_METHOD(MogileFs, get)
 {
@@ -817,7 +820,7 @@ PHP_METHOD(MogileFs, delete)
 
 /* }}} */
 
-/* {{{ proto string mogilefs_rename(string src, string dest)
+/* {{{ proto string MogileFs::rename(string src, string dest)
 	Move a MogileFs file */
 PHP_METHOD(MogileFs, rename)
 {
