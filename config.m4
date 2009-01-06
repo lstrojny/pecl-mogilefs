@@ -3,7 +3,7 @@ PHP_ARG_WITH(mogilefs, for mogilefs support,
 
 
 if test "$PHP_MOGILEFS" != "no"; then
-	for i in $PHP_MOGILEFS /usr/local /usr; do
+	for i in $PHP_MOGILEFS /usr/local /usr /sw; do
 		if test -x "$i/bin/neon-config"; then
 			NEON_CONFIG=$i/bin/neon-config
 			break
