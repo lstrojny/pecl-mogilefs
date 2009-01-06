@@ -3,10 +3,7 @@
 	<channel>pecl.php.net</channel>
 	<summary>PHP client library to communicate with the MogileFS storage</summary>
 	<description>
-		PHP MogileFS is a client library to communicate with MogileFS trackers.
-		Those trackers are part of the distributed filesystem MogileFS created
-		by Danga Interactive (http://www.danga.com/) and used in serveral large
-		scale projects like LiveJournal.
+PHP MogileFS is a client library to communicate with MogileFS trackers. Those trackers are part of the distributed filesystem MogileFS created by Danga Interactive (http://www.danga.com/) and used in serveral large scale projects like LiveJournal.
 	</description>
 	<lead>
 		<name>Lars Strojny</name>
@@ -25,7 +22,8 @@
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
 	<notes>
-		- Fixed build issue on Mac OS X. Now compiles fine with neon from fink
+- Fixed build issue on Mac OS X. Now compiles fine with neon from fink
+- Checking return value of asprintf()
 	</notes>
 	<contents>
 		<dir name="/">
