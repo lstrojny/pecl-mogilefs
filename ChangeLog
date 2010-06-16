@@ -1,5 +1,6 @@
 php-mogilefs 0.7.6:
 	* Support for large files (Alayn Gortazar <alayn@irontec.com>)
+	* Allow compilation against PHP 5.3.2
 
 php-mogilefs 0.7.5 beta3:
 	* New API: MogileFs::isConnected()
