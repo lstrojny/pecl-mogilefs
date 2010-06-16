@@ -1,3 +1,6 @@
+php-mogilefs 0.7.6:
+	* Support for large files (Alayn Gortazar <alayn@irontec.com>)
+
 php-mogilefs 0.7.5 beta3:
 	* New API: MogileFs::isConnected()
 	* Fixed segfault in MogileFs::put() if client was not connected before

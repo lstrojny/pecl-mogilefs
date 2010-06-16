@@ -468,22 +468,6 @@ PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS
 }
 /* }}} */
 
-PHPAPI char *mogilefs_file_to_mem(char *filename, int *file_buffer_len TSRMLS_DC) /* {{{ */
-{
-	php_stream *stream;
-	char *data = NULL;
-
-	if ((stream = php_stream_open_wrapper(filename, "rb", USE_PATH | ENFORCE_SAFE_MODE, NULL)) != NULL) {
-		*file_buffer_len = php_stream_copy_to_mem(stream, &data, PHP_STREAM_COPY_ALL, 0);
-		if (*file_buffer_len == 0) {
-			data = estrdup("");
-		}
-		php_stream_close(stream);
-	}
-	return data;
-}
-/* }}} */
-
 PHPAPI char *mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * const key,	const char * const class, int multi_dest TSRMLS_DC) /* {{{ */
 {
 	int request_len, response_len;
@@ -670,8 +654,9 @@ PHP_METHOD(MogileFs, put)
 	php_url *url;
 	ne_session *sess;
 	ne_request *req;
-	int multi_dest = 1, use_file = 1, key_len, class_len, file_buffer_len, filename_len, ret, alloc_file = 0, alloc_url = 0;
+	int multi_dest = 1, use_file = 1, key_len, class_len, file_buffer_len, filename_len, ret, alloc_file = 0, alloc_url = 0, fd = 0;
 	char *key = NULL, *class = NULL, *file_buffer, *filename, *close_request;
+	FILE *f;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(),
 				"Osss|bl", &object, mogilefs_ce,
@@ -685,16 +670,6 @@ PHP_METHOD(MogileFs, put)
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
 		RETURN_FALSE;
-	}
-
-	if (use_file) {
-		if ((file_buffer = mogilefs_file_to_mem(filename, &file_buffer_len TSRMLS_CC)) == NULL) {
-			RETURN_FALSE;
-		}
-		alloc_file = 1;
-	} else {
-		file_buffer = filename;
-		file_buffer_len = filename_len;
 	}
 
 	if ((close_request = mogilefs_create_open(mogilefs_sock, key, class, multi_dest TSRMLS_CC)) == NULL) {
@@ -722,11 +697,26 @@ PHP_METHOD(MogileFs, put)
 	}
 
 	ne_set_read_timeout(sess, (int) MOGILEFS_DAV_SESSION_TIMEOUT);
-	req = ne_request_create(sess, "PUT", url->path);
-	ne_set_request_body_buffer(req, file_buffer, file_buffer_len);
-	ret = ne_request_dispatch(req);
 
-	ne_request_destroy(req);
+	if (use_file) {
+		f = php_stream_open_wrapper_as_file(filename, "rb", USE_PATH | ENFORCE_SAFE_MODE, NULL);
+		if (f != NULL) {
+			fd = fileno(f);
+			ret = ne_put(sess, url->path, fd);
+			close(fd);
+		} else {
+			RETVAL_FALSE;
+			goto end;
+		}
+	} else {
+		file_buffer = filename;
+		file_buffer_len = filename_len;
+		req = ne_request_create(sess, "PUT", url->path);
+		ne_set_request_body_buffer(req, file_buffer, file_buffer_len);
+		ret = ne_request_dispatch(req);
+		ne_request_destroy(req);
+	}
+
 	ne_session_destroy(sess);
 
 	if (ret != NE_OK) {
@@ -745,9 +735,6 @@ PHP_METHOD(MogileFs, put)
 end:
 	if (close_request) {
 		efree(close_request);
-	}
-	if (alloc_file) {
-		efree(file_buffer);
 	}
 	if (alloc_url) {
 		php_url_free(url);
