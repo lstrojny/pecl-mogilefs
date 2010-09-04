@@ -13,7 +13,7 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 	</lead>
 	<date>2010-08-30</date>
 	<version>
-		<release>0.7.5</release>
+		<release>0.8.0-dev</release>
 		<api>0.7.0</api>
 	</version>
 	<stability>
@@ -22,9 +22,7 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
 	<notes>
-- Allow compilation with PHP 5.3.X
-- Fixed build issue on Mac OS X. Now compiles fine with neon from fink
-- Checking return value of asprintf()
+- Fixing arginfo for MogileFs::put()
 	</notes>
 	<contents>
 		<dir name="/">

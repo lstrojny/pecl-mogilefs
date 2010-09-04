@@ -89,7 +89,7 @@ ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_sleep, 0)
 ZEND_END_ARG_INFO()
 
 MOGILEFS_ARG_INFO
-ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_put, 0)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_MogileFs_put, 0, 0, 3)
 	ZEND_ARG_INFO(0, filename)
 	ZEND_ARG_INFO(0, key)
 	ZEND_ARG_INFO(0, class)

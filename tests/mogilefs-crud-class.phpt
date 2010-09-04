@@ -26,6 +26,9 @@ try {
 	var_dump($e->getMessage());
 }
 
+// Wait for the class to be created
+sleep(5);
+
 $data = $client->updateClass(MOGILEFS_DOMAIN, $classname, 1);
 var_dump($data['domain'] == MOGILEFS_DOMAIN);
 var_dump($data['class'] == $classname);
