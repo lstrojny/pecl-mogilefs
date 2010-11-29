@@ -319,6 +319,14 @@ PHPAPI int mogilefs_sock_disconnect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* 
 	}
 
 	MOGILEFS_SOCK_WRITE(mogilefs_sock, "QUIT", 4);
+	return mogilefs_sock_close(mogilefs_sock);
+}
+/* }}} */
+
+PHPAPI int mogilefs_sock_close(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
+	if (mogilefs_sock->stream == NULL) {
+		return 0;
+	}
 	mogilefs_sock->status = MOGILEFS_SOCK_STATUS_DISCONNECTED;
 	php_stream_close(mogilefs_sock->stream);
 	mogilefs_sock->stream = NULL;
@@ -405,6 +413,17 @@ PHPAPI int mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock TSRMLS_DC) {
 }
 /* }}} */
 
+PHPAPI int mogilefs_sock_eof(MogilefsSock *mogilefs_sock) { /* {{{ */
+	if (php_stream_eof(mogilefs_sock->stream)) {
+		/* close socket but avoid writing on it again */
+		mogilefs_sock_close(mogilefs_sock);
+		zend_throw_exception(mogilefs_exception_ce, "Lost tracker connection", 0 TSRMLS_CC);
+		return 1;
+	}
+	return 0;
+}
+/* }}} */
+	
 PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, int cmd_len, short free_cmd TSRMLS_DC) { /* {{{ */
 	int retval = 0;
 
@@ -412,7 +431,9 @@ PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, int cmd_l
 	php_printf("REQUEST: %s", cmd);
 #endif
 
-	if (php_stream_write(mogilefs_sock->stream, cmd, cmd_len) != cmd_len) {
+	if (mogilefs_sock_eof(mogilefs_sock)) {
+		retval = -1;
+	} else if (php_stream_write(mogilefs_sock->stream, cmd, cmd_len) != cmd_len) {
 		retval = -1;
 	}
 
@@ -427,12 +448,25 @@ PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, int cmd_l
 PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC) { /* {{{ */
 	char inbuf[MOGILEFS_SOCK_BUF_SIZE], *outbuf, *p, *s, *status, *message, *message_clean;
 
+	if (mogilefs_sock_eof(mogilefs_sock)) {
+		return NULL;
+	}
+
 	s = php_stream_gets(mogilefs_sock->stream, inbuf, 4); /* OK / ERR */
+	if (!s) {
+		zend_throw_exception(mogilefs_exception_ce, "read returned no data", 0 TSRMLS_CC);
+		return NULL;
+	}
+
 	status = estrndup(s, 2);
 	outbuf = php_stream_gets(mogilefs_sock->stream, inbuf, MOGILEFS_SOCK_BUF_SIZE);
 	if ((p = strchr(outbuf, '\r'))) {
 		*p = '\0';
 	}
+
+#ifdef MOGILEFS_DEBUG
+	php_printf("STATUS: %s RESPONSE: %s\n", status, outbuf);
+#endif
 
 	if (strcmp(status, "OK") != 0) {
 		*buf_len = 0;
@@ -460,9 +494,6 @@ PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS
 	*buf_len = strlen(outbuf);
 	efree(status);
 
-#ifdef MOGILEFS_DEBUG
-	php_printf("RESPONSE: %s\n", outbuf);
-#endif
 
 	return estrndup(outbuf, *buf_len);
 }

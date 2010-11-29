@@ -22,7 +22,8 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
 	<notes>
-- Fixing arginfo for MogileFs::put()
+- Adding read timeout handling (Andre Pascha <andre.pascha@kwick.de>)
+- Adding EOF check before reading/writing to a socket (Andre Pascha <andre.pascha@kwick.de>)
 	</notes>
 	<contents>
 		<dir name="/">

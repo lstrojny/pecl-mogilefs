@@ -110,8 +110,10 @@ PHPAPI int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, char *
 PHPAPI MogilefsSock* mogilefs_sock_server_init(char *m_host, int m_host_len, unsigned short m_port, char *m_domain, int m_domain_len, long timeout);
 PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC);
 PHPAPI int mogilefs_sock_disconnect(MogilefsSock *mogilefs_sock TSRMLS_DC);
+PHPAPI int mogilefs_sock_close(MogilefsSock *mogilefs_sock TSRMLS_DC);
 PHPAPI int mogilefs_sock_server_open(MogilefsSock *mogilefs_sock, int TSRMLS_DC);
 PHPAPI int mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock TSRMLS_DC);
+PHPAPI int mogilefs_sock_eof(MogilefsSock *mogilefs_sock);
 PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, int cmd_len, short free_cmd TSRMLS_DC);
 PHPAPI char * mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC);
 PHPAPI char * mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * const key, const char * const class, int multi_dest TSRMLS_DC);
