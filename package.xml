@@ -13,7 +13,7 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 	</lead>
 	<date>2011-02-16</date>
 	<version>
-		<release>0.8.0</release>
+		<release>0.8.1-dev</release>
 		<api>0.8.0</api>
 	</version>
 	<stability>
@@ -22,10 +22,7 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 	</stability>
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
 	<notes>
-- Fixing arginfo for MogileFs::put
-- Adding read timeout handling (Andre Pascha &lt;andre.pascha@kwick.de&gt;)
-- Adding EOF check before reading/writing to a socket (Andre Pascha &lt;andre.pascha@kwick.de&gt;)
-- Changing timeout parameter for MogileFs::connect to float to allow specifying microseconds
+- Connect timeout does not set read timeout
 	</notes>
 	<contents>
 		<dir name="/">

@@ -364,7 +364,6 @@ PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{
 	efree(host);
 
 	php_stream_auto_cleanup(mogilefs_sock->stream);
-	php_stream_set_option(mogilefs_sock->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, &mogilefs_sock->timeout);
 	php_stream_set_option(mogilefs_sock->stream, PHP_STREAM_OPTION_WRITE_BUFFER, PHP_STREAM_BUFFER_NONE, NULL);
 	mogilefs_sock->status = MOGILEFS_SOCK_STATUS_CONNECTED;
 	return 0;
