@@ -99,7 +99,7 @@ typedef struct MogilefsSock_ {
 	char				*host;
 	char				*domain;
 	unsigned short		port;
-	long				timeout;
+	struct timeval		timeout;
 	long				failed;
 	int					status;
 } MogilefsSock;
@@ -107,7 +107,7 @@ typedef struct MogilefsSock_ {
 
 /* {{{ internal function protos */
 PHPAPI int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, char *result, int result_len);
-PHPAPI MogilefsSock* mogilefs_sock_server_init(char *m_host, int m_host_len, unsigned short m_port, char *m_domain, int m_domain_len, long timeout);
+PHPAPI MogilefsSock* mogilefs_sock_server_init(char *m_host, int m_host_len, unsigned short m_port, char *m_domain, int m_domain_len, struct timeval timeout);
 PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC);
 PHPAPI int mogilefs_sock_disconnect(MogilefsSock *mogilefs_sock TSRMLS_DC);
 PHPAPI int mogilefs_sock_close(MogilefsSock *mogilefs_sock TSRMLS_DC);

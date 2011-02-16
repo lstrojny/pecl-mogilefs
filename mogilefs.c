@@ -292,7 +292,7 @@ PHPAPI int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, char *
 /* }}} */
 
 PHPAPI MogilefsSock *mogilefs_sock_server_init(char *host, int host_len, unsigned short port, /* {{{ */
-											char *domain, int domain_len, long timeout) {
+											char *domain, int domain_len, struct timeval timeout) {
 	MogilefsSock *mogilefs_sock;
 
 	mogilefs_sock = emalloc(sizeof *mogilefs_sock);
@@ -335,16 +335,12 @@ PHPAPI int mogilefs_sock_close(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ *
 /* }}} */
 
 PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
-	struct timeval tv;
 	char *host = NULL, *hash_key = NULL, *errstr = NULL;
 	int	host_len, err = 0;
 
 	if (mogilefs_sock->stream != NULL) {
 		mogilefs_sock_disconnect(mogilefs_sock TSRMLS_CC);
 	}
-
-	tv.tv_usec = mogilefs_sock->timeout;
-	tv.tv_sec = 0;
 
 	host_len = spprintf(&host, 0, "%s:%d", mogilefs_sock->host, mogilefs_sock->port);
 
@@ -354,7 +350,7 @@ PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{
 		ENFORCE_SAFE_MODE,
 		STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT,
 		hash_key,
-		&tv,
+		&mogilefs_sock->timeout,
 		NULL,
 		&errstr,
 		&err
@@ -368,7 +364,7 @@ PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{
 	efree(host);
 
 	php_stream_auto_cleanup(mogilefs_sock->stream);
-	php_stream_set_option(mogilefs_sock->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, &tv);
+	php_stream_set_option(mogilefs_sock->stream, PHP_STREAM_OPTION_READ_TIMEOUT, 0, &mogilefs_sock->timeout);
 	php_stream_set_option(mogilefs_sock->stream, PHP_STREAM_OPTION_WRITE_BUFFER, PHP_STREAM_BUFFER_NONE, NULL);
 	mogilefs_sock->status = MOGILEFS_SOCK_STATUS_CONNECTED;
 	return 0;
@@ -613,7 +609,7 @@ PHP_METHOD(MogileFs, connect)
 {
 	int host_len, domain_len, id;
 	char *host = NULL, *domain = NULL;
-	unsigned long port, to_conv;
+	unsigned long port, timeout_conv;
 	double timeout = 5.0;
 	struct timeval tv;
 	MogilefsSock *mogilefs_sock = NULL;
@@ -627,9 +623,9 @@ PHP_METHOD(MogileFs, connect)
 	}
 
 
-	to_conv = (int)(timeout * 1000);
-	tv.tv_sec = to_conv / 1000;
-	tv.tv_usec = to_conv % 1000;
+	timeout_conv = (int)(timeout * 1000);
+	tv.tv_sec = timeout_conv / 1000;
+	tv.tv_usec = timeout_conv % 1000;
 
 
 	if (tv.tv_usec < 0L || tv.tv_usec > INT_MAX || tv.tv_sec < 0L || tv.tv_sec > INT_MAX) {
@@ -637,7 +633,7 @@ PHP_METHOD(MogileFs, connect)
 		RETURN_FALSE;
 	}
 
-	mogilefs_sock = mogilefs_sock_server_init(host, host_len, port, domain, domain_len, timeout);
+	mogilefs_sock = mogilefs_sock_server_init(host, host_len, port, domain, domain_len, tv);
 	if (mogilefs_sock_server_open(mogilefs_sock, 1 TSRMLS_CC) < 0) {
 		mogilefs_free_socket(mogilefs_sock);
 		zend_throw_exception_ex(
