@@ -25,6 +25,7 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 - Fixing arginfo for MogileFs::put
 - Adding read timeout handling (Andre Pascha <andre.pascha@kwick.de>)
 - Adding EOF check before reading/writing to a socket (Andre Pascha <andre.pascha@kwick.de>)
+- Changing timeout parameter for MogileFs::connect to microseconds
 	</notes>
 	<contents>
 		<dir name="/">

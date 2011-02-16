@@ -343,8 +343,8 @@ PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{
 		mogilefs_sock_disconnect(mogilefs_sock TSRMLS_CC);
 	}
 
-	tv.tv_sec = mogilefs_sock->timeout;
-	tv.tv_usec = 0;
+	tv.tv_usec = mogilefs_sock->timeout;
+	tv.tv_sec = 0;
 
 	host_len = spprintf(&host, 0, "%s:%d", mogilefs_sock->host, mogilefs_sock->port);
 
@@ -613,25 +613,24 @@ PHP_METHOD(MogileFs, connect)
 {
 	int host_len, domain_len, id;
 	char *host = NULL, *domain = NULL;
-	long port;
-	struct timeval timeout = { 5L, 0L };
+	unsigned long port, timeout = 5000;
 	MogilefsSock *mogilefs_sock = NULL;
 	zval *object;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(),
 		"Osls|l", &object, mogilefs_ce, &host, &host_len, &port,
-		&domain, &domain_len, &timeout.tv_sec) == FAILURE) {
+		&domain, &domain_len, &timeout) == FAILURE) {
 
 		return;
 	}
 
 
-	if (timeout.tv_sec < 0L || timeout.tv_sec > INT_MAX) {
+	if (timeout < 0L || timeout > INT_MAX) {
 		zend_throw_exception(mogilefs_exception_ce, "Invalid timeout", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
-	mogilefs_sock = mogilefs_sock_server_init(host, host_len, port, domain, domain_len, timeout.tv_sec);
+	mogilefs_sock = mogilefs_sock_server_init(host, host_len, port, domain, domain_len, timeout);
 	if (mogilefs_sock_server_open(mogilefs_sock, 1 TSRMLS_CC) < 0) {
 		mogilefs_free_socket(mogilefs_sock);
 		zend_throw_exception_ex(
