@@ -455,40 +455,39 @@ PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, unsigned 
 /* }}} */
 
 PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC) { /* {{{ */
-	char inbuf[MOGILEFS_SOCK_BUF_SIZE], *outbuf, *p, *s, *status, *message, *message_clean;
+	char *outbuf, *p, *message, *message_clean, *retbuf;
+	size_t outbuf_len;
 
 	if (mogilefs_sock_eof(mogilefs_sock)) {
 		return NULL;
 	}
 
-	s = php_stream_gets(mogilefs_sock->stream, inbuf, 4); /* OK / ERR */
-	if (!s) {
-		zend_throw_exception(mogilefs_exception_ce, "read returned no data", 0 TSRMLS_CC);
+	outbuf = php_stream_get_line(mogilefs_sock->stream, NULL, MOGILEFS_MAX_MESSAGE_SIZE, &outbuf_len); /* OK / ERR */
+	if (!outbuf) {
+		zend_throw_exception(mogilefs_exception_ce, "Read returned no data", 0 TSRMLS_CC);
 		return NULL;
 	}
 
-	status = estrndup(s, 2);
-	outbuf = php_stream_gets(mogilefs_sock->stream, inbuf, MOGILEFS_SOCK_BUF_SIZE);
-	if ((p = strchr(outbuf, '\r'))) {
-		*p = '\0';
-	}
+	p = outbuf + outbuf_len - 2;
+	if (p) *p = '\0';
 
 #ifdef MOGILEFS_DEBUG
-	php_printf("STATUS: %s RESPONSE: %s\n", status, outbuf);
+	php_printf("RESPONSE: %s\n", outbuf);
 #endif
 
-	if (strcmp(status, "OK") != 0) {
+	if (strncmp(outbuf, "OK", 2) != 0) {
 		*buf_len = 0;
 
-		message = php_trim(outbuf, strlen(outbuf), NULL, 0, NULL, 3 TSRMLS_CC);
+		message = php_trim(outbuf, outbuf_len, NULL, 0, NULL, 3 TSRMLS_CC);
 
 #ifdef MOGILEFS_DEBUG
 		php_printf("ERROR: %s\n", message);
 #endif
 
 		message_clean = malloc(strlen(message) + 1);
-		if ((p = strchr(message, ' '))) {
-			strcpy(message_clean, p+1);
+		/** Extract error message from "ERR <code> <message>" */
+		if ((p = strchr(message, ' ')) && (p = strchr(p + 1, ' '))) {
+			strcpy(message_clean, p + 1);
 		} else {
 			strcpy(message_clean, message);
 		}
@@ -496,15 +495,18 @@ PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS
 
 		zend_throw_exception(mogilefs_exception_ce, message_clean, 0 TSRMLS_CC);
 
+		efree(outbuf);
 		efree(message);
-		efree(status);
+
 		return NULL;
 	}
-	*buf_len = strlen(outbuf);
-	efree(status);
 
+	*buf_len = outbuf_len - 2;
+	retbuf = estrndup(outbuf + 3, *buf_len);
 
-	return estrndup(outbuf, *buf_len);
+	efree(outbuf);
+
+	return retbuf; 
 }
 /* }}} */
 

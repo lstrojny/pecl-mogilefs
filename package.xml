@@ -26,6 +26,7 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 - Remove PHP max version limit
 - Comply with stricter c99 standard
 - Fixed tests and made them more robust
+- Optimized mogilefs_sock_read() and introduced maximum message size (based on a patch from Andre Pascha of kwick.de)
 	</notes>
 	<contents>
 		<dir name="/">
@@ -34,24 +35,29 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 			<file name="mogilefs.c" role="src"/>
 			<file name="php_mogilefs.h" role="src"/>
 			<dir name="tests">
-				<!-- Inventory -->
+				<!-- Test Inventory -->
 				<file name="config.inc.php.example" role="test"/>
 				<file name="test-helper.php" role="test"/>
 
 				<!-- Tests -->
 				<file name="mogilefs-close.phpt" role="test"/>
 				<file name="mogilefs-connect.phpt" role="test"/>
+				<file name="mogilefs-construct.phpt" role="test"/>
 				<file name="mogilefs-crud-class.phpt" role="test"/>
 				<file name="mogilefs-crud-domain.phpt" role="test"/>
+				<file name="mogilefs-extension-present.phpt" role="test"/>
 				<file name="mogilefs-get-domains.phpt" role="test"/>
 				<file name="mogilefs-is-connected.phpt" role="test"/>
 				<file name="mogilefs-list-keys.phpt" role="test"/>
 				<file name="mogilefs-put-file.phpt" role="test"/>
+				<file name="mogilefs-readtimeout.phpt" role="test"/>
 				<file name="mogilefs-rename.phpt" role="test"/>
 				<file name="mogilefs-sleep.phpt" role="test"/>
 				<file name="mogilefs-construct.phpt" role="test"/>
 				<dir name="regressions">
 					<file name="array-is-managed.phpt" role="test"/>
+					<file name="cleaned-socket.phpt" role="test"/>
+					<file name="not-connected.phpt" role="test"/>
 				</dir>
 				<dir name="performance">
 					<file name="benchmark.php" role="test"/>
