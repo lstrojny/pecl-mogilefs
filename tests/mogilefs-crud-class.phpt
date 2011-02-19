@@ -55,7 +55,7 @@ bool(true)
 bool(true)
 bool(true)
 int(3)
-string(%d) "Duplicate name/number used."
+string(%d) "That class already exists in that domain"
 bool(true)
 bool(true)
 bool(true)
