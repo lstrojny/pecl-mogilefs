@@ -76,6 +76,8 @@ PHP_METHOD(MogileFs, close);
 PHP_METHOD(MogileFs, disconnect);
 PHP_METHOD(MogileFs, delete);
 PHP_METHOD(MogileFs, rename);
+PHP_METHOD(MogileFs, setReadTimeout);
+PHP_METHOD(MogileFs, getReadTimeout);
 PHP_METHOD(MogileFs, isInDebuggingMode);
 
 #define mogilefs_sock_name "MogileFS Socket Buffer"
@@ -87,7 +89,8 @@ PHP_METHOD(MogileFs, isInDebuggingMode);
 
 
 #define MOGILEFS_SOCK_BUF_SIZE 4096
-#define MOGILEFS_DAV_SESSION_TIMEOUT 8
+#define MOGILEFS_READ_TIMEOUT 10.0
+#define MOGILEFS_CONNECT_TIMEOUT 5.0
 #define MOGILEFS_SOCK_STATUS_FAILED 0
 #define MOGILEFS_SOCK_STATUS_DISCONNECTED 1
 #define MOGILEFS_SOCK_STATUS_UNKNOWN 2
@@ -95,11 +98,12 @@ PHP_METHOD(MogileFs, isInDebuggingMode);
 
 /* {{{ struct MogilefsSock */
 typedef struct MogilefsSock_ {
-	php_stream *stream;
+	php_stream			*stream;
 	char				*host;
 	char				*domain;
 	unsigned short		port;
-	struct timeval		timeout;
+	struct timeval		connect_timeout;
+	struct timeval		read_timeout;
 	long				failed;
 	int					status;
 } MogilefsSock;

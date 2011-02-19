@@ -25,7 +25,11 @@ function mogilefs_test_factory()
 	try {
 		$client->createClass(MOGILEFS_DOMAIN, MOGILEFS_CLASS, MOGILEFS_DEVICE_COUNT);
 	} catch (MogileFsException $e) {
-		assert('$e->getMessage() == "That class already exists in that domain"');
+        if ($e->getMessage() === 'Domain not found') {
+            $client->createDomain(MOGILEFS_DOMAIN);
+        } else {
+		    assert('$e->getMessage() == "That class already exists in that domain"');
+        }
 	}
 	return $client;
 }
