@@ -211,12 +211,13 @@ PHPAPI void mogilefs_free_socket(MogilefsSock *mogilefs_sock) /* {{{ */
 
 PHP_MINIT_FUNCTION(mogilefs) /* {{{ */
 {
-	ne_sock_init();
 	zend_class_entry mogilefs_class_entry;
+	zend_class_entry mogilefs_exception_class_entry;
+	
+	ne_sock_init();
 	INIT_CLASS_ENTRY(mogilefs_class_entry, "MogileFs", php_mogilefs_methods);
 	mogilefs_ce = zend_register_internal_class(&mogilefs_class_entry TSRMLS_CC);
 
-	zend_class_entry mogilefs_exception_class_entry;
 	INIT_CLASS_ENTRY(mogilefs_exception_class_entry, "MogileFsException", NULL);
 	mogilefs_exception_ce = zend_register_internal_class_ex(
 		&mogilefs_exception_class_entry,
@@ -432,7 +433,7 @@ PHPAPI int mogilefs_sock_eof(MogilefsSock *mogilefs_sock) { /* {{{ */
 }
 /* }}} */
 	
-PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, int cmd_len, short free_cmd TSRMLS_DC) { /* {{{ */
+PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, unsigned int cmd_len, short free_cmd TSRMLS_DC) { /* {{{ */
 	int retval = 0;
 
 #ifdef MOGILEFS_DEBUG
@@ -510,7 +511,7 @@ PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS
 PHPAPI char *mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * const key,	const char * const class, int multi_dest TSRMLS_DC) /* {{{ */
 {
 	int request_len, response_len;
-	char *request = NULL, *response = NULL; //, *close_request = NULL;
+	char *request = NULL, *response = NULL;
 
 	request_len = spprintf(
 		&request,
@@ -699,8 +700,20 @@ PHP_METHOD(MogileFs, put)
 	php_url *url;
 	ne_session *sess;
 	ne_request *req;
-	int multi_dest = 1, use_file = 1, key_len, class_len, file_buffer_len, filename_len, ret, alloc_file = 0, alloc_url = 0, fd = 0;
-	char *key = NULL, *class = NULL, *file_buffer, *filename, *close_request;
+	int multi_dest = 1,
+		use_file = 1,
+		key_len,
+		class_len,
+		file_buffer_len,
+		filename_len,
+		ret,
+		alloc_url = 0,
+		fd = 0;
+	char *key = NULL,
+		*class = NULL,
+		*file_buffer,
+		*filename,
+		*close_request;
 	FILE *f;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(),

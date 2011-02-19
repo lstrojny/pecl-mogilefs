@@ -118,7 +118,7 @@ PHPAPI int mogilefs_sock_close(MogilefsSock *mogilefs_sock TSRMLS_DC);
 PHPAPI int mogilefs_sock_server_open(MogilefsSock *mogilefs_sock, int TSRMLS_DC);
 PHPAPI int mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock TSRMLS_DC);
 PHPAPI int mogilefs_sock_eof(MogilefsSock *mogilefs_sock);
-PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, int cmd_len, short free_cmd TSRMLS_DC);
+PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, unsigned int cmd_len, short free_cmd TSRMLS_DC);
 PHPAPI char * mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC);
 PHPAPI char * mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * const key, const char * const class, int multi_dest TSRMLS_DC);
 PHPAPI int mogilefs_create_close(MogilefsSock *mogilefs_sock, const char * const m_key, const char * const class, const char * const close_request TSRMLS_DC);
