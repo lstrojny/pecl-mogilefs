@@ -23,7 +23,9 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
 	<notes>
 - Adding new methods setReadTimeout(float readTimeout) and getReadTimeout()
-- Remove PHP max limit
+- Remove PHP max version limit
+- Comply with stricter c99 standard
+- Fixed tests and made them more robust
 	</notes>
 	<contents>
 		<dir name="/">

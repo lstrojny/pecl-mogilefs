@@ -95,6 +95,13 @@ PHP_METHOD(MogileFs, isInDebuggingMode);
 #define MOGILEFS_SOCK_STATUS_DISCONNECTED 1
 #define MOGILEFS_SOCK_STATUS_UNKNOWN 2
 #define MOGILEFS_SOCK_STATUS_CONNECTED 3
+/**
+ * Compute maximum mogilefs message buffer size
+ *
+ * (max(keylength) + max(keynamelength) + '=' + '&') * max(listkey_entries) + status + "\r\n")
+ */
+#define MOGILEFS_MAX_MESSAGE_SIZE ((255 + 7 + 1 + 1) * 1000 + 3 + 2)
+
 
 /* {{{ struct MogilefsSock */
 typedef struct MogilefsSock_ {

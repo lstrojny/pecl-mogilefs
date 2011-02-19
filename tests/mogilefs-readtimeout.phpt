@@ -21,9 +21,9 @@ var_dump($client->getReadTimeout());
 ?>
 ==DONE==
 --EXPECTF--
-float(5)
+float(10)
 string(%d) "No connection established. Call connect() first"
-float(5)
+float(10)
 NULL
 float(10.2)
 ==DONE==

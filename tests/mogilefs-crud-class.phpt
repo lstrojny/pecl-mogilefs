@@ -26,10 +26,17 @@ try {
 	var_dump($e->getMessage());
 }
 
-// Wait for the class to be created
-sleep(5);
-
-$data = $client->updateClass(MOGILEFS_DOMAIN, $classname, 1);
+// Might take a few seconds to create the class
+$c = 0;
+do {
+	try {
+		$data = $client->updateClass(MOGILEFS_DOMAIN, $classname, 1);
+		break;
+	} catch (MogileFsException $e) {
+		usleep(500);
+		++$c;
+	}
+} while ($c < 10);
 var_dump($data['domain'] == MOGILEFS_DOMAIN);
 var_dump($data['class'] == $classname);
 var_dump($data['mindevcount'] == 1);
@@ -48,7 +55,7 @@ bool(true)
 bool(true)
 bool(true)
 int(3)
-string(%d) "That class already exists in that domain"
+string(%d) "Duplicate name/number used."
 bool(true)
 bool(true)
 bool(true)

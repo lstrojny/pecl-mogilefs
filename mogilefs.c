@@ -320,7 +320,7 @@ PHPAPI MogilefsSock *mogilefs_sock_server_init(char *host, int host_len, unsigne
 
 	mogilefs_sock->port = port;
 	mogilefs_sock->connect_timeout = connect_timeout;
-	mogilefs_sock->read_timeout.tv_sec = 5;
+	mogilefs_sock->read_timeout.tv_sec = MOGILEFS_READ_TIMEOUT;
 	mogilefs_sock->read_timeout.tv_usec = 0;
 
 	return mogilefs_sock;
@@ -636,15 +636,15 @@ PHP_METHOD(MogileFs, connect)
 	}
 
 
+	if (connect_timeout < 0 || connect_timeout > (double)INT_MAX) {
+		zend_throw_exception(mogilefs_exception_ce, "Invalid timeout", 0 TSRMLS_CC);
+		RETURN_FALSE;
+	}
+
 	connect_timeout_conv = (int)(connect_timeout * 1000);
 	tv.tv_sec = connect_timeout_conv / 1000;
 	tv.tv_usec = connect_timeout_conv % 1000;
 
-
-	if (tv.tv_usec < 0L || tv.tv_usec > INT_MAX || tv.tv_sec < 0L || tv.tv_sec > INT_MAX) {
-		zend_throw_exception(mogilefs_exception_ce, "Invalid timeout", 0 TSRMLS_CC);
-		RETURN_FALSE;
-	}
 
 	mogilefs_sock = mogilefs_sock_server_init(host, host_len, port, domain, domain_len, tv);
 	if (mogilefs_sock_server_open(mogilefs_sock, 1 TSRMLS_CC) < 0) {
