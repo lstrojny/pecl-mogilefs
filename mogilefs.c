@@ -682,6 +682,7 @@ PHP_METHOD(MogileFs, close)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -729,15 +730,18 @@ PHP_METHOD(MogileFs, put)
 	multi_dest = 0;
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to MogileFS tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
 	if ((close_request = mogilefs_create_open(mogilefs_sock, key, class, multi_dest TSRMLS_CC)) == NULL) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not open CREATE_CLOSE connection", 0 TSRMLS_CC);
 		RETVAL_FALSE;
 		goto end;
 	}
 
 	if (mogilefs_get_uri_path(close_request, &url TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not retrieve MogileFS path", 0 TSRMLS_CC);
 		RETVAL_FALSE;
 		goto end;
 	}
@@ -752,6 +756,7 @@ PHP_METHOD(MogileFs, put)
 	}
 
 	if ((sess = ne_session_create(url->scheme, url->host, url->port)) == NULL) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not open WebDAV connection", 0 TSRMLS_CC);
 		RETVAL_FALSE;
 		goto end;
 	}
@@ -766,6 +771,7 @@ PHP_METHOD(MogileFs, put)
 			ret = ne_put(sess, url->path, fd);
 			close(fd);
 		} else {
+			zend_throw_exception(mogilefs_exception_ce, "Could not open file", 0 TSRMLS_CC);
 			RETVAL_FALSE;
 			goto end;
 		}
@@ -819,6 +825,7 @@ PHP_METHOD(MogileFs, get)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "GET_PATHS domain=%s&key=%s\r\n", mogilefs_sock->domain, key);
@@ -852,6 +859,7 @@ PHP_METHOD(MogileFs, delete)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -887,6 +895,7 @@ PHP_METHOD(MogileFs, rename)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "RENAME domain=%s&from_key=%s&to_key=%s\r\n", mogilefs_sock->domain, src_key, dest_key);
@@ -919,6 +928,7 @@ PHP_METHOD(MogileFs, getDomains)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "GET_DOMAINS\r\n");
@@ -954,6 +964,7 @@ PHP_METHOD(MogileFs, listKeys)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -1004,6 +1015,7 @@ PHP_METHOD(MogileFs, listFids)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -1042,6 +1054,7 @@ PHP_METHOD(MogileFs, getHosts)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -1080,6 +1093,7 @@ PHP_METHOD(MogileFs, getDevices)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -1116,6 +1130,7 @@ PHP_METHOD(MogileFs, sleep)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -1157,6 +1172,7 @@ PHP_METHOD(MogileFs, stats)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -1193,6 +1209,7 @@ PHP_METHOD(MogileFs, replicate)
 
 	}
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -1235,6 +1252,7 @@ PHP_METHOD(MogileFs, createDevice)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -1270,6 +1288,7 @@ PHP_METHOD(MogileFs, createDomain)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -1305,6 +1324,7 @@ PHP_METHOD(MogileFs, deleteDomain)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -1342,6 +1362,7 @@ PHP_METHOD(MogileFs, createClass)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -1389,6 +1410,7 @@ PHP_METHOD(MogileFs, updateClass)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -1435,6 +1457,7 @@ PHP_METHOD(MogileFs, deleteClass)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -1479,6 +1502,7 @@ PHP_METHOD(MogileFs, createHost)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "CREATE_HOST domain=%s&host=%s&ip=%s&port=%s\r\n", mogilefs_sock->domain, host, ip, port);
@@ -1524,6 +1548,7 @@ PHP_METHOD(MogileFs, updateHost)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "UPDATE_HOST domain=%s&host=%s&ip=%s&port=%s&status=%s&update=1\r\n", mogilefs_sock->domain, host, ip, port, status);
@@ -1566,6 +1591,7 @@ PHP_METHOD(MogileFs, deleteHost)
 
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "DELETE_HOST domain=%s&host=%s\r\n", mogilefs_sock->domain, host);
@@ -1609,6 +1635,7 @@ PHP_METHOD(MogileFs, setWeight)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "SET_WEIGHT domain=%s&host=%s&device=%s&weight=%s\r\n", mogilefs_sock->domain, host, device, weight);
@@ -1656,6 +1683,7 @@ PHP_METHOD(MogileFs, setState)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "SET_STATE domain=%s&host=%s&device=%s&state=%s\r\n", mogilefs_sock->domain, host, device, state);
@@ -1704,6 +1732,7 @@ PHP_METHOD(MogileFs, checker)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "CHECKER domain=%s&disable=%s&level=%s\r\n", mogilefs_sock->domain, disable, level);
@@ -1740,6 +1769,7 @@ PHP_METHOD(MogileFs, monitorRound)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
@@ -1780,6 +1810,7 @@ PHP_METHOD(MogileFs, isConnected)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
