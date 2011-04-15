@@ -27,6 +27,7 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 - Comply with stricter c99 standard
 - Fixed tests and made them more robust
 - Optimized mogilefs_sock_read() and introduced maximum message size (based on a patch from Andre Pascha of kwick.de)
+- MogileFs::put() throws more exceptions
 	</notes>
 	<contents>
 		<dir name="/">
