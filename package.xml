@@ -41,10 +41,10 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 				<file name="test-helper.php" role="test"/>
 
 				<!-- Tests -->
-				<file name="mogilefs-close.phpt" role="test"/>
+				<file name="00-mogilefs-crud-class.phpt" role="test"/>
 				<file name="mogilefs-connect.phpt" role="test"/>
+				<file name="mogilefs-close.phpt" role="test"/>
 				<file name="mogilefs-construct.phpt" role="test"/>
-				<file name="mogilefs-crud-class.phpt" role="test"/>
 				<file name="mogilefs-crud-domain.phpt" role="test"/>
 				<file name="mogilefs-extension-present.phpt" role="test"/>
 				<file name="mogilefs-get-domains.phpt" role="test"/>
@@ -54,7 +54,6 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 				<file name="mogilefs-readtimeout.phpt" role="test"/>
 				<file name="mogilefs-rename.phpt" role="test"/>
 				<file name="mogilefs-sleep.phpt" role="test"/>
-				<file name="mogilefs-construct.phpt" role="test"/>
 				<dir name="regressions">
 					<file name="array-is-managed.phpt" role="test"/>
 					<file name="cleaned-socket.phpt" role="test"/>
