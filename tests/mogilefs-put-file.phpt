@@ -23,7 +23,12 @@ var_dump('foobarbaz' === file_get_contents($result['path1']));
 var_dump($client->delete('bar'));
 
 
-var_dump($client->put('foobarbaz', 'bar', MOGILEFS_CLASS, true));
+try {
+	$client->put('foobarbaz', 'bar', MOGILEFS_CLASS, true);
+} catch (MogileFsException $e) {
+	var_dump(get_class($e));
+	var_dump($e->getMessage());
+}
 var_dump($client->put());
 
 ?>
@@ -39,7 +44,8 @@ string(%d) "http://%s.fid"
 string(%d) "%d"
 bool(true)
 bool(true)
-bool(false)
+string(%d) "MogileFsException"
+string(%d) "Could not open file"
 
 Warning: MogileFs::put() expects at least 3 parameters, 0 given in %s on line %d
 NULL

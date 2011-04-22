@@ -8,9 +8,15 @@ if (mogilefs_skipped()) print "skip";
 <?php
 require_once dirname(__FILE__) . '/../test-helper.php';
 $client = new MogileFs();
-var_dump($client->put(__FILE__, 'test', MOGILEFS_DOMAIN));
+try {
+	$client->put(__FILE__, 'test', MOGILEFS_DOMAIN);
+} catch (MogileFsException $e) {
+	var_dump(get_class($e));
+	var_dump($e->getMessage());
+}
 ?>
 ==DONE==
 --EXPECTF--
-bool(false)
+string(%d) "MogileFsException"
+string(%d) "Could not connect to MogileFS tracker"
 ==DONE==

@@ -1810,7 +1810,6 @@ PHP_METHOD(MogileFs, isConnected)
 	}
 
 	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
 
