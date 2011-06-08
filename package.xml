@@ -26,7 +26,7 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 	</notes>
 	<contents>
 		<dir name="/">
-			<file name="README" role="doc"/>
+			<file name="README.md" role="doc"/>
 			<file name="config.m4" role="src"/>
 			<file name="mogilefs.c" role="src"/>
 			<file name="php_mogilefs.h" role="src"/>
@@ -42,6 +42,7 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 				<file name="mogilefs-construct.phpt" role="test"/>
 				<file name="mogilefs-crud-domain.phpt" role="test"/>
 				<file name="mogilefs-extension-present.phpt" role="test"/>
+				<file name="mogilefs-fileInfo.phpt" role="test"/>
 				<file name="mogilefs-get-domains.phpt" role="test"/>
 				<file name="mogilefs-is-connected.phpt" role="test"/>
 				<file name="mogilefs-list-keys.phpt" role="test"/>
