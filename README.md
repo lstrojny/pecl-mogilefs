@@ -12,7 +12,9 @@ make install
 
 ## Method overview
 
- - ``bool MogileFs::connect(string $host, int $port, string $domain)``
+ - ``MogileFs MogileFs::__construct()``
+ - ``bool MogileFs::connect(string $host, int $port, string $domain[, float $timeout])``
+ - ``bool MogileFs::isConnection()``
  - ``bool MogileFs::close()``
  - ``bool MogileFs::put(file, string $key, string $class[, bool $use_file])``
  - ``array MogileFs::fileInfo(string $key)``
@@ -38,6 +40,8 @@ make install
  - ``bool MogileFs::setWeight(string $hostname, string $device, string $weight)``
  - ``bool MogileFs::setState(string $hostname, string $device[, string $state = "alive"])``
  - ``bool MogileFs::checker(string $status ("on" or "off"), string $level)``
+ - ``void Mogilefs::setReadTimeout(float $readTimeout)``
+ - ``float MogileFs::getReadTimeout()``
 
 ## Example usage
 ```php
