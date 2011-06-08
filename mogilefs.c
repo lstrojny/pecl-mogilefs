@@ -89,6 +89,11 @@ ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_get, 0)
 ZEND_END_ARG_INFO()
 
 MOGILEFS_ARG_INFO
+ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_fileInfo, 0)
+	ZEND_ARG_INFO(0, key)
+ZEND_END_ARG_INFO()
+
+MOGILEFS_ARG_INFO
 ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_getDomains, 0)
 ZEND_END_ARG_INFO()
 
@@ -138,6 +143,7 @@ zend_function_entry php_mogilefs_methods[] = {
 	PHP_ME(MogileFs, connect,			arginfo_MogileFs_connect,			ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, get,				arginfo_MogileFs_get,				ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, getDomains,		arginfo_MogileFs_getDomains,		ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, fileInfo,			arginfo_MogileFs_fileInfo,								ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, listKeys,			NULL,								ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, listFids,			NULL,								ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, getHosts,			NULL,								ZEND_ACC_PUBLIC)
@@ -911,6 +917,45 @@ PHP_METHOD(MogileFs, rename)
 }
 
 /* }}} */
+
+
+/* {{{ proto array MogileFs::fileInfo(string key)
+	Get MogileFs fileInfo */
+PHP_METHOD(MogileFs, fileInfo)
+{
+	zval *object;
+	MogilefsSock *mogilefs_sock;
+	char *key = NULL, *request, *response;
+	int key_len, request_len, response_len;
+
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
+			&object, mogilefs_ce, &key, &key_len) == FAILURE) {
+
+		return;
+	}
+
+	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+		RETURN_FALSE;
+	}
+
+	request_len = spprintf(&request, 0, "FILE_INFO domain=%s&key=%s\r\n", mogilefs_sock->domain, key);
+	if (MOGILEFS_SOCK_WRITE_FREE(mogilefs_sock, request, request_len) < 0) {
+		RETURN_FALSE;
+	}
+
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+		RETURN_FALSE;
+	}
+
+	if (mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAM_PASSTHRU, response, response_len) < 0) {
+		RETURN_FALSE;
+	}
+}
+
+/* }}} */
+
+
 
 /* {{{ proto array MogileFs::getDomains()
 	Get MogileFs domains */

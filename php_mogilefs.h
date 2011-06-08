@@ -51,6 +51,7 @@ PHP_METHOD(MogileFs, connect);
 PHP_METHOD(MogileFs, get);
 PHP_METHOD(MogileFs, getPaths);
 PHP_METHOD(MogileFs, getDomains);
+PHP_METHOD(MogileFs, fileInfo);
 PHP_METHOD(MogileFs, listKeys);
 PHP_METHOD(MogileFs, listFids);
 PHP_METHOD(MogileFs, getHosts);
