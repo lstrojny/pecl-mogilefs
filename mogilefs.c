@@ -481,6 +481,8 @@ PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS
 	php_printf("RESPONSE: %s\n", outbuf);
 #endif
 
+	outbuf_len = php_url_decode(outbuf, outbuf_len);
+
 	if (strncmp(outbuf, "OK", 2) != 0) {
 		*buf_len = 0;
 
@@ -497,7 +499,6 @@ PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS
 		} else {
 			strcpy(message_clean, message);
 		}
-		php_url_decode(message_clean, strlen(message_clean));
 
 		zend_throw_exception(mogilefs_exception_ce, message_clean, 0 TSRMLS_CC);
 
