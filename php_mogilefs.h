@@ -89,7 +89,6 @@ PHP_METHOD(MogileFs, isInDebuggingMode);
 	mogilefs_sock_write (socket, cmd, cmd_len, 0 TSRMLS_CC)
 
 
-#define MOGILEFS_SOCK_BUF_SIZE 4096
 #define MOGILEFS_READ_TIMEOUT 10.0
 #define MOGILEFS_CONNECT_TIMEOUT 5.0
 #define MOGILEFS_SOCK_STATUS_FAILED 0
