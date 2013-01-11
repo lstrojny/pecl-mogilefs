@@ -11,9 +11,9 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 		<email>lstrojny@php.net</email>
 		<active>yes</active>
 	</lead>
-	<date>2011-06-08</date>
+	<date>2013-01-11</date>
 	<version>
-		<release>0.9.2-dev</release>
+		<release>0.9.2</release>
 		<api>1.0</api>
 	</version>
 	<stability>
@@ -23,6 +23,7 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 	<license uri="http://www.opensource.org/licenses/bsd-license.php">BSD License</license>
 	<notes>
         - Always URL-decode response from tracker (patch by Andre Pascha &lt;andre.pascha@kwick.de&gt;)
+        - Allow PHP 5.4
 	</notes>
 	<contents>
 		<dir name="/">
