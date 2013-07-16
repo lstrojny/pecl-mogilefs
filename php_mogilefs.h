@@ -49,7 +49,6 @@ PHP_METHOD(MogileFs, __construct);
 PHP_METHOD(MogileFs, isConnected);
 PHP_METHOD(MogileFs, connect);
 PHP_METHOD(MogileFs, get);
-PHP_METHOD(MogileFs, getPaths);
 PHP_METHOD(MogileFs, getDomains);
 PHP_METHOD(MogileFs, fileInfo);
 PHP_METHOD(MogileFs, listKeys);
