@@ -143,7 +143,7 @@ zend_function_entry php_mogilefs_methods[] = {
 	PHP_ME(MogileFs, connect,			arginfo_MogileFs_connect,			ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, get,				arginfo_MogileFs_get,				ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, getDomains,		arginfo_MogileFs_getDomains,		ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, fileInfo,			arginfo_MogileFs_fileInfo,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, fileInfo,			arginfo_MogileFs_fileInfo,			ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, listKeys,			NULL,								ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, listFids,			NULL,								ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, getHosts,			NULL,								ZEND_ACC_PUBLIC)
