@@ -18,7 +18,7 @@ make install
  - ``bool MogileFs::close()``
  - ``bool MogileFs::put(file, string $key, string $class[, bool $use_file])``
  - ``array MogileFs::file(string $key)``
- - ``array MogileFs::getPaths (string $key)``
+ - ``array MogileFs::get (string $key)``
  - ``bool MogileFs::delete (string $key)``
  - ``bool MogileFs::rename (string $from_key, string $to_key)``
  - ``bool MogileFs::listKeys (string $prefix, string $after, integer $limit)``
@@ -49,7 +49,7 @@ make install
 $mg = new MogileFs();
 $mg->connect('192.168.101.1', 6001, 'myDomain');
 $mg->put('/example/file.jpg', 'my_key', 'my_class');
-$paths = $mg->getPaths('my_key');
+$paths = $mg->get('my_key');
 $mg->close();
 ```
 
