@@ -21,7 +21,7 @@ make install
  - ``array MogileFs::get (string $key)``
  - ``bool MogileFs::delete (string $key)``
  - ``bool MogileFs::rename (string $from_key, string $to_key)``
- - ``bool MogileFs::listKeys (string $prefix, string $after, integer $limit)``
+ - ``array MogileFs::listKeys (string $prefix, string $after, integer $limit)``
  - ``bool MogileFs::listFids (integer $from, integer $to)``
  - ``array MogileFs::getDomains()``
  - ``array MogileFs::getHosts()``
