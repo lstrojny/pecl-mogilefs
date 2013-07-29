@@ -17,7 +17,7 @@ make install
  - ``bool MogileFs::isConnection()``
  - ``bool MogileFs::close()``
  - ``bool MogileFs::put(file, string $key, string $class[, bool $use_file])``
- - ``array MogileFs::file(string $key)``
+ - ``array MogileFs::fileInfo(string $key)``
  - ``array MogileFs::get(string $key)``
  - ``bool MogileFs::delete(string $key)``
  - ``bool MogileFs::rename(string $from_key, string $to_key)``
