@@ -86,6 +86,7 @@ ZEND_END_ARG_INFO()
 MOGILEFS_ARG_INFO
 ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_get, 0)
 	ZEND_ARG_INFO(0, key)
+	ZEND_ARG_INFO(0, pathcount)
 ZEND_END_ARG_INFO()
 
 MOGILEFS_ARG_INFO
@@ -816,18 +817,18 @@ end:
 }
 /* }}} */
 
-/* {{{ proto string MogileFs::get(string key)
+/* {{{ proto string MogileFs::get(string key, integer pathcount)
 	Get MogileFs path */
 PHP_METHOD(MogileFs, get)
 {
 	zval *object;
 	MogilefsSock *mogilefs_sock;
 	char *key = NULL, *request, *response;
-	int key_len, request_len, response_len;
+	int key_len, pathcount = 2, request_len, response_len;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
 									&object, mogilefs_ce,
-									&key, &key_len) == FAILURE) {
+									&key, &key_len, &pathcount) == FAILURE) {
 			return;
 	}
 
@@ -835,7 +836,7 @@ PHP_METHOD(MogileFs, get)
 		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
 		RETURN_FALSE;
 	}
-	request_len = spprintf(&request, 0, "GET_PATHS domain=%s&key=%s\r\n", mogilefs_sock->domain, key);
+	request_len = spprintf(&request, 0, "GET_PATHS domain=%s&key=%s&pathcount=%d\r\n", mogilefs_sock->domain, key, pathcount);
 	if (MOGILEFS_SOCK_WRITE_FREE(mogilefs_sock, request, request_len) < 0) {
 		RETURN_FALSE;
 	}
