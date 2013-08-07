@@ -826,7 +826,7 @@ PHP_METHOD(MogileFs, get)
 	char *key = NULL, *request, *response;
 	int key_len, pathcount = 2, request_len, response_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|l",
 									&object, mogilefs_ce,
 									&key, &key_len, &pathcount) == FAILURE) {
 			return;
