@@ -345,11 +345,10 @@ PHPAPI int mogilefs_sock_disconnect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* 
 /* }}} */
 
 PHPAPI int mogilefs_sock_close(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
-	if (mogilefs_sock->stream == NULL) {
-		return 0;
-	}
 	mogilefs_sock->status = MOGILEFS_SOCK_STATUS_DISCONNECTED;
-	php_stream_close(mogilefs_sock->stream);
+	if (mogilefs_sock->stream != NULL) {
+		php_stream_close(mogilefs_sock->stream);
+	}
 	mogilefs_sock->stream = NULL;
 	return 1;
 }
@@ -430,6 +429,11 @@ PHPAPI int mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock TSRMLS_DC) {
 /* }}} */
 
 PHPAPI int mogilefs_sock_eof(MogilefsSock *mogilefs_sock) { /* {{{ */
+	if (!mogilefs_sock || mogilefs_sock->stream == NULL) {
+		mogilefs_sock_close(mogilefs_sock);
+		zend_throw_exception(mogilefs_exception_ce, "Lost tracker connection", 0 TSRMLS_CC);
+		return 1;
+	}
 	if (php_stream_eof(mogilefs_sock->stream)) {
 		/* close socket but avoid writing on it again */
 		mogilefs_sock_close(mogilefs_sock);
