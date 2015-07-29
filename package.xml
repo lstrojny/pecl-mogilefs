@@ -11,9 +11,9 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 		<email>lstrojny@php.net</email>
 		<active>yes</active>
 	</lead>
-	<date>2013-01-11</date>
+	<date>2015-07-29</date>
 	<version>
-		<release>0.9.4-dev</release>
+		<release>0.9.49</release>
 		<api>1.0</api>
 	</version>
 	<stability>
