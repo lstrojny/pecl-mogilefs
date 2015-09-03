@@ -340,7 +340,7 @@ PHPAPI int mogilefs_sock_disconnect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* 
 	}
 
 	MOGILEFS_SOCK_WRITE(mogilefs_sock, "QUIT", 4);
-	return mogilefs_sock_close(mogilefs_sock);
+	return mogilefs_sock_close(mogilefs_sock TSRMLS_CC);
 }
 /* }}} */
 
@@ -428,15 +428,15 @@ PHPAPI int mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock TSRMLS_DC) {
 }
 /* }}} */
 
-PHPAPI int mogilefs_sock_eof(MogilefsSock *mogilefs_sock) { /* {{{ */
+PHPAPI int mogilefs_sock_eof(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
 	if (!mogilefs_sock || mogilefs_sock->stream == NULL) {
-		mogilefs_sock_close(mogilefs_sock);
+		mogilefs_sock_close(mogilefs_sock TSRMLS_CC);
 		zend_throw_exception(mogilefs_exception_ce, "Lost tracker connection", 0 TSRMLS_CC);
 		return 1;
 	}
 	if (php_stream_eof(mogilefs_sock->stream)) {
 		/* close socket but avoid writing on it again */
-		mogilefs_sock_close(mogilefs_sock);
+		mogilefs_sock_close(mogilefs_sock TSRMLS_CC);
 		zend_throw_exception(mogilefs_exception_ce, "Lost tracker connection", 0 TSRMLS_CC);
 		return 1;
 	}
@@ -451,7 +451,7 @@ PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, unsigned 
 	php_printf("REQUEST: %s", cmd);
 #endif
 
-	if (mogilefs_sock_eof(mogilefs_sock)) {
+	if (mogilefs_sock_eof(mogilefs_sock TSRMLS_CC)) {
 		retval = -1;
 	} else if (php_stream_write(mogilefs_sock->stream, cmd, cmd_len) != cmd_len) {
 		retval = -1;
@@ -469,7 +469,7 @@ PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS
 	char *outbuf, *p, *message, *message_clean, *retbuf;
 	size_t outbuf_len;
 
-	if (mogilefs_sock_eof(mogilefs_sock)) {
+	if (mogilefs_sock_eof(mogilefs_sock TSRMLS_CC)) {
 		return NULL;
 	}
 
@@ -673,7 +673,7 @@ PHP_METHOD(MogileFs, connect)
 		RETURN_FALSE;
 	}
 
-	id = zend_list_insert(mogilefs_sock, le_mogilefs_sock);
+	id = zend_list_insert(mogilefs_sock, le_mogilefs_sock TSRMLS_CC);
 	add_property_resource(object, "socket", id);
 	RETURN_TRUE;
 }
