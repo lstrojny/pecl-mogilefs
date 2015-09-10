@@ -354,7 +354,8 @@ PHPAPI int mogilefs_sock_close(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ *
 /* }}} */
 
 PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
-	char *host = NULL, *hash_key = NULL, *errstr = NULL;
+	zend_string *errstr = NULL;
+	char *host = NULL, *hash_key = NULL;
 	int	host_len, err = 0;
 
 	if (mogilefs_sock->stream != NULL) {
