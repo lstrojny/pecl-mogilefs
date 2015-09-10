@@ -200,7 +200,7 @@ ZEND_GET_MODULE(mogilefs)
 #endif
 /* }}} */
 
-static void mogilefs_destructor_mogilefs_sock(zend_rsrc_list_entry * rsrc TSRMLS_DC) /* {{{ */
+static void mogilefs_destructor_mogilefs_sock(zend_resource * rsrc TSRMLS_DC) /* {{{ */
 {
 	MogilefsSock *mogilefs_sock = (MogilefsSock *) rsrc->ptr;
 	mogilefs_sock_disconnect(mogilefs_sock TSRMLS_CC);
