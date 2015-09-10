@@ -467,7 +467,8 @@ PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, unsigned 
 /* }}} */
 
 PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC) { /* {{{ */
-	char *outbuf, *p, *message, *message_clean, *retbuf;
+	zend_string *message, *tmp;
+	char *outbuf, *p, *message_clean, *retbuf;
 	size_t outbuf_len;
 
 	if (mogilefs_sock_eof(mogilefs_sock TSRMLS_CC)) {
@@ -492,18 +493,20 @@ PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS
 	if (strncmp(outbuf, "OK", 2) != 0) {
 		*buf_len = 0;
 
-		message = php_trim(outbuf, outbuf_len, NULL, 0, NULL, 3 TSRMLS_CC);
+		tmp = zend_string_init(outbuf, outbuf_len, 0);
+		message = php_trim(tmp, NULL, 0, 3);
+		zend_string_release(tmp);
 
 #ifdef MOGILEFS_DEBUG
 		php_printf("ERROR: %s\n", message);
 #endif
 
-		message_clean = malloc(strlen(message) + 1);
+		message_clean = malloc(ZSTR_LEN(message) + 1);
 		/** Extract error message from "ERR <code> <message>" */
-		if ((p = strchr(message, ' ')) && (p = strchr(p + 1, ' '))) {
+		if ((p = strchr(message->val, ' ')) && (p = strchr(p + 1, ' '))) {
 			strcpy(message_clean, p + 1);
 		} else {
-			strcpy(message_clean, message);
+			strcpy(message_clean, message->val);
 		}
 
 		zend_throw_exception(mogilefs_exception_ce, message_clean, 0 TSRMLS_CC);
