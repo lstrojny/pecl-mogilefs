@@ -228,8 +228,7 @@ PHP_MINIT_FUNCTION(mogilefs) /* {{{ */
 	INIT_CLASS_ENTRY(mogilefs_exception_class_entry, "MogileFsException", NULL);
 	mogilefs_exception_ce = zend_register_internal_class_ex(
 		&mogilefs_exception_class_entry,
-		zend_exception_get_default(TSRMLS_C),
-		NULL TSRMLS_CC
+		zend_exception_get_default(TSRMLS_C)
 	);
 
 	le_mogilefs_sock = zend_register_list_destructors_ex(
