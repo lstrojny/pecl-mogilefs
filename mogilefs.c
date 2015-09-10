@@ -419,7 +419,7 @@ PHPAPI int mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock TSRMLS_DC) {
 		return -1;
 	}
 
-	*mogilefs_sock = (MogilefsSock *) zend_list_find(Z_LVAL_PP(socket), &resource_type);
+	*mogilefs_sock = (MogilefsSock *) Z_RES_VAL_P(*socket);
 
 	if (!*mogilefs_sock || resource_type != le_mogilefs_sock) {
 		return -1;
