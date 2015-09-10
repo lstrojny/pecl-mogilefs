@@ -297,7 +297,7 @@ PHPAPI int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, char *
 		}
 
 		token_data_len = spprintf(&token_data, 0, "%s", k);
-		ZVAL_STRINGL(data, token_data, token_data_len, 1);
+		ZVAL_STRINGL(data, token_data, token_data_len);
 		add_assoc_zval(return_value, cur_key, data);
 
 		efree(splitted_key);
