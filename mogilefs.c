@@ -414,7 +414,8 @@ PHPAPI int mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock TSRMLS_DC) {
 	zval **socket;
 	int resource_type;
 
-	if (Z_TYPE_P(id) != IS_OBJECT || zend_hash_find(Z_OBJPROP_P(id), "socket", sizeof("socket"), (void **) &socket) == FAILURE) {
+	zend_string *key = zend_string_init("socket", sizeof("socket") - 1, 0);
+	if (Z_TYPE_P(id) != IS_OBJECT || (*socket = zend_hash_find(Z_OBJPROP_P(id), key))) {
 		return -1;
 	}
 
