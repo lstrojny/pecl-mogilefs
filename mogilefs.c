@@ -366,7 +366,7 @@ PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{
 	mogilefs_sock->stream = php_stream_xport_create(
 		host,
 		host_len,
-		ENFORCE_SAFE_MODE,
+		0,
 		STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT,
 		hash_key,
 		&mogilefs_sock->connect_timeout,
@@ -776,7 +776,7 @@ PHP_METHOD(MogileFs, put)
 	ne_set_read_timeout(sess, (int) mogilefs_sock->read_timeout.tv_sec);
 
 	if (use_file) {
-		f = php_stream_open_wrapper_as_file(filename, "rb", USE_PATH | ENFORCE_SAFE_MODE, NULL);
+		f = php_stream_open_wrapper_as_file(filename, "rb", USE_PATH, NULL);
 		if (f != NULL) {
 			fd = fileno(f);
 			ret = ne_put(sess, url->path, fd);
