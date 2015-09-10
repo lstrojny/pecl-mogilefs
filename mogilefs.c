@@ -638,7 +638,8 @@ PHP_METHOD(MogileFs, __construct)
 	Initialize a new MogileFs Session */
 PHP_METHOD(MogileFs, connect)
 {
-	int host_len, domain_len, id;
+	zval *id;
+	int host_len, domain_len;
 	char *host = NULL, *domain = NULL;
 	unsigned long port, connect_timeout_conv;
 	double connect_timeout = MOGILEFS_CONNECT_TIMEOUT;
@@ -678,7 +679,7 @@ PHP_METHOD(MogileFs, connect)
 	}
 
 	id = zend_list_insert(mogilefs_sock, le_mogilefs_sock TSRMLS_CC);
-	add_property_resource(object, "socket", id);
+	add_property_resource(object, "socket", Z_RES_P(id));
 	RETURN_TRUE;
 }
 
