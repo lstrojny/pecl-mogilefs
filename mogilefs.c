@@ -716,8 +716,8 @@ PHP_METHOD(MogileFs, put)
 	php_url *url;
 	ne_session *sess;
 	ne_request *req;
+	zend_bool use_file = 1;
 	int multi_dest = 1,
-		use_file = 1,
 		key_len,
 		class_len,
 		file_buffer_len,
