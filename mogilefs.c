@@ -273,15 +273,13 @@ PHPAPI int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, char *
 
 	for ((key_val = strtok_r(token, "&", &last)); key_val; (key_val = strtok_r(NULL, "&", &last))) {
 
-		zval *data;
+		zval data;
 
 		if ((splitted_key = estrdup(key_val)) == NULL) {
 			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Out of memory");
 			efree(token);
 			return -1;
 		}
-
-		MAKE_STD_ZVAL(data);
 
 		/* some return values can be null */
 		if ((k = strtok(splitted_key, "=")) == NULL) {
@@ -297,8 +295,8 @@ PHPAPI int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, char *
 		}
 
 		token_data_len = spprintf(&token_data, 0, "%s", k);
-		ZVAL_STRINGL(data, token_data, token_data_len);
-		add_assoc_zval(return_value, cur_key, data);
+		ZVAL_STRINGL(&data, token_data, token_data_len);
+		add_assoc_zval(return_value, cur_key, &data);
 
 		efree(splitted_key);
 		efree(token_data);
@@ -309,8 +307,8 @@ PHPAPI int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, char *
 }
 /* }}} */
 
-PHPAPI MogilefsSock *mogilefs_sock_server_init(char *host, int host_len, unsigned short port, /* {{{ */
-											char *domain, int domain_len, struct timeval connect_timeout) {
+PHPAPI MogilefsSock *mogilefs_sock_server_init(char *host, size_t host_len, zend_long port, /* {{{ */
+											char *domain, size_t domain_len, struct timeval connect_timeout) {
 	MogilefsSock *mogilefs_sock;
 
 	mogilefs_sock = emalloc(sizeof *mogilefs_sock);
@@ -355,8 +353,9 @@ PHPAPI int mogilefs_sock_close(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ *
 
 PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
 	zend_string *errstr = NULL;
-	char *host = NULL, *hash_key = NULL;
-	int	host_len, err = 0;
+	char *host = NULL;
+	size_t host_len;
+	int err = 0;
 
 	if (mogilefs_sock->stream != NULL) {
 		mogilefs_sock_disconnect(mogilefs_sock TSRMLS_CC);
@@ -367,9 +366,9 @@ PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{
 	mogilefs_sock->stream = php_stream_xport_create(
 		host,
 		host_len,
-		0,
+		REPORT_ERRORS,
 		STREAM_XPORT_CLIENT | STREAM_XPORT_CONNECT,
-		hash_key,
+		NULL,
 		&mogilefs_sock->connect_timeout,
 		NULL,
 		&errstr,
@@ -410,22 +409,20 @@ PHPAPI int mogilefs_sock_server_open(MogilefsSock *mogilefs_sock, int force_conn
 }
 /* }}} */
 
-PHPAPI int mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock TSRMLS_DC) { /* {{{ */
-	zval **socket;
-	int resource_type;
+PHPAPI zend_long mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock TSRMLS_DC) { /* {{{ */
+	zval *socket;
 
-	zend_string *key = zend_string_init("socket", sizeof("socket") - 1, 0);
-	if (Z_TYPE_P(id) != IS_OBJECT || (*socket = zend_hash_find(Z_OBJPROP_P(id), key))) {
+	if (Z_TYPE_P(id) != IS_OBJECT || (NULL == (socket = zend_hash_str_find(Z_OBJPROP_P(id), "socket", sizeof("socket") - 1)))) {
 		return -1;
 	}
 
-	*mogilefs_sock = (MogilefsSock *) Z_RES_VAL_P(*socket);
+	*mogilefs_sock = (MogilefsSock *) Z_RES_VAL_P(socket);
 
-	if (!*mogilefs_sock || resource_type != le_mogilefs_sock) {
+	if (!*mogilefs_sock || Z_RES_TYPE_P(socket) != le_mogilefs_sock) {
 		return -1;
 	}
 
-	return Z_LVAL_PP(socket);
+	return 1;
 }
 /* }}} */
 
@@ -639,9 +636,9 @@ PHP_METHOD(MogileFs, __construct)
 PHP_METHOD(MogileFs, connect)
 {
 	zval *id;
-	int host_len, domain_len;
+	size_t host_len, domain_len;
 	char *host = NULL, *domain = NULL;
-	unsigned long port, connect_timeout_conv;
+	zend_long port, connect_timeout_conv;
 	double connect_timeout = MOGILEFS_CONNECT_TIMEOUT;
 	struct timeval tv;
 	MogilefsSock *mogilefs_sock = NULL;
@@ -653,7 +650,6 @@ PHP_METHOD(MogileFs, connect)
 
 		return;
 	}
-
 
 	if (connect_timeout < 0 || connect_timeout > (double)INT_MAX) {
 		zend_throw_exception(mogilefs_exception_ce, "Invalid timeout", 0 TSRMLS_CC);
