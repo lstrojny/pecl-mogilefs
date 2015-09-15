@@ -21,6 +21,6 @@ var_dump($client->sleep("wrong"));
 bool(true)
 bool(true)
 
-Warning: MogileFs::sleep() expects parameter 1 to be long, string given in %s on line %d
+Warning: MogileFs::sleep() expects parameter 1 to be integer, string given in %s on line %d
 NULL
 ==DONE==
