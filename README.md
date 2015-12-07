@@ -1,5 +1,7 @@
 # PECL MogileFs
 
+*Warning:* I am not an active user of the library anymore so this is maintenance only and I merely merge pull requests of the community.
+
 MogileFs is a open source distribued filesystem (www.danga.com/mogilefs/). The PECL MogileFs extension allows to communicate with a MogileFs tracker from within PHP.
 
 ## Install MogileFs extension
