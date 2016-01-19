@@ -13,7 +13,7 @@ PHP MogileFS is a client library to communicate with MogileFS trackers. Those tr
 	</lead>
 	<date>2016-01-19</date>
 	<version>
-		<release>0.9.50</release>
+		<release>0.9.3</release>
 		<api>1.0</api>
 	</version>
 	<stability>
