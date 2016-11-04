@@ -716,13 +716,12 @@ PHP_METHOD(MogileFs, put)
 	php_url *url;
 	ne_session *sess;
 	ne_request *req;
-	zend_bool use_file = 1;
-	int multi_dest = 1,
-		key_len,
+	zend_bool use_file = 1, multi_dest = 1;
+	size_t key_len,
 		class_len,
 		file_buffer_len,
-		filename_len,
-		ret,
+		filename_len;
+	int ret,
 		alloc_url = 0,
 		fd = 0;
 	char *key = NULL,
@@ -733,7 +732,7 @@ PHP_METHOD(MogileFs, put)
 	FILE *f;
 
 	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(),
-				"Osss|bl", &object, mogilefs_ce,
+				"Osss|bb", &object, mogilefs_ce,
 				&filename, &filename_len, &key, &key_len,
 				&class, &class_len, &use_file, &multi_dest) == FAILURE) {
 
