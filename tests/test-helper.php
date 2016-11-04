@@ -21,7 +21,8 @@ function mogilefs_test_factory()
 	}
 
 	$client = new MogileFs();
-	assert($client->connect(MOGILEFS_HOST, MOGILEFS_PORT, MOGILEFS_DOMAIN));
+	$connected = $client->connect(MOGILEFS_HOST, MOGILEFS_PORT, MOGILEFS_DOMAIN);
+	assert($connected);
 	try {
 		$client->createClass(MOGILEFS_DOMAIN, MOGILEFS_CLASS, MOGILEFS_DEVICE_COUNT);
 	} catch (MogileFsException $e) {
