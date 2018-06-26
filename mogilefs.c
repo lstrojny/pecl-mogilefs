@@ -667,7 +667,7 @@ PHP_METHOD(MogileFs, connect)
 		zend_throw_exception_ex(
 			mogilefs_exception_ce,
 			0 TSRMLS_CC,
-			"Can't connect to %s:%d",
+			"Can't connect to %s:" ZEND_LONG_FMT,
 			host,
 			port
 		);
@@ -706,6 +706,12 @@ PHP_METHOD(MogileFs, close)
 }
 
 /* }}} */
+
+#if PHP_VERSION_ID < 70300
+#define URL_STR(a) (a)
+#else
+#define URL_STR(a) ZSTR_VAL(a)
+#endif
 
 /* {{{ proto bool MogileFs::put(string file, string key, string class [, bool use_file = true [, bool multi_dest]])
 	Put a file to the MogileFs tracker */
@@ -761,13 +767,10 @@ PHP_METHOD(MogileFs, put)
 	alloc_url = 1;
 
 	if (url->port == 0) {
-		url->port = ne_uri_defaultport(url->scheme);
-	}
-	if (url->scheme == NULL) {
-		url->scheme = "http";
+		url->port = ne_uri_defaultport(URL_STR(url->scheme));
 	}
 
-	if ((sess = ne_session_create(url->scheme, url->host, url->port)) == NULL) {
+	if ((sess = ne_session_create(url->scheme ? URL_STR(url->scheme) : "http", URL_STR(url->host), url->port)) == NULL) {
 		zend_throw_exception(mogilefs_exception_ce, "Could not open WebDAV connection", 0 TSRMLS_CC);
 		RETVAL_FALSE;
 		goto end;
@@ -780,7 +783,7 @@ PHP_METHOD(MogileFs, put)
 		f = php_stream_open_wrapper_as_file(filename, "rb", USE_PATH, NULL);
 		if (f != NULL) {
 			fd = fileno(f);
-			ret = ne_put(sess, url->path, fd);
+			ret = ne_put(sess, URL_STR(url->path), fd);
 			close(fd);
 		} else {
 			zend_throw_exception(mogilefs_exception_ce, "Could not open file", 0 TSRMLS_CC);
@@ -790,7 +793,7 @@ PHP_METHOD(MogileFs, put)
 	} else {
 		file_buffer = filename;
 		file_buffer_len = filename_len;
-		req = ne_request_create(sess, "PUT", url->path);
+		req = ne_request_create(sess, "PUT", URL_STR(url->path));
 		ne_set_request_body_buffer(req, file_buffer, file_buffer_len);
 		ret = ne_request_dispatch(req);
 		ne_request_destroy(req);
