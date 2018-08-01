@@ -36,6 +36,7 @@ make install
  - ``array MogileFs::deleteDomain(string $domain)``
  - ``array MogileFs::createClass(string $domain, string $class, string $mindevcount)``
  - ``array MogileFs::updateClass(string $domain, string $class, string $mindevcount)``
+ - ``array MogileFs::deleteClass(string $domain, string $class)``
  - ``array MogileFs::createHost(string $hostname)``
  - ``array MogileFs::updateHost(string $hostname, string $ip, int $port[, string $state = "alive"])``
  - ``bool MogileFs::deleteHost(string $hostname)``
