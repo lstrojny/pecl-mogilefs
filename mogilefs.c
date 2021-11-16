@@ -62,73 +62,139 @@
 #endif
 
 /* {{{ arginfo */
-MOGILEFS_ARG_INFO
-ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_isConnected, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_connect, 0, 4, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, host, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, port, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO(0, domain, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, timeout, IS_DOUBLE, 0)
 ZEND_END_ARG_INFO()
 
-MOGILEFS_ARG_INFO
-ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_connect, 0)
-	ZEND_ARG_INFO(0, host)
-	ZEND_ARG_INFO(0, port)
-	ZEND_ARG_INFO(0, domain)
-	ZEND_ARG_INFO(0, timeout)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_isConnection, 0, 0, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-MOGILEFS_ARG_INFO
-ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_setReadTimeout, 0)
-	ZEND_ARG_INFO(0, readTimeout)
+#define arginfo_MogileFs_close arginfo_MogileFs_isConnection
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_put, 0, 4, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, pathvalidfile, file, 0)
+	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, class, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, use_file, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
-MOGILEFS_ARG_INFO
-ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_getReadTimeout, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_fileInfo, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-MOGILEFS_ARG_INFO
-ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_get, 0)
-	ZEND_ARG_INFO(0, key)
-	ZEND_ARG_INFO(0, pathcount)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_get, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, pathcount, integer, 0, "2")
 ZEND_END_ARG_INFO()
 
-MOGILEFS_ARG_INFO
-ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_fileInfo, 0)
-	ZEND_ARG_INFO(0, key)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_delete, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-MOGILEFS_ARG_INFO
-ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_getDomains, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_rename, 0, 2, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, from_key, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, to_key, IS_STRING, 0)
 ZEND_END_ARG_INFO()
 
-MOGILEFS_ARG_INFO
-ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_sleep, 0)
-	ZEND_ARG_INFO(0, seconds)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_listKeys, 0, 3, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, prefix, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, after, IS_STRING, 0)
+	ZEND_ARG_OBJ_INFO(0, limit, integer, 0)
 ZEND_END_ARG_INFO()
 
-MOGILEFS_ARG_INFO
-ZEND_BEGIN_ARG_INFO_EX(arginfo_MogileFs_put, 0, 0, 3)
-	ZEND_ARG_INFO(0, filename)
-	ZEND_ARG_INFO(0, key)
-	ZEND_ARG_INFO(0, class)
-	ZEND_ARG_INFO(0, file_only)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_listFids, 0, 2, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, from, integer, 0)
+	ZEND_ARG_OBJ_INFO(0, to, integer, 0)
 ZEND_END_ARG_INFO()
 
-MOGILEFS_ARG_INFO
-ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_close, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_getDomains, 0, 0, IS_ARRAY, 0)
 ZEND_END_ARG_INFO()
 
-MOGILEFS_ARG_INFO
-ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_delete, 0)
-	ZEND_ARG_INFO(0, key)
+#define arginfo_MogileFs_getHosts arginfo_MogileFs_getDomains
+
+#define arginfo_MogileFs_getDevices arginfo_MogileFs_getDomains
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_sleep, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_OBJ_INFO(0, duration, integer, 0)
 ZEND_END_ARG_INFO()
 
-MOGILEFS_ARG_INFO
-ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_rename, 0)
-	ZEND_ARG_INFO(0, key)
-	ZEND_ARG_INFO(0, destination)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_stats, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_OBJ_INFO(0, all, integer, 0)
 ZEND_END_ARG_INFO()
 
-MOGILEFS_ARG_INFO
-ZEND_BEGIN_ARG_INFO(arginfo_MogileFs_isInDebuggingMode, 0)
+#define arginfo_MogileFs_replicate arginfo_MogileFs_isConnection
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_createDevice, 0, 2, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, devid, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, status, IS_STRING, 0)
 ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_createDomain, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, domain, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_MogileFs_deleteDomain arginfo_MogileFs_createDomain
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_createClass, 0, 3, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, domain, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, class, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, mindevcount, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_MogileFs_updateClass arginfo_MogileFs_createClass
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_createHost, 0, 1, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, hostname, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_updateHost, 0, 3, IS_ARRAY, 0)
+	ZEND_ARG_TYPE_INFO(0, hostname, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, ip, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, port, IS_LONG, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, state, IS_STRING, 0, "\"alive\"")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_deleteHost, 0, 1, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, hostname, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_setWeight, 0, 3, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, hostname, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, device, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, weight, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_setState, 0, 2, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, hostname, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, device, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, state, IS_STRING, 0, "\"alive\"")
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_checker, 0, 2, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, status, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, level, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_setReadTimeout, 0, 1, IS_VOID, 0)
+	ZEND_ARG_TYPE_INFO(0, readTimeout, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_getReadTimeout, 0, 0, IS_DOUBLE, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_deleteClass, 0, 2, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, domain, IS_STRING, 0)
+	ZEND_ARG_TYPE_INFO(0, class, IS_STRING, 0)
+ZEND_END_ARG_INFO()
+
+#define arginfo_MogileFs_monitorRound arginfo_MogileFs_getDomains
+
+#define arginfo_MogileFs_isInDebuggingMode arginfo_MogileFs_isConnection
+
+#define arginfo_MogileFs_isConnected arginfo_MogileFs_isConnection
 /* }}} */
 
 /* True global resources - no need for thread safety here */
@@ -139,34 +205,33 @@ static zend_class_entry *mogilefs_exception_ce;
 /* {{{ zend_function_entry */
 static
 zend_function_entry php_mogilefs_methods[] = {
-	PHP_ME(MogileFs, __construct,		NULL,								ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, isConnected,		arginfo_MogileFs_isConnected,		ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, connect,			arginfo_MogileFs_connect,			ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, get,				arginfo_MogileFs_get,				ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, getDomains,		arginfo_MogileFs_getDomains,		ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, fileInfo,			arginfo_MogileFs_fileInfo,			ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, listKeys,			NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, listFids,			NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, getHosts,			NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, getDevices,		NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, sleep,				arginfo_MogileFs_sleep,				ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, stats,				NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, replicate,			NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, createDevice,		NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, createDomain,		NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, deleteDomain,		NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, createClass,		NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, updateClass,		NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, deleteClass,		NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, createHost,		NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, updateHost,		NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, deleteHost,		NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, setWeight,			NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, setState,			NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, checker,			NULL,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, monitorRound,		NULL,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, fileInfo,			arginfo_MogileFs_fileInfo,		ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, listKeys,			arginfo_MogileFs_listKeys,		ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, listFids,			arginfo_MogileFs_listFids,		ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, getHosts,			arginfo_MogileFs_getHosts,		ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, getDevices,		arginfo_MogileFs_getDevices,		ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, sleep,				arginfo_MogileFs_sleep,			ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, stats,				arginfo_MogileFs_stats,			ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, replicate,			arginfo_MogileFs_replicate,		ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, createDevice,		arginfo_MogileFs_createDevice,							ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, createDomain,		arginfo_MogileFs_createDomain,							ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, deleteDomain,		arginfo_MogileFs_deleteDomain,							ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, createClass,		arginfo_MogileFs_createClass,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, updateClass,		arginfo_MogileFs_updateClass,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, deleteClass,		arginfo_MogileFs_deleteClass,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, createHost,		arginfo_MogileFs_createHost,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, updateHost,		arginfo_MogileFs_updateHost,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, deleteHost,		arginfo_MogileFs_deleteHost,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, setWeight,			arginfo_MogileFs_setWeight,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, setState,			arginfo_MogileFs_setState,								ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, checker,			arginfo_MogileFs_checker,									ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, monitorRound,		arginfo_MogileFs_monitorRound,							ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, put,				arginfo_MogileFs_put,				ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, close,				arginfo_MogileFs_close,				ZEND_ACC_PUBLIC)
+	PHP_ME(MogileFs, close,				arginfo_MogileFs_close,			ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, delete,			arginfo_MogileFs_delete,			ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, rename,			arginfo_MogileFs_rename,			ZEND_ACC_PUBLIC)
 	PHP_ME(MogileFs, setReadTimeout,	arginfo_MogileFs_setReadTimeout,	ZEND_ACC_PUBLIC)
@@ -200,10 +265,10 @@ ZEND_GET_MODULE(mogilefs)
 #endif
 /* }}} */
 
-static void mogilefs_destructor_mogilefs_sock(zend_resource * rsrc TSRMLS_DC) /* {{{ */
+static void mogilefs_destructor_mogilefs_sock(zend_resource * rsrc) /* {{{ */
 {
 	MogilefsSock *mogilefs_sock = (MogilefsSock *) rsrc->ptr;
-	mogilefs_sock_disconnect(mogilefs_sock TSRMLS_CC);
+	mogilefs_sock_disconnect(mogilefs_sock);
 	mogilefs_free_socket(mogilefs_sock);
 }
 /* }}} */
@@ -223,12 +288,12 @@ PHP_MINIT_FUNCTION(mogilefs) /* {{{ */
 	
 	ne_sock_init();
 	INIT_CLASS_ENTRY(mogilefs_class_entry, "MogileFs", php_mogilefs_methods);
-	mogilefs_ce = zend_register_internal_class(&mogilefs_class_entry TSRMLS_CC);
+	mogilefs_ce = zend_register_internal_class(&mogilefs_class_entry);
 
 	INIT_CLASS_ENTRY(mogilefs_exception_class_entry, "MogileFsException", NULL);
 	mogilefs_exception_ce = zend_register_internal_class_ex(
 		&mogilefs_exception_class_entry,
-		zend_exception_get_default(TSRMLS_C)
+		zend_exception_get_default()
 	);
 
 	le_mogilefs_sock = zend_register_list_destructors_ex(
@@ -263,7 +328,7 @@ PHPAPI int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, char *
 	int token_data_len;
 
 	if ((token = estrndup(result, result_len)) == NULL) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Out of memory");
+		php_error_docref(NULL, E_WARNING, "Out of memory");
 		return -1;
 	}
 
@@ -276,7 +341,7 @@ PHPAPI int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, char *
 		zval data;
 
 		if ((splitted_key = estrdup(key_val)) == NULL) {
-			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Out of memory");
+			php_error_docref(NULL, E_WARNING, "Out of memory");
 			efree(token);
 			return -1;
 		}
@@ -331,17 +396,17 @@ PHPAPI MogilefsSock *mogilefs_sock_server_init(char *host, size_t host_len, zend
 }
 /* }}} */
 
-PHPAPI int mogilefs_sock_disconnect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
+PHPAPI int mogilefs_sock_disconnect(MogilefsSock *mogilefs_sock) { /* {{{ */
 	if (mogilefs_sock->stream == NULL) {
 		return 0;
 	}
 
 	MOGILEFS_SOCK_WRITE(mogilefs_sock, "QUIT", 4);
-	return mogilefs_sock_close(mogilefs_sock TSRMLS_CC);
+	return mogilefs_sock_close(mogilefs_sock);
 }
 /* }}} */
 
-PHPAPI int mogilefs_sock_close(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
+PHPAPI int mogilefs_sock_close(MogilefsSock *mogilefs_sock) { /* {{{ */
 	mogilefs_sock->status = MOGILEFS_SOCK_STATUS_DISCONNECTED;
 	if (mogilefs_sock->stream != NULL) {
 		php_stream_close(mogilefs_sock->stream);
@@ -351,14 +416,14 @@ PHPAPI int mogilefs_sock_close(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ *
 }
 /* }}} */
 
-PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
+PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock) { /* {{{ */
 	zend_string *errstr = NULL;
 	char *host = NULL;
 	size_t host_len;
 	int err = 0;
 
 	if (mogilefs_sock->stream != NULL) {
-		mogilefs_sock_disconnect(mogilefs_sock TSRMLS_CC);
+		mogilefs_sock_disconnect(mogilefs_sock);
 	}
 
 	host_len = spprintf(&host, 0, "%s:%d", mogilefs_sock->host, mogilefs_sock->port);
@@ -390,16 +455,16 @@ PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{
 }
 /* }}} */
 
-PHPAPI int mogilefs_sock_server_open(MogilefsSock *mogilefs_sock, int force_connect TSRMLS_DC) { /* {{{ */
+PHPAPI int mogilefs_sock_server_open(MogilefsSock *mogilefs_sock, int force_connect) { /* {{{ */
 	switch (mogilefs_sock->status) {
 		case MOGILEFS_SOCK_STATUS_DISCONNECTED:
-			return mogilefs_sock_connect(mogilefs_sock TSRMLS_CC);
+			return mogilefs_sock_connect(mogilefs_sock);
 
 		case MOGILEFS_SOCK_STATUS_CONNECTED:
 			return 0;
 
 		case MOGILEFS_SOCK_STATUS_UNKNOWN:
-			if (force_connect > 0 && mogilefs_sock_connect(mogilefs_sock TSRMLS_CC) < 0) {
+			if (force_connect > 0 && mogilefs_sock_connect(mogilefs_sock) < 0) {
 				return -1;
 			}
 			mogilefs_sock->status = MOGILEFS_SOCK_STATUS_CONNECTED;
@@ -409,7 +474,7 @@ PHPAPI int mogilefs_sock_server_open(MogilefsSock *mogilefs_sock, int force_conn
 }
 /* }}} */
 
-PHPAPI zend_long mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock TSRMLS_DC) { /* {{{ */
+PHPAPI zend_long mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock) { /* {{{ */
 	zval *socket;
 
 	if (Z_TYPE_P(id) != IS_OBJECT || (NULL == (socket = zend_hash_str_find(Z_OBJPROP_P(id), "socket", sizeof("socket") - 1)))) {
@@ -426,30 +491,30 @@ PHPAPI zend_long mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock TSRMLS
 }
 /* }}} */
 
-PHPAPI int mogilefs_sock_eof(MogilefsSock *mogilefs_sock TSRMLS_DC) { /* {{{ */
+PHPAPI int mogilefs_sock_eof(MogilefsSock *mogilefs_sock) { /* {{{ */
 	if (!mogilefs_sock || mogilefs_sock->stream == NULL) {
-		mogilefs_sock_close(mogilefs_sock TSRMLS_CC);
-		zend_throw_exception(mogilefs_exception_ce, "Lost tracker connection", 0 TSRMLS_CC);
+		mogilefs_sock_close(mogilefs_sock);
+		zend_throw_exception(mogilefs_exception_ce, "Lost tracker connection", 0);
 		return 1;
 	}
 	if (php_stream_eof(mogilefs_sock->stream)) {
 		/* close socket but avoid writing on it again */
-		mogilefs_sock_close(mogilefs_sock TSRMLS_CC);
-		zend_throw_exception(mogilefs_exception_ce, "Lost tracker connection", 0 TSRMLS_CC);
+		mogilefs_sock_close(mogilefs_sock);
+		zend_throw_exception(mogilefs_exception_ce, "Lost tracker connection", 0);
 		return 1;
 	}
 	return 0;
 }
 /* }}} */
 	
-PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, unsigned int cmd_len, short free_cmd TSRMLS_DC) { /* {{{ */
+PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, unsigned int cmd_len, short free_cmd) { /* {{{ */
 	int retval = 0;
 
 #ifdef MOGILEFS_DEBUG
 	php_printf("REQUEST: %s", cmd);
 #endif
 
-	if (mogilefs_sock_eof(mogilefs_sock TSRMLS_CC)) {
+	if (mogilefs_sock_eof(mogilefs_sock)) {
 		retval = -1;
 	} else if (php_stream_write(mogilefs_sock->stream, cmd, cmd_len) != cmd_len) {
 		retval = -1;
@@ -463,18 +528,18 @@ PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, unsigned 
 }
 /* }}} */
 
-PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC) { /* {{{ */
+PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len) { /* {{{ */
 	zend_string *message, *tmp;
 	char *outbuf, *p, *message_clean, *retbuf;
 	size_t outbuf_len;
 
-	if (mogilefs_sock_eof(mogilefs_sock TSRMLS_CC)) {
+	if (mogilefs_sock_eof(mogilefs_sock)) {
 		return NULL;
 	}
 
 	outbuf = php_stream_get_line(mogilefs_sock->stream, NULL, MOGILEFS_MAX_MESSAGE_SIZE, &outbuf_len); /* OK / ERR */
 	if (!outbuf) {
-		zend_throw_exception(mogilefs_exception_ce, "Read returned no data", 0 TSRMLS_CC);
+		zend_throw_exception(mogilefs_exception_ce, "Read returned no data", 0);
 		return NULL;
 	}
 
@@ -506,7 +571,7 @@ PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS
 			strcpy(message_clean, message->val);
 		}
 
-		zend_throw_exception(mogilefs_exception_ce, message_clean, 0 TSRMLS_CC);
+		zend_throw_exception(mogilefs_exception_ce, message_clean, 0);
 
 		efree(outbuf);
 		efree(message);
@@ -523,7 +588,7 @@ PHPAPI char *mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS
 }
 /* }}} */
 
-PHPAPI char *mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * const key,	const char * const class, int multi_dest TSRMLS_DC) /* {{{ */
+PHPAPI char *mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * const key,	const char * const class, int multi_dest) /* {{{ */
 {
 	int request_len, response_len;
 	char *request = NULL, *response = NULL;
@@ -542,7 +607,7 @@ PHPAPI char *mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * cons
 		return NULL;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		return NULL;
 	}
 
@@ -551,7 +616,7 @@ PHPAPI char *mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * cons
 /* }}} */
 
 PHPAPI int mogilefs_create_close(MogilefsSock *mogilefs_sock, const char * const key, /* {{{ */
-						 const char * const class, const char * const close_request TSRMLS_DC)
+						 const char * const class, const char * const close_request)
 {
 	int request_len, response_len;
 	char *request = NULL, *response;
@@ -562,7 +627,7 @@ PHPAPI int mogilefs_create_close(MogilefsSock *mogilefs_sock, const char * const
 		return -1;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		return -1;
 	}
 
@@ -571,7 +636,7 @@ PHPAPI int mogilefs_create_close(MogilefsSock *mogilefs_sock, const char * const
 }
 /* }}} */
 
-PHPAPI int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_DC) { /* {{{ */
+PHPAPI int mogilefs_get_uri_path(const char * const url, php_url **p_url) { /* {{{ */
 	char *key_val, *last, *token, *splitted_key, *splitted_uri, *splitted;
 	int splitted_uri_len = 0;
 	signed int ret = -2;
@@ -625,7 +690,7 @@ PHPAPI void mogilefs_get_default_domain(MogilefsSock *mogilefs_sock, char **doma
 	Create new MogileFs instance */
 PHP_METHOD(MogileFs, __construct)
 {
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "") == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "") == FAILURE) {
 		return;
 	}
 }
@@ -644,7 +709,7 @@ PHP_METHOD(MogileFs, connect)
 	MogilefsSock *mogilefs_sock = NULL;
 	zval *object;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(),
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(),
 		"Osls|d", &object, mogilefs_ce, &host, &host_len, &port,
 		&domain, &domain_len, &connect_timeout) == FAILURE) {
 
@@ -652,7 +717,7 @@ PHP_METHOD(MogileFs, connect)
 	}
 
 	if (connect_timeout < 0 || connect_timeout > (double)INT_MAX) {
-		zend_throw_exception(mogilefs_exception_ce, "Invalid timeout", 0 TSRMLS_CC);
+		zend_throw_exception(mogilefs_exception_ce, "Invalid timeout", 0);
 		RETURN_FALSE;
 	}
 
@@ -662,11 +727,11 @@ PHP_METHOD(MogileFs, connect)
 
 
 	mogilefs_sock = mogilefs_sock_server_init(host, host_len, port, domain, domain_len, tv);
-	if (mogilefs_sock_server_open(mogilefs_sock, 1 TSRMLS_CC) < 0) {
+	if (mogilefs_sock_server_open(mogilefs_sock, 1) < 0) {
 		mogilefs_free_socket(mogilefs_sock);
 		zend_throw_exception_ex(
 			mogilefs_exception_ce,
-			0 TSRMLS_CC,
+			0,
 			"Can't connect to %s:" ZEND_LONG_FMT,
 			host,
 			port
@@ -674,7 +739,7 @@ PHP_METHOD(MogileFs, connect)
 		RETURN_FALSE;
 	}
 
-	id = zend_list_insert(mogilefs_sock, le_mogilefs_sock TSRMLS_CC);
+	id = zend_list_insert(mogilefs_sock, le_mogilefs_sock);
 	add_property_resource(object, "socket", Z_RES_P(id));
 	RETURN_TRUE;
 }
@@ -688,18 +753,18 @@ PHP_METHOD(MogileFs, close)
 	zval *object;
 	MogilefsSock *mogilefs_sock = NULL;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "O",
 		&object, mogilefs_ce) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
-	if (mogilefs_sock_disconnect(mogilefs_sock TSRMLS_CC)) {
+	if (mogilefs_sock_disconnect(mogilefs_sock)) {
 		RETURN_TRUE;
 	}
 	RETURN_FALSE;
@@ -737,7 +802,7 @@ PHP_METHOD(MogileFs, put)
 		*close_request;
 	FILE *f;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(),
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(),
 				"Osss|bb", &object, mogilefs_ce,
 				&filename, &filename_len, &key, &key_len,
 				&class, &class_len, &use_file, &multi_dest) == FAILURE) {
@@ -747,19 +812,19 @@ PHP_METHOD(MogileFs, put)
 
 	multi_dest = 0;
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to MogileFS tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to MogileFS tracker", 0);
 		RETURN_FALSE;
 	}
 
-	if ((close_request = mogilefs_create_open(mogilefs_sock, key, class, multi_dest TSRMLS_CC)) == NULL) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not open CREATE_CLOSE connection", 0 TSRMLS_CC);
+	if ((close_request = mogilefs_create_open(mogilefs_sock, key, class, multi_dest)) == NULL) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not open CREATE_CLOSE connection", 0);
 		RETVAL_FALSE;
 		goto end;
 	}
 
-	if (mogilefs_get_uri_path(close_request, &url TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not retrieve MogileFS path", 0 TSRMLS_CC);
+	if (mogilefs_get_uri_path(close_request, &url) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not retrieve MogileFS path", 0);
 		RETVAL_FALSE;
 		goto end;
 	}
@@ -771,7 +836,7 @@ PHP_METHOD(MogileFs, put)
 	}
 
 	if ((sess = ne_session_create(url->scheme ? URL_STR(url->scheme) : "http", URL_STR(url->host), url->port)) == NULL) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not open WebDAV connection", 0 TSRMLS_CC);
+		zend_throw_exception(mogilefs_exception_ce, "Could not open WebDAV connection", 0);
 		RETVAL_FALSE;
 		goto end;
 	}
@@ -786,7 +851,7 @@ PHP_METHOD(MogileFs, put)
 			ret = ne_put(sess, URL_STR(url->path), fd);
 			close(fd);
 		} else {
-			zend_throw_exception(mogilefs_exception_ce, "Could not open file", 0 TSRMLS_CC);
+			zend_throw_exception(mogilefs_exception_ce, "Could not open file", 0);
 			RETVAL_FALSE;
 			goto end;
 		}
@@ -802,12 +867,12 @@ PHP_METHOD(MogileFs, put)
 	ne_session_destroy(sess);
 
 	if (ret != NE_OK) {
-		zend_throw_exception_ex(mogilefs_exception_ce, 0 TSRMLS_CC, "%s", ne_get_error(sess));
+		zend_throw_exception_ex(mogilefs_exception_ce, 0, "%s", ne_get_error(sess));
 		RETVAL_FALSE;
 		goto end;
 	}
 
-	if (mogilefs_create_close(mogilefs_sock, key, class, close_request TSRMLS_CC) < 0) {
+	if (mogilefs_create_close(mogilefs_sock, key, class, close_request) < 0) {
 		RETVAL_FALSE;
 		goto end;
 	}
@@ -833,14 +898,14 @@ PHP_METHOD(MogileFs, get)
 	char *key = NULL, *request, *response;
 	int key_len, pathcount = 2, request_len, response_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os|l",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "Os|l",
 									&object, mogilefs_ce,
 									&key, &key_len, &pathcount) == FAILURE) {
 			return;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "GET_PATHS domain=%s&key=%s&pathcount=%d\r\n", mogilefs_sock->domain, key, pathcount);
@@ -848,7 +913,7 @@ PHP_METHOD(MogileFs, get)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 	if (mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAM_PASSTHRU, response, response_len) < 0) {
@@ -867,14 +932,14 @@ PHP_METHOD(MogileFs, delete)
 	char *key = NULL, *request, *response;
 	int key_len, request_len, response_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "Os",
 		&object, mogilefs_ce, &key, &key_len) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
@@ -883,7 +948,7 @@ PHP_METHOD(MogileFs, delete)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -902,15 +967,15 @@ PHP_METHOD(MogileFs, rename)
 	char *src_key = NULL, *dest_key = NULL, *request, *response;
 	int src_key_len, dest_key_len, request_len, response_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "Oss",
 			&object, mogilefs_ce, &src_key, &src_key_len,
 			&dest_key, &dest_key_len) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "RENAME domain=%s&from_key=%s&to_key=%s\r\n", mogilefs_sock->domain, src_key, dest_key);
@@ -918,7 +983,7 @@ PHP_METHOD(MogileFs, rename)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 	efree(response);
@@ -937,14 +1002,14 @@ PHP_METHOD(MogileFs, fileInfo)
 	char *key = NULL, *request, *response;
 	int key_len, request_len, response_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "Os",
 			&object, mogilefs_ce, &key, &key_len) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
@@ -953,7 +1018,7 @@ PHP_METHOD(MogileFs, fileInfo)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -975,14 +1040,14 @@ PHP_METHOD(MogileFs, getDomains)
 	char *request, *response;
 	int	request_len, response_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "O",
 			&object, mogilefs_ce) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "GET_DOMAINS\r\n");
@@ -990,7 +1055,7 @@ PHP_METHOD(MogileFs, getDomains)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 	if (mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAM_PASSTHRU, response, response_len) < 0) {
@@ -1010,15 +1075,15 @@ PHP_METHOD(MogileFs, listKeys)
 	long limit = 1000;
 	int prefix_len, after_len, request_len, response_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss|l",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "Oss|l",
 		&object, mogilefs_ce, &prefix, &prefix_len,
 		&after, &after_len, &limit) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
@@ -1037,7 +1102,7 @@ PHP_METHOD(MogileFs, listKeys)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 	if (mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAM_PASSTHRU, response, response_len) < 0) {
@@ -1056,20 +1121,20 @@ PHP_METHOD(MogileFs, listFids)
 	int	to_len, from_len, request_len, response_len;
 
 	if (object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|ss", &object,
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "O|ss", &object,
 			mogilefs_ce, &from, &from_len, &to, &to_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 
 	} else {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|ss",
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "|ss",
 															&from, &from_len, &to, &to_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
@@ -1079,7 +1144,7 @@ PHP_METHOD(MogileFs, listFids)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1101,14 +1166,14 @@ PHP_METHOD(MogileFs, getHosts)
 	int request_len, response_len;
 
 	if (object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &object,
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &object,
 									mogilefs_ce) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
@@ -1118,7 +1183,7 @@ PHP_METHOD(MogileFs, getHosts)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1140,14 +1205,14 @@ PHP_METHOD(MogileFs, getDevices)
 	int request_len, response_len;
 
 	if(object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &object,
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &object,
 									mogilefs_ce) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
@@ -1157,7 +1222,7 @@ PHP_METHOD(MogileFs, getDevices)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1177,14 +1242,14 @@ PHP_METHOD(MogileFs, sleep)
 	long duration;
 	int	request_len, response_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O|l", &object,
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "O|l", &object,
 		mogilefs_ce, &duration) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
@@ -1194,7 +1259,7 @@ PHP_METHOD(MogileFs, sleep)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 	efree(response);
@@ -1213,20 +1278,20 @@ PHP_METHOD(MogileFs, stats)
 	int	all_len, request_len, response_len;
 
 	if(object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|s", &object,
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "O|s", &object,
 									mogilefs_ce, &all, &all_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 
 	}else {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|s",
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "|s",
 															&all, &all_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
@@ -1236,7 +1301,7 @@ PHP_METHOD(MogileFs, stats)
 		RETURN_FALSE;
 	}
 
-	if((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 	if(mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAM_PASSTHRU, response, response_len) < 0) {
@@ -1256,14 +1321,14 @@ PHP_METHOD(MogileFs, replicate)
 	int	 request_len, response_len;
 
 	if(object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &object,
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "O", &object,
 									mogilefs_ce) == FAILURE) {
 			RETURN_FALSE;
 		}
 
 	}
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
@@ -1273,7 +1338,7 @@ PHP_METHOD(MogileFs, replicate)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1294,19 +1359,19 @@ PHP_METHOD(MogileFs, createDevice)
 	int	status_len, devid_len, request_len, response_len;
 
 	if(object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Oss", &object,
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "Oss", &object,
 									mogilefs_ce, &devid, &devid_len, &status, &status_len ) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}else {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "ss",
 																												&devid, &devid_len, &status, &status_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
@@ -1316,7 +1381,7 @@ PHP_METHOD(MogileFs, createDevice)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1335,14 +1400,14 @@ PHP_METHOD(MogileFs, createDomain)
 	char *domain, *request, *response;
 	int	domain_len, request_len, response_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "Os",
 		&object, mogilefs_ce, &domain, &domain_len) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
@@ -1352,7 +1417,7 @@ PHP_METHOD(MogileFs, createDomain)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1371,14 +1436,14 @@ PHP_METHOD(MogileFs, deleteDomain)
 	char *domain, *request, *response;
 	int	domain_len, request_len, response_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "Os",
 		&object, mogilefs_ce, &domain, &domain_len) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
@@ -1388,7 +1453,7 @@ PHP_METHOD(MogileFs, deleteDomain)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1408,15 +1473,15 @@ PHP_METHOD(MogileFs, createClass)
 	char *domain = NULL, *class, *request, *response;
 	int	domain_len, class_len, mindevcount, request_len, response_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Ossl",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "Ossl",
 		&object, mogilefs_ce, &domain, &domain_len,
 		&class, &class_len, &mindevcount) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
@@ -1435,7 +1500,7 @@ PHP_METHOD(MogileFs, createClass)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1456,15 +1521,15 @@ PHP_METHOD(MogileFs, updateClass)
 	int	domain_len, class_len, request_len, response_len;
 	long mindevcount;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Ossl",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "Ossl",
 		&object, mogilefs_ce, &domain, &domain_len,
 		&class, &class_len, &mindevcount) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
@@ -1483,7 +1548,7 @@ PHP_METHOD(MogileFs, updateClass)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1503,15 +1568,15 @@ PHP_METHOD(MogileFs, deleteClass)
 	char *domain = NULL, *class, *request, *response;
 	int	domain_len, class_len, request_len, response_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Oss",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "Oss",
 		&object, mogilefs_ce, &domain, &domain_len,
 		&class, &class_len) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
@@ -1523,7 +1588,7 @@ PHP_METHOD(MogileFs, deleteClass)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1544,19 +1609,19 @@ PHP_METHOD(MogileFs, createHost)
 	int	host_len, ip_len, port_len, request_len, response_len;
 
 	if (object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss", &object,
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "Osss", &object,
 									mogilefs_ce, &host, &host_len, &ip, &ip_len, &port, &port_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	} else {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "sss",
 									&host, &host_len, &ip, &ip_len, &port, &port_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "CREATE_HOST domain=%s&host=%s&ip=%s&port=%s\r\n", mogilefs_sock->domain, host, ip, port);
@@ -1564,7 +1629,7 @@ PHP_METHOD(MogileFs, createHost)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1585,24 +1650,24 @@ PHP_METHOD(MogileFs, updateHost)
 	int	host_len, ip_len, port_len, status_len, request_len, response_len;
 
 	if (object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss|s", &object,
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "Osss|s", &object,
 				mogilefs_ce, &host, &host_len, &ip, &ip_len, &port, &port_len, &status, &status_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	} else {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss|s",
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "sss|s",
 									&host, &host_len, &ip, &ip_len, &port, &port_len, &status, &status_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}
 
 	if (!strcmp("alive", status) && !strcmp("dead", status)) {
-		zend_throw_exception(mogilefs_exception_ce, "Invalid connection status", 0 TSRMLS_CC);
+		zend_throw_exception(mogilefs_exception_ce, "Invalid connection status", 0);
 		RETURN_FALSE;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "UPDATE_HOST domain=%s&host=%s&ip=%s&port=%s&status=%s&update=1\r\n", mogilefs_sock->domain, host, ip, port, status);
@@ -1611,7 +1676,7 @@ PHP_METHOD(MogileFs, updateHost)
 		RETURN_FALSE;
 	}
 
-	if((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1632,20 +1697,20 @@ PHP_METHOD(MogileFs, deleteHost)
 	int host_len, request_len, response_len;
 
 	if (object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Os", &object,
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "Os", &object,
 									mogilefs_ce, &host, &host_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	} else {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "s",
 									&host, &host_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}
 
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "DELETE_HOST domain=%s&host=%s\r\n", mogilefs_sock->domain, host);
@@ -1654,7 +1719,7 @@ PHP_METHOD(MogileFs, deleteHost)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1677,19 +1742,19 @@ PHP_METHOD(MogileFs, setWeight)
 	int	host_len, device_len, weight_len, request_len, response_len;
 
 	if (object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss", &object,
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "Osss", &object,
 						mogilefs_ce, &host, &host_len, &device, &device_len, &weight, &weight_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	} else {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "sss",
 												&host, &host_len, &device, &device_len, &weight, &weight_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "SET_WEIGHT domain=%s&host=%s&device=%s&weight=%s\r\n", mogilefs_sock->domain, host, device, weight);
@@ -1698,7 +1763,7 @@ PHP_METHOD(MogileFs, setWeight)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1720,24 +1785,24 @@ PHP_METHOD(MogileFs, setState)
 	int	host_len, device_len, state_len, request_len, response_len;
 
 	if (object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Osss", &object,
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "Osss", &object,
 						mogilefs_ce, &host, &host_len, &device, &device_len, &state, &state_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	} else {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "sss",
 								&host, &host_len, &device, &device_len, &state, &state_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	}
 
 	if (!strcmp("alive", state) && !strcmp("dead", state)) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid state");
+		php_error_docref(NULL, E_WARNING, "Invalid state");
 		RETURN_FALSE;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "SET_STATE domain=%s&host=%s&device=%s&state=%s\r\n", mogilefs_sock->domain, host, device, state);
@@ -1746,7 +1811,7 @@ PHP_METHOD(MogileFs, setState)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1768,12 +1833,12 @@ PHP_METHOD(MogileFs, checker)
 	int	disable_len, level_len, request_len, response_len;
 
 	if (object == NULL) {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O|ss", &object,
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "O|ss", &object,
 									mogilefs_ce, &disable, &disable_len, &level, &level_len) == FAILURE) {
 			RETURN_FALSE;
 		}
 	} else {
-		if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|ss",
+		if (zend_parse_parameters(ZEND_NUM_ARGS(), "|ss",
 									&disable, &disable_len, &level, &level_len) == FAILURE) {
 			RETURN_FALSE;
 		}
@@ -1781,12 +1846,12 @@ PHP_METHOD(MogileFs, checker)
 
 	if(!strcmp("on", disable) && !strcmp("off", disable))
 	{
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invalid parameter, first parameter must be 'off' or 'on' ");
+		php_error_docref(NULL, E_WARNING, "Invalid parameter, first parameter must be 'off' or 'on' ");
 		RETURN_FALSE;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 	request_len = spprintf(&request, 0, "CHECKER domain=%s&disable=%s&level=%s\r\n", mogilefs_sock->domain, disable, level);
@@ -1795,7 +1860,7 @@ PHP_METHOD(MogileFs, checker)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1816,14 +1881,14 @@ PHP_METHOD(MogileFs, monitorRound)
 	char *request, *response;
 	int	request_len, response_len;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "O",
 		&object, mogilefs_ce) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
-		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0 TSRMLS_CC);
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
+		zend_throw_exception(mogilefs_exception_ce, "Could not connect to tracker", 0);
 		RETURN_FALSE;
 	}
 
@@ -1838,7 +1903,7 @@ PHP_METHOD(MogileFs, monitorRound)
 		RETURN_FALSE;
 	}
 
-	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len TSRMLS_CC)) == NULL) {
+	if ((response = mogilefs_sock_read(mogilefs_sock, &response_len)) == NULL) {
 		RETURN_FALSE;
 	}
 
@@ -1857,13 +1922,13 @@ PHP_METHOD(MogileFs, isConnected)
 	zval *object;
 	MogilefsSock *mogilefs_sock;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "O",
 		&object, mogilefs_ce) == FAILURE) {
 
 		return;
 	}
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
 		RETURN_FALSE;
 	}
 
@@ -1874,7 +1939,7 @@ PHP_METHOD(MogileFs, isConnected)
 /* {{{ proto bool MogileFs::isInDebuggingMode() */
 PHP_METHOD(MogileFs, isInDebuggingMode)
 {
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "") == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS(), "") == FAILURE) {
 		return;
 	}
 
@@ -1896,15 +1961,15 @@ PHP_METHOD(MogileFs, setReadTimeout)
 	double read_timeout = 0;
 	struct timeval tv;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Od",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "Od",
 	    &object, mogilefs_ce, &read_timeout) == FAILURE) {
 
 	    return;
 	}
 	
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
 
-		zend_throw_exception(mogilefs_exception_ce, "No connection established. Call connect() first", 0 TSRMLS_CC);
+		zend_throw_exception(mogilefs_exception_ce, "No connection established. Call connect() first", 0);
 	    return;
 	}
 
@@ -1926,14 +1991,14 @@ PHP_METHOD(MogileFs, getReadTimeout)
 	MogilefsSock *mogilefs_sock = NULL;
 	double read_timeout;
 
-	if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "O",
+	if (zend_parse_method_parameters(ZEND_NUM_ARGS(), getThis(), "O",
 		&object, mogilefs_ce) == FAILURE) {
 
 		return;
 	}
 
 
-	if (mogilefs_sock_get(object, &mogilefs_sock TSRMLS_CC) < 0) {
+	if (mogilefs_sock_get(object, &mogilefs_sock) < 0) {
 
 		RETURN_DOUBLE(MOGILEFS_READ_TIMEOUT);
 	}

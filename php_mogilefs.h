@@ -83,9 +83,9 @@ PHP_METHOD(MogileFs, isInDebuggingMode);
 #define mogilefs_sock_name "MogileFS Socket Buffer"
 
 #define MOGILEFS_SOCK_WRITE_FREE(socket, cmd, cmd_len) \
-	mogilefs_sock_write (socket, cmd, cmd_len, 1 TSRMLS_CC)
+	mogilefs_sock_write (socket, cmd, cmd_len, 1)
 #define MOGILEFS_SOCK_WRITE(socket, cmd, cmd_len) \
-	mogilefs_sock_write (socket, cmd, cmd_len, 0 TSRMLS_CC)
+	mogilefs_sock_write (socket, cmd, cmd_len, 0)
 
 
 #define MOGILEFS_READ_TIMEOUT 10.0
@@ -118,17 +118,17 @@ typedef struct MogilefsSock_ {
 /* {{{ internal function protos */
 PHPAPI int mogilefs_parse_response_to_array(INTERNAL_FUNCTION_PARAMETERS, char *result, int result_len);
 PHPAPI MogilefsSock* mogilefs_sock_server_init(char *m_host, size_t m_host_len, zend_long m_port, char *m_domain, size_t m_domain_len, struct timeval timeout);
-PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock TSRMLS_DC);
-PHPAPI int mogilefs_sock_disconnect(MogilefsSock *mogilefs_sock TSRMLS_DC);
-PHPAPI int mogilefs_sock_close(MogilefsSock *mogilefs_sock TSRMLS_DC);
-PHPAPI int mogilefs_sock_server_open(MogilefsSock *mogilefs_sock, int TSRMLS_DC);
-PHPAPI zend_long mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock TSRMLS_DC);
-PHPAPI int mogilefs_sock_eof(MogilefsSock *mogilefs_sock TSRMLS_DC);
-PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, unsigned int cmd_len, short free_cmd TSRMLS_DC);
-PHPAPI char * mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len TSRMLS_DC);
-PHPAPI char * mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * const key, const char * const class, int multi_dest TSRMLS_DC);
-PHPAPI int mogilefs_create_close(MogilefsSock *mogilefs_sock, const char * const m_key, const char * const class, const char * const close_request TSRMLS_DC);
-PHPAPI int mogilefs_get_uri_path(const char * const url, php_url **p_url TSRMLS_DC);
+PHPAPI int mogilefs_sock_connect(MogilefsSock *mogilefs_sock);
+PHPAPI int mogilefs_sock_disconnect(MogilefsSock *mogilefs_sock);
+PHPAPI int mogilefs_sock_close(MogilefsSock *mogilefs_sock);
+PHPAPI int mogilefs_sock_server_open(MogilefsSock *mogilefs_sock, int);
+PHPAPI zend_long mogilefs_sock_get(zval *id, MogilefsSock **mogilefs_sock);
+PHPAPI int mogilefs_sock_eof(MogilefsSock *mogilefs_sock);
+PHPAPI int mogilefs_sock_write(MogilefsSock *mogilefs_sock, char *cmd, unsigned int cmd_len, short free_cmd);
+PHPAPI char * mogilefs_sock_read(MogilefsSock *mogilefs_sock, int *buf_len);
+PHPAPI char * mogilefs_create_open(MogilefsSock *mogilefs_sock, const char * const key, const char * const class, int multi_dest);
+PHPAPI int mogilefs_create_close(MogilefsSock *mogilefs_sock, const char * const m_key, const char * const class, const char * const close_request);
+PHPAPI int mogilefs_get_uri_path(const char * const url, php_url **p_url);
 PHPAPI void mogilefs_free_socket(MogilefsSock *mogilefs_sock);
 /* }}} */
 
