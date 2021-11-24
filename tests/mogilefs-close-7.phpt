@@ -3,7 +3,7 @@ MogileFs::close()
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
-if (PHP_VERSION_ID < 80000) die("skip PHP 8 only");
+if (PHP_VERSION_ID >= 80000) die("skip PHP 7 only");
 if (mogilefs_skipped()) print "skip";
 --FILE--
 <?php
@@ -12,12 +12,7 @@ require_once dirname(__FILE__) . '/test-helper.php';
 $client = mogilefs_test_factory();
 var_dump($client->close());
 var_dump($client->close());
-
-try {
-	$client->close("param");
-} catch (\ArgumentCountError $e) {
-	var_dump($e->getMessage(), $e->getCode());
-}
+var_dump($client->close("param"));
 
 $client = mogilefs_test_factory();
 var_dump($client->disconnect());
@@ -27,8 +22,9 @@ var_dump($client->disconnect());
 --EXPECTF--
 bool(true)
 bool(false)
-string(%d) "MogileFs::close() expects exactly 0 %s, 1 given"
-int(0)
+
+Warning: MogileFs::close() expects exactly 0 parameters, 1 given in %s on line %d
+NULL
 bool(true)
 bool(false)
 ==DONE==

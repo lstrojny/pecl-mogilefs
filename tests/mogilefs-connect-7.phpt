@@ -3,7 +3,7 @@ MogileFs::connect(string host, int port, string domain)
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
-if (PHP_VERSION_ID < 80000) die("skip PHP 8 only");
+if (PHP_VERSION_ID >= 80000) die("skip PHP 7 only");
 if (mogilefs_skipped()) print "skip";
 --FILE--
 <?php
@@ -39,11 +39,7 @@ try {
 
 // Params
 $client = new MogileFs();
-try{
-	$client->connect();
-}catch (ArgumentCountError $e){
-	var_dump($e->getMessage(), $e->getCode());
-}
+var_dump($client->connect());
 ?>
 ==DONE==
 --EXPECTF--
@@ -56,6 +52,7 @@ string(%d) "Invalid timeout"
 int(0)
 string(%d) "Invalid timeout"
 int(0)
-string(%d) "MogileFs::connect() expects at least 3 %s, 0 given"
-int(0)
+
+Warning: MogileFs::connect() expects at least 3 parameters, 0 given in %s on line %d
+NULL
 ==DONE==

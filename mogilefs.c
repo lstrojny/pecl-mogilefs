@@ -49,199 +49,23 @@
 
 #include "php_mogilefs.h"
 
+#if PHP_VERSION_ID < 80000
+#include "mogilefs_legacy_arginfo.h"
+#else
+#include "mogilefs_arginfo.h"
+#endif
+
 #include <ne_socket.h>
 #include <ne_session.h>
 #include <ne_utils.h>
 #include <ne_auth.h>
 #include <ne_basic.h>
 
-#if (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION > 2) || PHP_MAJOR_VERSION > 5
-# define MOGILEFS_ARG_INFO
-#else
-# define MOGILEFS_ARG_INFO static
-#endif
-
-/* {{{ arginfo */
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_connect, 0, 4, _IS_BOOL, 0)
-	ZEND_ARG_TYPE_INFO(0, host, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, port, IS_LONG, 0)
-	ZEND_ARG_TYPE_INFO(0, domain, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, timeout, IS_DOUBLE, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_isConnection, 0, 0, _IS_BOOL, 0)
-ZEND_END_ARG_INFO()
-
-#define arginfo_MogileFs_close arginfo_MogileFs_isConnection
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_put, 0, 4, _IS_BOOL, 0)
-	ZEND_ARG_OBJ_INFO(0, pathvalidfile, file, 0)
-	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, class, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, use_file, _IS_BOOL, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_fileInfo, 0, 1, IS_ARRAY, 0)
-	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_get, 0, 1, IS_ARRAY, 0)
-	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
-	ZEND_ARG_OBJ_INFO_WITH_DEFAULT_VALUE(0, pathcount, integer, 0, "2")
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_delete, 0, 1, _IS_BOOL, 0)
-	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_rename, 0, 2, _IS_BOOL, 0)
-	ZEND_ARG_TYPE_INFO(0, from_key, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, to_key, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_listKeys, 0, 3, IS_ARRAY, 0)
-	ZEND_ARG_TYPE_INFO(0, prefix, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, after, IS_STRING, 0)
-	ZEND_ARG_OBJ_INFO(0, limit, integer, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_listFids, 0, 2, _IS_BOOL, 0)
-	ZEND_ARG_OBJ_INFO(0, from, integer, 0)
-	ZEND_ARG_OBJ_INFO(0, to, integer, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_getDomains, 0, 0, IS_ARRAY, 0)
-ZEND_END_ARG_INFO()
-
-#define arginfo_MogileFs_getHosts arginfo_MogileFs_getDomains
-
-#define arginfo_MogileFs_getDevices arginfo_MogileFs_getDomains
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_sleep, 0, 1, _IS_BOOL, 0)
-	ZEND_ARG_OBJ_INFO(0, duration, integer, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_stats, 0, 1, IS_ARRAY, 0)
-	ZEND_ARG_OBJ_INFO(0, all, integer, 0)
-ZEND_END_ARG_INFO()
-
-#define arginfo_MogileFs_replicate arginfo_MogileFs_isConnection
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_createDevice, 0, 2, IS_ARRAY, 0)
-	ZEND_ARG_TYPE_INFO(0, devid, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, status, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_createDomain, 0, 1, IS_ARRAY, 0)
-	ZEND_ARG_TYPE_INFO(0, domain, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-#define arginfo_MogileFs_deleteDomain arginfo_MogileFs_createDomain
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_createClass, 0, 3, IS_ARRAY, 0)
-	ZEND_ARG_TYPE_INFO(0, domain, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, class, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, mindevcount, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-#define arginfo_MogileFs_updateClass arginfo_MogileFs_createClass
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_createHost, 0, 1, IS_ARRAY, 0)
-	ZEND_ARG_TYPE_INFO(0, hostname, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_updateHost, 0, 3, IS_ARRAY, 0)
-	ZEND_ARG_TYPE_INFO(0, hostname, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, ip, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, port, IS_LONG, 0)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, state, IS_STRING, 0, "\"alive\"")
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_deleteHost, 0, 1, _IS_BOOL, 0)
-	ZEND_ARG_TYPE_INFO(0, hostname, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_setWeight, 0, 3, _IS_BOOL, 0)
-	ZEND_ARG_TYPE_INFO(0, hostname, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, device, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, weight, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_setState, 0, 2, _IS_BOOL, 0)
-	ZEND_ARG_TYPE_INFO(0, hostname, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, device, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, state, IS_STRING, 0, "\"alive\"")
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_checker, 0, 2, _IS_BOOL, 0)
-	ZEND_ARG_TYPE_INFO(0, status, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, level, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_setReadTimeout, 0, 1, IS_VOID, 0)
-	ZEND_ARG_TYPE_INFO(0, readTimeout, IS_DOUBLE, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_getReadTimeout, 0, 0, IS_DOUBLE, 0)
-ZEND_END_ARG_INFO()
-
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_MogileFs_deleteClass, 0, 2, _IS_BOOL, 0)
-	ZEND_ARG_TYPE_INFO(0, domain, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, class, IS_STRING, 0)
-ZEND_END_ARG_INFO()
-
-#define arginfo_MogileFs_monitorRound arginfo_MogileFs_getDomains
-
-#define arginfo_MogileFs_isInDebuggingMode arginfo_MogileFs_isConnection
-
-#define arginfo_MogileFs_isConnected arginfo_MogileFs_isConnection
-/* }}} */
-
 /* True global resources - no need for thread safety here */
 static int le_mogilefs_sock;
 static zend_class_entry *mogilefs_ce;
 static zend_class_entry *mogilefs_exception_ce;
 
-/* {{{ zend_function_entry */
-static
-zend_function_entry php_mogilefs_methods[] = {
-	PHP_ME(MogileFs, isConnected,		arginfo_MogileFs_isConnected,		ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, connect,			arginfo_MogileFs_connect,			ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, get,				arginfo_MogileFs_get,				ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, getDomains,		arginfo_MogileFs_getDomains,		ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, fileInfo,			arginfo_MogileFs_fileInfo,		ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, listKeys,			arginfo_MogileFs_listKeys,		ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, listFids,			arginfo_MogileFs_listFids,		ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, getHosts,			arginfo_MogileFs_getHosts,		ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, getDevices,		arginfo_MogileFs_getDevices,		ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, sleep,				arginfo_MogileFs_sleep,			ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, stats,				arginfo_MogileFs_stats,			ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, replicate,			arginfo_MogileFs_replicate,		ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, createDevice,		arginfo_MogileFs_createDevice,							ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, createDomain,		arginfo_MogileFs_createDomain,							ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, deleteDomain,		arginfo_MogileFs_deleteDomain,							ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, createClass,		arginfo_MogileFs_createClass,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, updateClass,		arginfo_MogileFs_updateClass,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, deleteClass,		arginfo_MogileFs_deleteClass,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, createHost,		arginfo_MogileFs_createHost,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, updateHost,		arginfo_MogileFs_updateHost,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, deleteHost,		arginfo_MogileFs_deleteHost,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, setWeight,			arginfo_MogileFs_setWeight,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, setState,			arginfo_MogileFs_setState,								ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, checker,			arginfo_MogileFs_checker,									ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, monitorRound,		arginfo_MogileFs_monitorRound,							ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, put,				arginfo_MogileFs_put,				ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, close,				arginfo_MogileFs_close,			ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, delete,			arginfo_MogileFs_delete,			ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, rename,			arginfo_MogileFs_rename,			ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, setReadTimeout,	arginfo_MogileFs_setReadTimeout,	ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, getReadTimeout,	arginfo_MogileFs_getReadTimeout,	ZEND_ACC_PUBLIC)
-	PHP_ME(MogileFs, isInDebuggingMode, arginfo_MogileFs_isInDebuggingMode,	ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-	/* Aliases */
-	PHP_MALIAS(MogileFs, disconnect, close, arginfo_MogileFs_close, ZEND_ACC_PUBLIC)
-	{NULL, NULL, NULL}
-};
-/* }}} */
 
 zend_module_entry mogilefs_module_entry = {
 #if ZEND_EXTENSION_API_NO >= 20010901
@@ -287,7 +111,7 @@ PHP_MINIT_FUNCTION(mogilefs) /* {{{ */
 	zend_class_entry mogilefs_exception_class_entry;
 	
 	ne_sock_init();
-	INIT_CLASS_ENTRY(mogilefs_class_entry, "MogileFs", php_mogilefs_methods);
+	INIT_CLASS_ENTRY(mogilefs_class_entry, "MogileFs", class_MogileFs_methods);
 	mogilefs_ce = zend_register_internal_class(&mogilefs_class_entry);
 
 	INIT_CLASS_ENTRY(mogilefs_exception_class_entry, "MogileFsException", NULL);
@@ -690,7 +514,7 @@ PHPAPI void mogilefs_get_default_domain(MogilefsSock *mogilefs_sock, char **doma
 	Create new MogileFs instance */
 PHP_METHOD(MogileFs, __construct)
 {
-	if (zend_parse_parameters(ZEND_NUM_ARGS(), "") == FAILURE) {
+	if (zend_parse_parameters_none() == FAILURE) {
 		return;
 	}
 }
@@ -889,7 +713,7 @@ end:
 }
 /* }}} */
 
-/* {{{ proto string MogileFs::get(string key, integer pathcount)
+/* {{{ proto string MogileFs::get(string key, int pathcount)
 	Get MogileFs path */
 PHP_METHOD(MogileFs, get)
 {

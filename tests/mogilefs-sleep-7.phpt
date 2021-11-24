@@ -3,7 +3,7 @@ MogileFs::sleep(int time)
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
-if (PHP_VERSION_ID < 80000) die("skip PHP 8 only");
+if (PHP_VERSION_ID >= 80000) die("skip PHP 7 only");
 if (mogilefs_skipped()) print "skip";
 --FILE--
 <?php
@@ -15,17 +15,13 @@ var_dump($client->sleep(1));
 $end = (microtime(true) - $start);
 var_dump($end >= 1);
 
-try {
-    $client->sleep("wrong");
-} catch (\TypeError $e) {
-    var_dump($e->getMessage(), $e->getCode());
-}
-
+var_dump($client->sleep("wrong"));
 ?>
 ==DONE==
 --EXPECTF--
 bool(true)
 bool(true)
-string(%d) "MogileFs::sleep(): Argument #1 ($duration) must be of type int, string given"
-int(0)
+
+Warning: MogileFs::sleep() expects parameter 1 to be int, string given in %s on line %d
+NULL
 ==DONE==

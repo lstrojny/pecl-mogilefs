@@ -32,7 +32,7 @@
 
 #ifndef PHP_MOGILEFS_H
 #define PHP_MOGILEFS_H
-#define PHP_MOGILEFS_VERSION "0.9.49"
+#define PHP_MOGILEFS_VERSION "0.9.50-dev"
 
 extern zend_module_entry mogilefs_module_entry;
 #define phpext_mogilefs_ptr &mogilefs_module_entry
@@ -44,41 +44,6 @@ extern zend_module_entry mogilefs_module_entry;
 PHP_MINIT_FUNCTION(mogilefs);
 PHP_MSHUTDOWN_FUNCTION(mogilefs);
 PHP_MINFO_FUNCTION(mogilefs);
-
-PHP_METHOD(MogileFs, __construct);
-PHP_METHOD(MogileFs, isConnected);
-PHP_METHOD(MogileFs, connect);
-PHP_METHOD(MogileFs, get);
-PHP_METHOD(MogileFs, getDomains);
-PHP_METHOD(MogileFs, fileInfo);
-PHP_METHOD(MogileFs, listKeys);
-PHP_METHOD(MogileFs, listFids);
-PHP_METHOD(MogileFs, getHosts);
-PHP_METHOD(MogileFs, getDevices);
-PHP_METHOD(MogileFs, sleep);
-PHP_METHOD(MogileFs, stats);
-PHP_METHOD(MogileFs, replicate);
-PHP_METHOD(MogileFs, createDevice);
-PHP_METHOD(MogileFs, createDomain);
-PHP_METHOD(MogileFs, deleteDomain);
-PHP_METHOD(MogileFs, createClass);
-PHP_METHOD(MogileFs, updateClass);
-PHP_METHOD(MogileFs, deleteClass);
-PHP_METHOD(MogileFs, createHost);
-PHP_METHOD(MogileFs, updateHost);
-PHP_METHOD(MogileFs, deleteHost);
-PHP_METHOD(MogileFs, setWeight);
-PHP_METHOD(MogileFs, setState);
-PHP_METHOD(MogileFs, checker);
-PHP_METHOD(MogileFs, monitorRound);
-PHP_METHOD(MogileFs, put);
-PHP_METHOD(MogileFs, close);
-PHP_METHOD(MogileFs, disconnect);
-PHP_METHOD(MogileFs, delete);
-PHP_METHOD(MogileFs, rename);
-PHP_METHOD(MogileFs, setReadTimeout);
-PHP_METHOD(MogileFs, getReadTimeout);
-PHP_METHOD(MogileFs, isInDebuggingMode);
 
 #define mogilefs_sock_name "MogileFS Socket Buffer"
 

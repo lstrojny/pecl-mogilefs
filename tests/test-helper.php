@@ -29,7 +29,8 @@ function mogilefs_test_factory()
         if ($e->getMessage() === 'Domain not found') {
             $client->createDomain(MOGILEFS_DOMAIN);
         } else {
-		    assert('$e->getMessage() == "That class already exists in that domain"');
+			$assertion = $e->getMessage() == "That class already exists in that domain";
+		    assert($assertion);
         }
 	}
 	return $client;
