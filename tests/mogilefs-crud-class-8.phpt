@@ -3,6 +3,7 @@ Mogilefs::createClass(string domain, string class, int device_count) / MogileFs:
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
+if (PHP_VERSION_ID >= 80000) die("skip PHP 7 only");
 if (mogilefs_skipped()) print "skip";
 --FILE--
 <?php

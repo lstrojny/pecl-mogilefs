@@ -1,5 +1,5 @@
 --TEST--
-MogileFS::getDomains()
+MogileFS::fileInfo()
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';

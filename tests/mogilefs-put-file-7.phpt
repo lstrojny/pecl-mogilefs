@@ -3,7 +3,7 @@ MogileFs::put(string path/content, string key, string class, bool file_only = tr
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
-if (PHP_VERSION_ID < 80000) die("skip PHP 8 only");
+if (PHP_VERSION_ID >= 80000) die("skip PHP 7 only");
 if (mogilefs_skipped()) print "skip";
 --FILE--
 <?php
@@ -30,13 +30,7 @@ try {
 	var_dump(get_class($e));
 	var_dump($e->getMessage());
 }
-
-try {
-	$client->put();
-} catch (\ArgumentCountError $e) {
-	var_dump($e->getMessage(), $e->getCode());
-}
-
+var_dump($client->put());
 
 ?>
 ==DONE==
@@ -53,6 +47,7 @@ bool(true)
 bool(true)
 string(%d) "MogileFsException"
 string(%d) "Could not open file"
-string(%d) "MogileFs::put() expects at least 3 %s, 0 given"
-int(0)
+
+Warning: MogileFs::put() expects at least 3 parameters, 0 given in %s on line %d
+NULL
 ==DONE==

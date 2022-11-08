@@ -3,6 +3,7 @@ MogileFs::createDomain(string domain) / MogileFs::deleteDomain(string domain)
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
+if (PHP_VERSION_ID < 80000) die("skip PHP 8 only");
 if (mogilefs_skipped()) print "skip";
 --FILE--
 <?php
@@ -13,14 +14,29 @@ $domainname = "simple-test-domain";
 var_dump($client->createDomain($domainname));
 var_dump($client->deleteDomain($domainname));
 
+try {
+	$client->createDomain();
+} catch (\ArgumentCountError $e) {
+	var_dump($e->getMessage(), $e->getCode());
+}
 
-var_dump($client->createDomain());
-var_dump($client->createDomain(new stdClass()));
+try {
+	$client->createDomain(new stdClass());
+} catch (\TypeError $e) {
+	var_dump($e->getMessage(), $e->getCode());
+}
 
+try {
+	$client->deleteDomain();
+} catch (\ArgumentCountError $e) {
+	var_dump($e->getMessage(), $e->getCode());
+}
 
-var_dump($client->deleteDomain());
-var_dump($client->deleteDomain(new stdClass()));
-
+try {
+	$client->deleteDomain(new stdClass());
+} catch (\TypeError $e) {
+	var_dump($e->getMessage(), $e->getCode());
+}
 
 try {
 	$client->deleteDomain('unknown-domain');
@@ -38,17 +54,13 @@ array(1) {
   ["domain"]=>
   string(18) "simple-test-domain"
 }
-
-Warning: MogileFs::createDomain() expects exactly 1 parameter, 0 given in %s on line %d
-NULL
-
-Warning: MogileFs::createDomain() expects parameter 1 to be string, object given in %s on line %d
-NULL
-
-Warning: MogileFs::deleteDomain() expects exactly 1 parameter, 0 given in %s on line %d
-NULL
-
-Warning: MogileFs::deleteDomain() expects parameter 1 to be string, object given in %s on line %d
-NULL
+string(%d) "MogileFs::createDomain() expects exactly 1 %s, 0 given"
+int(0)
+string(%d) "MogileFs::createDomain(): Argument #1 ($domain) must be of type string, stdClass given"
+int(0)
+string(%d) "MogileFs::deleteDomain() expects exactly 1 %s, 0 given"
+int(0)
+string(%d) "MogileFs::deleteDomain(): Argument #1 ($domain) must be of type string, stdClass given"
+int(0)
 string(%d) "Domain not found"
 ==DONE==

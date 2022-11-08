@@ -3,24 +3,16 @@ MogileFs::listKeys(string prefix, string after, int limit)
 --SKIPIF--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
-if (PHP_VERSION_ID < 80000) die("skip PHP 8 only");
+if (PHP_VERSION_ID >= 80000) die("skip PHP 7 only");
 if (mogilefs_skipped()) print "skip";
 --FILE--
 <?php
 require_once dirname(__FILE__) . '/test-helper.php';
 $client = mogilefs_test_factory();
 
-try {
-	$client->listKeys();
-} catch (\ArgumentCountError $e) {
-	var_dump($e->getMessage(), $e->getCode());
-}
+var_dump($client->listKeys());
 
-try {
-	$client->listKeys('pref');
-} catch (\ArgumentCountError $e) {
-	var_dump($e->getMessage(), $e->getCode());
-}
+var_dump($client->listKeys('pref'));
 
 try {
 	var_dump($client->listKeys('pref', 'after'));
@@ -32,6 +24,7 @@ try {
 } catch (MogileFsException $e) {
 	var_dump($e->getMessage());
 }
+
 
 var_dump($client->put(__FILE__, 'testList1', MOGILEFS_CLASS));
 var_dump($client->put(__FILE__, 'testList2', MOGILEFS_CLASS));
@@ -50,10 +43,12 @@ var_dump($client->delete('testList3'));
 ?>
 ==DONE==
 --EXPECTF--
-string(%d) "MogileFs::listKeys() expects at least 2 %s, 0 given"
-int(0)
-string(%d) "MogileFs::listKeys() expects at least 2 %s, 1 given"
-int(0)
+
+Warning: MogileFs::listKeys() expects at least 2 parameters, 0 given in %s on line %d
+NULL
+
+Warning: MogileFs::listKeys() expects at least 2 parameters, 1 given in %s on line %d
+NULL
 string(39) "Pattern does not match the after-value?"
 string(52) "No keys match that pattern and after-value (if any)."
 bool(true)
