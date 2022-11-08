@@ -32,7 +32,7 @@
 
 #ifndef PHP_MOGILEFS_H
 #define PHP_MOGILEFS_H
-#define PHP_MOGILEFS_VERSION "0.9.50-dev"
+#define PHP_MOGILEFS_VERSION "0.9.51-dev"
 
 extern zend_module_entry mogilefs_module_entry;
 #define phpext_mogilefs_ptr &mogilefs_module_entry

@@ -1,5 +1,5 @@
 /* This is a generated file, edit the .stub.php file instead.
- * Stub hash: 3010401d4dc218623b01f915c33c0f2745185438 */
+ * Stub hash: 8a8afeda08b8f271787a1ed1f1f555153b4cb044 */
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_class_MogileFs___construct, 0, 0, 0)
 ZEND_END_ARG_INFO()
@@ -109,11 +109,11 @@ ZEND_END_ARG_INFO()
 
 #define arginfo_class_MogileFs_monitorRound arginfo_class_MogileFs_getDomains
 
-ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MogileFs_put, 0, 4, _IS_BOOL, 0)
-	ZEND_ARG_OBJ_INFO(0, pathvalidfile, file, 0)
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO_EX(arginfo_class_MogileFs_put, 0, 3, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO(0, pathvalidfile, IS_STRING, 0)
 	ZEND_ARG_TYPE_INFO(0, key, IS_STRING, 0)
 	ZEND_ARG_TYPE_INFO(0, class, IS_STRING, 0)
-	ZEND_ARG_TYPE_INFO(0, use_file, _IS_BOOL, 0)
+	ZEND_ARG_TYPE_INFO_WITH_DEFAULT_VALUE(0, use_file, _IS_BOOL, 0, "true")
 ZEND_END_ARG_INFO()
 
 #define arginfo_class_MogileFs_close arginfo_class_MogileFs_isConnected

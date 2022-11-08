@@ -27,7 +27,7 @@ class MogileFs {
     public function setState(string $hostname, string $device, string $state = "alive"): bool {}
     public function checker(string $status, string $level): bool {}
     public function monitorRound(): array {}
-    public function put(file $pathvalidfile, string $key, string $class, bool $use_file): bool {}
+    public function put(string $pathvalidfile, string $key, string $class, bool $use_file = true): bool {}
     public function close(): bool {}
     public function delete(string $key): bool {}
     public function rename(string $from_key, string $to_key): bool {}
